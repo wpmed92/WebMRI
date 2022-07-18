@@ -1,0 +1,43 @@
+[{
+  "name": "-in",
+  "type": "infile",
+  "ext": "nii",
+  "text": "Input volume"
+},
+{
+  "name": "-ref",
+  "type": "infile",
+  "ext": "nii",
+  "text": "Reference volume"
+},
+{
+  "name": "-out",
+  "type": "outfile",
+  "namebuild": "%-in,_to_,%-ref"
+},
+{
+  "name": "-omat",
+  "type": "outfile",
+  "namebuild": "%-in,_to_,%-ref,.mat"
+},
+{
+  "name": "-init",
+  "postval": "-applyxfm",
+  "type": "infile",
+  "ext": "mat",
+  "text": "Transformation matrix",
+  "optional": true
+},
+{
+  "name": "-cost",
+  "type": "string[]",
+  "vals": ["mutualinfo", "corratio", "normcorr", "normmi", "leastsq"],
+  "text": "Cost function"
+},
+{
+  "name": "-dof",
+  "type": "number",
+  "def": 6,
+  "step": 1,
+  "text": "Degree of Freedom"
+}]

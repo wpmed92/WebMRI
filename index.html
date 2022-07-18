@@ -1,0 +1,142 @@
+<html>
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="index.css">
+
+<!-- CSS Dependencies -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/9.7.3/css/bootstrap-slider.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<!-- CSS Dependencies -->
+
+<!-- JS Dependencies -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/9.7.3/bootstrap-slider.min.js"></script>
+<!-- JS Dependencies -->
+
+<!-- Code -->
+<script src="src/brainbrowser/brainbrowser.js"></script>
+<script src="src/brainbrowser/core/tree-store.js"></script>
+<script src="src/brainbrowser/lib/config.js"></script>
+<script src="src/brainbrowser/lib/utils.js"></script>
+<script src="src/brainbrowser/lib/events.js"></script>
+<script src="src/brainbrowser/lib/loader.js"></script>
+<script src="src/brainbrowser/lib/file-pool.js"></script>
+<script src="src/brainbrowser/lib/color-map.js"></script>
+<script src="src/brainbrowser/volume-viewer.js"></script>
+<script src="src/brainbrowser/volume-viewer/lib/display.js"></script>
+<script src="src/brainbrowser/volume-viewer/lib/panel.js"></script>
+<script src="src/brainbrowser/volume-viewer/lib/utils.js"></script>
+<script src="src/brainbrowser/volume-viewer/modules/loading.js"></script>
+<script src="src/brainbrowser/volume-viewer/modules/rendering.js"></script>
+<script src="src/brainbrowser/volume-viewer/modules/pluginsys.js"></script>
+<script src="src/brainbrowser/volume-viewer/volume-loaders/blend.js"></script>
+<script src="src/brainbrowser/volume-viewer/volume-loaders/minc.js"></script>
+<script src="src/brainbrowser/volume-viewer/volume-loaders/nifti1.js"></script>
+<script src="src/brainbrowser/volume-viewer/volume-loaders/dicom.js"></script>
+<script src="src/brainbrowser/volume-viewer/volume-loaders/mgh.js"></script>
+<script src="src/main.config.js"></script>
+<script src="src/main.js"></script>
+<!-- Code -->
+
+</head>
+
+<body>
+  
+  <!-- hidden file inputs, programatically clicked by a-dicom and a-nifti -->
+  <input type="file" id="file-dicom" multiple style="display:none;"/>
+  <input type="file" id="file-nifti" style="display:none;"/>
+  
+  <div id="div-main">
+  <!-- Navbar -->
+  <nav id="nav-menu" class="navbar navbar-inverse">
+    <div class="container-fluid">
+	  <div class="navbar-header">
+	    <a class="navbar-brand" href="#">WebMRI</a>
+	  </div>
+	  <ul class="nav navbar-nav">
+	    <li class="dropdown">
+		  <a class="dropdown-toggle" data-toggle="dropdown" href="#">File
+		  <span class="caret"></span></a>
+		  <ul class="dropdown-menu">
+		    <li><a id="a-dicom" href="#" >Open DICOM</a></li>
+		    <li><a id="a-nifti" href="#">Open NIfTI</a></li>
+		    <li><a id="a-overlay" href="#">Create overlay</a></li>
+		  </ul>
+	    </li>
+	    <li class="dropdown">
+		  <a class="dropdown-toggle" data-toggle="dropdown" href="#">Tools
+		  <span class="caret"></span></a>
+		  <ul  id="ul-plugin-menu" class="dropdown-menu">
+		  </ul>
+	    </li>
+	  </ul>
+	  <ul class="nav navbar-nav navbar-right">
+	    <li><a href="#"><span class="glyphicon glyphicon-question-sign"></span> About</a></li>
+	  </ul>
+    </div>
+  </nav>
+  <!-- Navbar -->
+	
+  <div id="div-side-wrapper">
+    <div id="div-side-menu" class="panel panel-default">
+      <div class="panel-heading">
+	    <h5 class="text-info"><i class="fa fa-folder-o" aria-hidden="true"></i> Workspace</h5>
+      </div>
+	  
+      <div id="div-filepool" class="panel-body">
+      </div>
+    </div>
+	
+	<div id="div-volume-controls" class="panel panel-default hide">
+	  <div class="panel-heading">
+	    <h5 class="text-info"><i class="fa fa-sliders" aria-hidden="true"></i> Volume controls</h5>
+      </div>
+	  
+	  <div id="div-volume-controls-body" class="panel-body">
+	    <div class="div-voxel-coords">
+		  <div class="div-coord-wrapper">
+		    <div class="div-coord-title">i:</div><input class="div-coord-val" id="voxel-i">
+		  </div>
+		  
+		  <div class="div-coord-wrapper">
+		    <div class="div-coord-title">j:</div><input class="div-coord-val" id="voxel-j">
+		  </div>
+		  
+		  <div class="div-coord-wrapper">
+		    <div class="div-coord-title">k:</div><input class="div-coord-val" id="voxel-k">
+		  </div>
+		</div>
+	  
+	    <div class="div-world-coords">
+		  <div class="div-coord-wrapper">
+		    <div class="div-coord-title">x:</div><input class="div-coord-val" id="world-x">
+		  </div>
+	      
+		  <div class="div-coord-wrapper">
+		    <div class="div-coord-title">y:</div><input class="div-coord-val" id="world-y">
+		  </div>
+	      
+		  <div class="div-coord-wrapper">
+		    <div class="div-coord-title">z:</div><input class="div-coord-val" id="world-z">
+		  </div>
+	    </div>
+	  
+        <div class="blend-div hide">
+          <span class="control-heading" id="contrast-heading">Blend ratio </span>
+          <input id="ex1" data-slider-id='ex1Slider' type="text" data-slider-min="0" data-slider-max="1" data-slider-step="0.01" data-slider-value="0.5"/>
+        </div>
+		
+		<div class="div-windowing">
+          <span class="control-heading" id="contrast-heading">Windowing levels</span>
+          <input id="input-windowing" data-slider-id='ex1Slider' type="text" data-slider-min="0" data-slider-max="255" data-slider-step="1" data-slider-value="[0,255]"/>
+        </div>
+	  </div>
+    </div>
+  </div>
+  
+  <div id="div-brainbrowser"></div>
+  </div>
+</body>
+</html>

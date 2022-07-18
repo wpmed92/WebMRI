@@ -1,0 +1,102 @@
+#div-main {
+  width: 100%;
+  height: 100%;
+  background-color:black;
+  position:relative;
+}
+
+a {
+  margin-right: 10px;
+}
+
+#div-side-wrapper {
+  width: 20%;
+  float:left;
+  margin-left: 5;
+}
+
+#div-brainbrowser {
+  background-color:black;
+  float:right;
+}
+
+#volume-viewer {
+  display: inline-block;
+  background-color: #FFFFFF;
+  padding: 0.5em;
+  border-radius: 10px;
+}
+
+.volume-container {
+  display: table-cell;
+}
+
+.tbi-wrapper-div {
+  display:  inline-block;
+  position: relative;
+  margin: 3px 5px;
+}
+
+canvas.slice-display {
+  top: 0;
+  left: 0;
+  position:absolute;
+  display: block;
+  margin: 3px 5px;
+}
+
+.div-landmark {
+  top: 0;
+  left: 0;
+  position:absolute;
+  display: block;
+  margin: 3px 5px;
+}
+
+.modal-backdrop { 
+  display:none;
+}
+
+.hide {
+  display:none;
+}
+
+.div-coord-wrapper {
+  display:flex;	
+  margin-bottom: 5;
+}
+
+.div-coord-title {
+  width:10%;
+}
+
+.div-coord-val {
+  width:80%;
+  margin-left: 5;
+}
+
+.div-voxel-coords {
+  float:left;
+  width:50%;
+}
+
+.div-world-coords {
+  float:right;
+  width:50%;
+}
+
+.div-windowing {
+  margin-top: 10px;
+}
+
+.blend-div {
+  margin-top: 20px;
+}
+
+.a-file-pool {
+  display:inline-block;
+  width: 150px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
