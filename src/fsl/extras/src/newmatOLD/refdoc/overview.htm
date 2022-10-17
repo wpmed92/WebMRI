@@ -1,0 +1,70 @@
+<HTML>
+<HEAD><TITLE>Newmat10 - overview</TITLE></HEAD>
+<BODY bgcolor="#FFFFFF">
+<H2><font color="#FF0000">Overview</H2></font>
+<A HREF="make.htm">  next</A> - 
+<A HREF="make.htm">  skip</A> - 
+<A HREF="starting.htm">  up</A> - 
+<A HREF="index.htm">  start</A><P>
+
+I use .h as the suffix of definition files and .cpp as the suffix of
+C++ source files.
+<P>
+You will need to compile all the *.cpp files listed as program files in the
+<A HREF="files.htm">files section</A>
+to get the complete package.
+Ideally you should store the
+resulting object files as a library.
+The tmt*.cpp files are
+used for <A HREF="testing.htm">testing</A>,
+example.cpp is an <A HREF="example.htm">example</A> and sl_ex.cpp,
+nl_ex.cpp and garch.cpp are examples of the
+<A HREF="nonlin.htm">non-linear</A> solve and
+optimisation routines. A demonstration of the exception mechanism is
+in test_exc.cpp.
+<P>
+I include a number of <I>make</I> files for compiling the example and the test
+package. See the section on <A HREF="make.htm">make files</A> for details.
+But with the PC compilers, its pretty quick
+just to load all the files in the interactive environments by pointing
+and clicking.
+<P>
+Use the large or win32 console model when you are using a PC. Do not <I>outline</I>
+inline functions. You may need to increase the stack size.
+<P>
+Your source files that access the newmat will need to #include one or
+more of the following files.
+<DL>
+<DT>include.h:
+<DD>if you want to access just the compiler options
+
+<DT>newmat.h:
+<DD>to access just the main matrix library (includes include.h)
+
+<DT>newmatap.h:
+<DD>to access the advanced matrix routines such as Cholesky
+decomposition, QR triangularisation etc (includes newmat.h)
+
+<DT>newmatio.h:
+<DD>to access the output routines (includes newmat.h)
+You can use this only with compilers that support the standard input/output
+routines including
+manipulators.
+
+<DT>newmatnl.h:
+<DD>to access the non-linear optimisation routines (includes newmat.h)
+
+</DL>
+<P> 
+See the section on <A HREF="custom.htm">customising</A>
+to see how to edit include.h for
+your environment and the section on <A HREF="compiler.htm">compilers</A>
+for any special problems with the compiler you are using.
+<P>
+<A HREF="make.htm">  next</A> - 
+<A HREF="make.htm">  skip</A> - 
+<A HREF="starting.htm">  up</A> - 
+<A HREF="index.htm">  start</A><P>
+</BODY>
+</HTML>
+

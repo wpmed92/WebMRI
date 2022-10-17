@@ -1,0 +1,52 @@
+<HTML>
+<HEAD><TITLE>Newmat10 - Numerical Recipes in C</TITLE></HEAD>
+<BODY bgcolor="#FFFFFF">
+<H2><font color="#FF0000">Interface to Numerical Recipes in C</H2></font>
+<A HREF="except.htm">  next</A> - 
+<A HREF="except.htm">  skip</A> - 
+<A HREF="refer.htm">  up</A> - 
+<A HREF="index.htm">  start</A><P>
+
+This package can be used with the vectors and matrices defined in
+<I>Numerical Recipes in C</I>. You need to edit the routines in Numerical
+Recipes so that the elements are of the same type as used in this
+package. Eg replace float by double, vector by dvector and matrix by
+dmatrix, etc. You may need to edit the function definitions to use
+the version acceptable to your compiler (if you are using the first edition
+of NRIC). You may need to enclose the code from
+Numerical Recipes in <TT>extern "C" { ... }</TT>. You will also need to include
+the matrix and vector utility routines.
+<P>
+Then any vector in Numerical Recipes with subscripts starting from 1 in
+a function call can be accessed by a RowVector, ColumnVector or
+DiagonalMatrix in the present package. Similarly any matrix with
+subscripts starting from 1 can be accessed by an  nricMatrix  in the
+present package. The class nricMatrix is derived from Matrix and can be
+used in place of Matrix. In each case, if you wish to refer to a
+RowVector, ColumnVector, DiagonalMatrix or nricMatrix X in an function
+from Numerical Recipes, use <TT>X.nric()</TT> in the function call.
+<P>
+Numerical Recipes cannot change the dimensions of a matrix or vector. So
+matrices or vectors must be correctly dimensioned before a Numerical
+Recipes routine is called.
+<P>
+For example
+<PRE>
+   SymmetricMatrix B(44);
+   .....                             // load values into B
+   nricMatrix BX = B;                // copy values to an nricMatrix
+   DiagonalMatrix D(44);             // Matrices for output
+   nricMatrix V(44,44);              //    correctly dimensioned
+   int nrot;
+   jacobi(BX.nric(),44,D.nric(),V.nric(),&nrot);
+                                     // jacobi from NRIC
+   cout &lt;&lt; D;                        // print eigenvalues
+</PRE>
+<P>
+<A HREF="except.htm">  next</A> - 
+<A HREF="except.htm">  skip</A> - 
+<A HREF="refer.htm">  up</A> - 
+<A HREF="index.htm">  start</A><P>
+</BODY>
+</HTML>
+

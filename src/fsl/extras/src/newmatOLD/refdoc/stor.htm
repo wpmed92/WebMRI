@@ -1,0 +1,53 @@
+<HTML>
+<HEAD><TITLE>Newmat10 - storage</TITLE></HEAD>
+<BODY bgcolor="#FFFFFF">
+<H2><font color="#FF0000">Data storage</H2></font>
+<A HREF="mem_man.htm">  next</A> -
+<A HREF="mem_man.htm">  skip</A> -
+<A HREF="design.htm">  up</A> -
+<A HREF="index.htm">  start</A>
+
+<H3><font color="#FF0000">Structure</H3></font>
+
+<P>Each matrix object contains the basic information such as the number of
+rows and columns and a status variable plus a pointer to the data
+array which is on the heap.
+
+<H3><font color="#FF0000">One block or several</H3></font>
+
+<P>The elements of the matrix are stored as a
+single array. Alternatives would have been to store each row as a
+separate array or a set of adjacent rows as a separate array. The
+present solution simplifies the program but limits the size of
+matrices in 16 bit PCs that have a 64k byte limit on the
+size of arrays (I don't use the <TT>huge</TT> keyword).
+The large arrays may also cause problems for
+memory management in smaller machines.
+
+<H3><font color="#FF0000">By row or by column or other</H3></font>
+
+<P>In Fortran two dimensional arrays are stored by column. In
+most other systems they are stored by row. I have followed this
+later convention. This makes it easier to interface with other
+packages written in C but harder to interface with those written
+in Fortran. This may have been a wrong decision. Most work on the
+efficient manipulation of large matrices is being done in
+Fortran. It would have been easier to use this work if I had
+adopted the Fortran convention.
+
+<P>An alternative would be to store the elements by mid-sized
+rectangular blocks. This might impose less strain on memory
+management when one needs to access both rows and columns.
+
+<H3><font color="#FF0000">Storage of symmetric matrices</H3></font>
+
+<P>Symmetric matrices are stored as lower triangular matrices.
+The decision was pretty arbitrary, but it does slightly simplify
+the Cholesky decomposition program.
+<P>
+<A HREF="mem_man.htm">  next</A> -
+<A HREF="mem_man.htm">  skip</A> -
+<A HREF="design.htm">  up</A> -
+<A HREF="index.htm">  start</A>
+<P> 
+</BODY></HTML>

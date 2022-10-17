@@ -1,0 +1,45 @@
+<HTML>
+<HEAD><TITLE>Newmat10 - destruct</TITLE></HEAD>
+<BODY bgcolor="#FFFFFF">
+<H2><font color="#FF0000">Destruction of temporaries</H2></font>
+<A HREF="calc.htm">  next</A> -
+<A HREF="calc.htm">  skip</A> -
+<A HREF="design.htm">  up</A> -
+<A HREF="index.htm">  start</A>
+
+<P>Versions before version 5 of newmat did not work correctly
+with Gnu C++ (version 5 or earlier). This was because the tree
+structure used to
+represent a matrix expression was set up on the stack. This was
+fine for AT&amp;T, Borland and Zortech C++.
+
+<P>However early version Gnu C++ destroys temporary structures as soon as the
+function that accesses them finishes. The other compilers wait
+until the end of the current expression or current block. To
+overcome this problem, there is now an option to store the
+temporaries forming the tree structure on the heap (created with
+new) and to delete them explicitly. Activate the definition of TEMPS_DESTROYED_QUICKLY
+to set this option.
+
+<P>In fact, I suggest this be the default option as, with it, the
+package uses less storage and runs faster. There still exist
+situations Gnu C++ will go wrong. These include statements like
+<PRE>
+   A = X * Matrix(P * Q);
+
+   Real r = (A*B)(3,4);
+</PRE>
+Neither of these kinds of statements will occur often in
+practice.
+<P>
+Now that the C++ standards committee has said that temporary structures should
+not be destroyed before a statement finishes, my policy needs to be re-evaluated.
+Probably, I'll return to using the stack, because of the difficulty of managing
+exceptions with the heap version. 
+<P>
+<A HREF="calc.htm">  next</A> -
+<A HREF="calc.htm">  skip</A> -
+<A HREF="design.htm">  up</A> -
+<A HREF="index.htm">  start</A><P>
+
+</BODY></HTML>

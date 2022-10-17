@@ -1,0 +1,65 @@
+<HTML>
+<HEAD><TITLE>Newmat10 - unspecified type</TITLE></HEAD>
+<BODY bgcolor="#FFFFFF">
+<H2><font color="#FF0000">Unspecified type</H2></font>
+<A HREF="cholesky.htm">  next</A> - 
+<A HREF="cholesky.htm">  skip</A> - 
+<A HREF="refer.htm">  up</A> - 
+<A HREF="index.htm">  start</A><P>
+
+Skip this section on your first reading.
+<P>
+If you want to work with a matrix of unknown type, say in a function. You
+can construct a matrix of type <TT>GenericMatrix</TT>. Eg
+<PRE>
+   Matrix A;
+   .....                                  // put some values in A
+   GenericMatrix GM = A;
+</PRE>
+A GenericMatrix matrix can be used anywhere where a matrix expression can be
+used and also on the left hand side of an <TT>=</TT>. You can pass any type of
+matrix (excluding the Crout and BandLUMatrix types)
+to a <TT>const GenericMatrix&amp;</TT> argument in a function. However most
+scalar functions including Nrows(), Ncols(), Type() and element access do not
+work with it. Nor does the ReturnMatrix construct. See also the paragraph on
+<A HREF="solve.htm">LinearEquationSolver</A>.
+<P>
+An alternative and less flexible approach is to use BaseMatrix or
+GeneralMatrix.
+<P>
+Suppose you wish to write a function which accesses a matrix of unknown
+type including expressions (eg <TT>A*B</TT>). Then use a layout similar to the
+following:
+<PRE>
+   void YourFunction(BaseMatrix& X)
+   {
+      GeneralMatrix* gm = X.Evaluate();   // evaluate an expression
+                                          // if necessary
+      ........                            // operations on *gm
+      gm->tDelete();                      // delete *gm if a temporary
+   }
+</PRE>
+See, as an example, the definitions of <TT>operator&lt;&lt;</TT> in newmat9.cpp.
+<P>
+Under certain circumstances; particularly where <TT>X</TT> is to be used just
+once in an expression you can leave out the <TT>Evaluate()</TT> statement
+and the
+corresponding <TT>tDelete()</TT>. Just use <TT>X</TT> in the expression.
+<P>
+If you know YourFunction will never have to handle a formula as its
+argument you could also use
+<PRE>
+   void YourFunction(const GeneralMatrix& X)
+   {
+      ........                            // operations on X
+   }
+</PRE>
+Do not try to construct a GeneralMatrix or BaseMatrix.
+<P>
+<A HREF="cholesky.htm">  next</A> - 
+<A HREF="cholesky.htm">  skip</A> - 
+<A HREF="refer.htm">  up</A> - 
+<A HREF="index.htm">  start</A><P>
+</BODY>
+</HTML>
+

@@ -1,0 +1,46 @@
+<HTML>
+<HEAD><TITLE>Newmat10 - complex</TITLE></HEAD>
+<BODY bgcolor="#FFFFFF">
+<H2><font color="#FF0000">Complex matrices</H2></font>
+<A HREF="index.htm">  next</A> -
+<A HREF="index.htm">  skip</A> -
+<A HREF="design.htm">  up</A> -
+<A HREF="index.htm">  start</A>
+
+<P>The package does not yet support matrices with complex
+elements. There are at least two approaches to including these.
+One is to have matrices with complex elements.
+
+<P>This probably means making new versions of the basic row and
+column operations for Real*Complex, Complex*Complex, Complex*Real
+and similarly for + and -. This would be OK, except that if I
+also want to do this for sparse matrices, then when you put
+these together, the whole thing will get out of hand.
+
+<P>The alternative is to represent a Complex matrix by a pair of
+Real matrices. One probably needs another level of decoding
+expressions but I think it might still be simpler than the first
+approach. But there is going to be a problem with accessing elements
+and it does not seem possible to solve this in an entirely
+satisfactory way.
+
+<P>Complex matrices are used extensively by electrical engineers
+and physicists
+and really should be fully supported in a comprehensive package.
+
+<P>You can simulate most complex operations by representing
+<TT>Z = X + iY</TT> by
+<PRE>
+    /  X   Y \
+    \ -Y   X / 
+</PRE>
+Most matrix operations will simulate the corresponding complex
+operation, when applied to this matrix. But, of course, this matrix
+is twice as big as you would need with a genuine complex matrix library.
+<P>
+<A HREF="index.htm">  next</A> -
+<A HREF="index.htm">  skip</A> -
+<A HREF="design.htm">  up</A> -
+<A HREF="index.htm">  start</A><P>
+ 
+</BODY></HTML>

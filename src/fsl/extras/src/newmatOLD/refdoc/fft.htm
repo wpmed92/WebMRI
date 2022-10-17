@@ -1,0 +1,66 @@
+<HTML>
+<HEAD><TITLE>Newmat10 - fast Fourier transform</TITLE></HEAD>
+<BODY bgcolor="#FFFFFF">
+<H2><font color="#FF0000">Fast Fourier transform</H2></font>
+<A HREF="trigtran.htm">  next</A> - 
+<A HREF="trigtran.htm">  skip</A> - 
+<A HREF="refer.htm">  up</A> - 
+<A HREF="index.htm">  start</A><P>
+
+<PRE>
+   FFT(X, Y, F, G);                         // F=X and G=Y are OK
+</PRE>
+where <TT>X</TT>, <TT>Y</TT>, <TT>F</TT>, <TT>G</TT> are column vectors.
+<TT>X</TT> and <TT>Y</TT> are the real and imaginary
+input vectors; <TT>F</TT> and <TT>G</TT> are the real and imaginary
+output vectors. The
+lengths of <TT>X</TT> and <TT>Y</TT> must be equal and should be the
+product of numbers less than about 10 for fast execution.
+<P>
+The formula is
+<PRE>
+          n-1
+   h[k] = SUM  z[j] exp (-2 pi i jk/n)
+          j=0
+</PRE>
+where <TT>z[j]</TT> is stored complex and stored in <TT>X(j+1)</TT>
+and <TT>Y(j+1)</TT>. Likewise
+<TT>h[k]</TT> is complex and stored in <TT>F(k+1)</TT> and <TT>G(k+1)</TT>.
+The fast Fourier
+algorithm takes order n log(n) operations (for <I>good</I> values of n)
+rather than n**2 that straight evaluation (see the file <TT>tmtf.cpp</TT>)
+takes. 
+<P>
+I use one of two methods:
+<UL>
+<LI>A program originally written by Sande and Gentleman. This requires that
+<I>n</I> can be expressed as a product of small numbers.</LI> 
+<LI>A method of Carl de Boor (1980), <I>Siam J Sci Stat Comput</I>, pp
+173-8. The sines and cosines are calculated explicitly. This gives
+better accuracy, at an expense of being a little slower than is
+otherwise possible. This is slower than the Sande-Gentleman program but
+will work for all <I>n</I> --- although it will be very slow for <I>bad</I>
+values of <I>n</I>.</LI>
+</UL>
+<P>
+Related functions
+<PRE>
+   FFTI(F, G, X, Y);                        // X=F and Y=G are OK
+   RealFFT(X, F, G);
+   RealFFTI(F, G, X);
+</PRE>
+<TT>FFTI</TT> is the inverse transform for <TT>FFT</TT>.
+<TT>RealFFT</TT> is for the case when the
+input vector is real, that is <TT>Y = 0</TT>. I assume the length of <TT>X</TT>,
+denoted by n, is even. The program sets the lengths of <TT>F</TT>
+and <TT>G</TT> to n/2 + 1. <TT>RealFFTI</TT> is the inverse of <TT>RealFFT</TT>.
+<P>
+See also the section on fast <A HREF="trigtran.htm">trigonometric transforms</A>.
+<P>
+<A HREF="trigtran.htm">  next</A> - 
+<A HREF="trigtran.htm">  skip</A> - 
+<A HREF="refer.htm">  up</A> - 
+<A HREF="index.htm">  start</A><P>
+</BODY>
+</HTML>
+

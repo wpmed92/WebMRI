@@ -1,0 +1,323 @@
+<h3>Introduction</h3>
+<p>For other information on FDT and updated journal references, see the <a href="http://www.fmrib.ox.ac.uk/analysis/research/fdt/">FDT web
+page</a>.  If you use FDT in your research, please quote the journal
+references listed there.
+
+<p>FDT (FMRIB Diffusion Toolbox) is a software tool for analysis of diffusion weighted images.  FDT is part
+of <a href="http://www.fmrib.ox.ac.uk/fsl">FSL</a> (FMRIB's Software Library)
+.  FDT has an easy-to-use graphical user interface (GUI) and its component
+programmes can also be run from the command line. FDT includes tools for
+data preprocessing, local diffusion modelling and tractography. Each stage in FDT is run
+separately.   
+
+The main FDT programmes are:
+
+<p>eddycorrect - for correction of eddy current distortion
+<br>Bedpost - for local modelling of diffusion parameters.
+<br>ProbTrack - for tractography and connectivity-based segmentation 
+<br>DtiFit - for local of fitting of diffusion tensors
+
+<br>The FDT GUI also includes a registration option that registers images using <a
+href="http://www.fmrib.ox.ac.uk/fsl/flirt/index.html"> FLIRT </a>
+
+<p>A typical processing pipeline (and approximate time required for each
+stage, based on an Intel 2.4GHz processor, and a 60 direction whole brain
+dataset of dimensions 256x208x72)
+would consist of:
+<br>1. Any study or scanner-specific pre-processing (e.g., averaging of multiple
+acquisitions, removal of images affected by large artifacts).  This would be
+done manually by the user.
+<br>2. Eddy current correction using FDT (??minutes).
+<br>3. Fitting of diffusion tensors on corrected data using dtifit within FDT to check data quality (10 minutes)
+<br>4. Fitting of the probabilistic diffusion model on corrected data using Bedpost within FDT
+(24 hours, or less if parallelised)
+<br>5. Probabilistic tractography run on the outputs of bedpost (endless.. - depends very much on what the
+user wishes to do.  Generating a connectivity distribution from a single voxel
+of interest takes about 10 seconds)
+
+The probabilistic tractography tools within FDT are very flexible and allow
+the user to generate connectivity distributions from single or multiple
+voxels; to limit these distribution based on anatomical criteria and to
+perform segmentation based on the probability of connection to user-defined
+target regions.
+
+
+<p>Before running:
+
+<p>Fdt requires 4D analyze data.  This will consist of a series of diffusion
+weighted volumes and some volumes with no diffusion weighting applied.  You
+will need text files describing the b-values applied during acquisition of
+each volume ('bvals'), and the direction in which diffusion weighting was
+applied ('bvecs')
+
+
+<p><hr><h3>Eddy Current Correction</h3>
+
+<p><hr><h3>Bedpost</h3>
+<p>Bedpost stands for Bayesian Estimation of Diffusion Parameters obtained using sampling
+techniques
+
+
+
+<p><hr><h3>Registration </h3>
+<p>If tractography results are to be stored in any space other than diffusion
+space then registration must be run.
+
+<p>Registration within Fdt uses <a href="http://www.fmrib.ox.ac.uk/fsl/flirt">>flirt</a>. Registration can only be
+applied after Bedpost has been run.  Typically, registration will be run
+between three spaces:
+<br>Diffusion space (using the nodif_brain.{hdr,img} file stored in the Bedpost directory)
+<br>Structural space (using the struct.{hdr,img} file stored in the Bedpost
+directory, e.g., the space of a high resolution T1-weighted image of
+the same subject)
+<br>Standard space (by default, the MNI152 brain stored within the fsldirectory).
+
+<p>Note that struct must have had bet applied.  The nodif_brain image should be
+the brain extracted version of the nodif image that is automatically stored in
+the Bedpost directory.  The user will
+have to manually apply bet to this image after running bedpost and before
+running registration.  (it is important that the user check the qualtiy of bet
+results on these images and adjust the settings in bet where appropriate)
+
+<p>Transformation matrices, and their inverses, will be dervied from diffusion to structural space and
+from structural to standard space.  Relevant matrices will be concatenated to
+produce transformation matrices between diffusion and standard space.  The resulting matrices are stored within
+the 'xfms' subdirectory of the bedpost directory and named as follows:  
+
+<p>diff2str.mat - from diffusion to structural space
+<br>str2diff.mat - from structural to diffusion space
+<br>diff2standard.mat - from diffusion to standard space
+<br>standard2diff.mat - from standard to diffusion space
+<br>str2standard.mat - from structural to standard space
+<br>standard2str.mat - from standard to structural space
+
+<p>By default, transformation matrices between diffusion and structural space are
+derived using 6 degrees of fredom, the mutual information cost
+function and normal search; transformations matrices between structural and standard space
+are derived using 12 degrees of freedom, the correlation ratio cost
+function and normal search.  These parameters may be adjusted if required
+using the drop down menus in the reigistration panel.
+
+<p><b>******** PROBTRACK - probabilistic tracking *********</b>
+
+<p>After Bedpost has been applied it is possible to run tractography analyses
+using ProbTrack.
+Probtrack can be run in multiple different modes. Every mode requires the user to
+specify a bedpost directory.  For all modes, the bedpost directory must contain the following files:
+
+<br>merged_phsamples.{img,hdr}
+<br>merged_thsamples.{img,hdr}
+<br>nodif_brain_mask.{img,hdr}
+
+<p>Results from probtract can be stored in any available space -e.g., diffusion
+space, structural space or standard space.  Note, however, that
+tractography itself ALWAYS takes place in diffusion space - it is simply the
+results of probtrack that are transformed into the required space before saving.  If probtrack results are to be stored in a space other than diffusion space
+then the following files must be in the xfms subdirectory of the bedpost directory:
+
+<p>for running analyses in structural space:
+<br>struct.{img,hdr}
+<br>xfms/str2diff.mat
+<br>xfms/diff2str.mat
+
+<p>for running analyses in standard space:
+<br>standard.{img,hdr}
+<br>xfms/standard2diff.mat
+<br>xfms/diff2standard.mat
+
+<p>OPTIONS TAB 
+<br>For all modes in probtrack, the user is able to change the setting of certain
+parameters by clicking the options tab.
+
+<p>Number of samples (default 5000): This determines the number of individual
+pathways (or samples) that are drawn through the probability distrubutions on
+principle fibre direction (see <a href="appendix"> appendix </a>for more details on the modelling and
+tractography methods).  By default this is set to 5000 as we are confident
+that convergence is reached with this number of particles. However, reducing
+this number will speed up processing and can be useful for preliminary or
+exploratory analyses. 
+
+<p>Curvature Threshold (default 0.2): We limit how sharply pathways can turn
+in order to
+exclude implausible pathways. This number is the cosine of the minimum allowable
+angle between two steps.  By default this is set to 0.2 (corresponding to a
+minimum angle of approximately 80 degrees).  Adjusting this number can enable
+pathways with sharper angles to be detected. 
+
+<p>Verbose: If this option is selected then FDT prints additional logging
+information to screen while it is running.
+
+<p>Loopcheck: By default, we terminate pathways that loop back on themselves
+-i.e paths that travel to a point where they have already been.
+
+<p>Advanced options:
+<br>Clicking the triangle reveals some further options:
+
+<p>Use anisotropy constraints: By default, pathways are traced regardless of
+anisotropy values.  However, it is possible to constrain tracking according to
+aniostropy values.  ?? dunno what this does exactly
+
+<p>Use modified Euler streamlining:  hmmmm
+
+<p>Maximum number of steps (default 1000): By default, particles are terminated
+when they have travelled 1000 steps.  Using a step length of 0.5mm this
+corresponds to a distance of 50cm.  These values can be adjusted if required.
+
+<p>Step length (default 0.5mm): This determines the length of each step.  This
+setting may be adjusted from default e.g., depending on the voxel size being
+used, or if tracking is being performed on different sized brains
+(e.g,. infants of non-human animals).
+
+<p><b>PATH DISTRIBUTION ESTIMATION</b>
+<br>The first four modes of ProbTrack involve generating connectivity
+distributions from user-specified seed voxel(s).  The output will be a single
+image in the space of the specified seed like <a href="pic"> this </a>.  All
+brain voxels will have a value (though many of these will be zero)
+representing the connectivity value between that voxel and the seed voxel
+(i.e., the number of particles that pass through that voxel). Note that when
+connectivity distributions are generated from multiple seed voxel within a
+region of interest then the time required for the analysis to run will be
+approximately the number of seed voxels multiplied by the time taken to
+generate a distrubiton from a single voxel.
+
+<p>SETTING UP THE GUI FOR PATH DISTRIBUTION ESTIMATION - SETTINGS COMMON TO ALL
+MODES:
+
+<p>Seeds space: specification of seeds is different for each mode - see below.
+
+<p>If seed space is not diffusion, then check the button and use the browse
+buttons to locate a reference image (e.g., subject1.bedpost/struct.hdr if seed space is structral
+space or subject1.bedpost/standard.hdr if seed space is standard space) and the transformation
+matrix from seed space to diffusion space (e.g., subject1.bedpost/xfms/str2diff.mat if seed
+space is structural space or subject1.bedpost/xfms/standard2diff.mat if seed space is standard
+space). 
+
+<p>If an exclusion mask is to be used then check the box and use the browse button
+to locate the mask file.  This must be a binarised analyze file in seed
+space.  Pathways will be terminated if they enter the exclusion mask.  For
+example, an exclusion mask of the midline will terminate pathways that cross
+into the other hemisphere. (Note that paths are always terminated when they reach the
+brain surface as defined by nodif_brain_mask)
+
+<p>Output:
+<br>Use the browse button to specify an output name.  This will be a filename or a
+directory name depending on the mode.
+
+<p>AVAILABLE MODES AND MODE-SPECIFIC SETTINGS:
+
+<p>SINGLE SEED VOXEL:  Generates a connectivity distribution from a single,
+user-specified voxel
+<br>GUI SETTTINGS  
+<br>Seeds space:
+<br>Enter the x,y,z co-ordinates of a single seed voxel.  Use the buttons to the
+right to specify whether the co-ordinates are given in voxels or millimetres.
+
+<br>OUTPUT
+The output will be a single image in the space of the specified seed.  All
+brain voxels will have a value (though many of these will be zero)
+representing the connectivity value between that voxel and the seed voxel
+(i.e., the number of particles that pass through that voxel). 
+
+<p>SEED MASK MODE: Generates a connectivity distribution from a user-specified
+region of interest.
+
+<br>Settting up the GUI
+<br>Seed image: Use the browse button to locate the seed image - this should be a binary mask.
+<br>OUTPUT
+<br>The output directory will contain:
+<br>logfile - a text record of the command that was run
+<br>The output file -  will be a single image in the space of the specified seed
+mask. All
+brain voxels will have a value (though many of these may be zero)
+representing the number of particles that pass through that voxel from the
+seed mask.  Connectivity distributions from multiple seed voxels are summed to
+produce this output.  Therefore the connectivity values will depend on the
+number of voxels in the seed mask. 
+
+<p>SEED MASK AND TARGET MASK - generates a connectivity distribution from voxels
+in the seed mask and retains only those paths that pass through the target
+mask.
+
+<br>Setting up the GUI
+<br>Seed image and Target image: Use the browse buttons to locate binary masks of
+the seed and target.  These must be in the same space.
+<br>OUTPUT:
+<br>The output directory will contain:
+<br>logfile - a text record of the command that was run
+<br>The output file -  will be a single image in the space of the specified seed mask.  All
+brain voxels will have a value (though many of these may be zero)
+representing the number of particles that pass through that voxel from the
+seed mask.  Connectivity distributions from multiple seed voxels are summed to
+produce this output.  Therefore the connectivity values will depend on the
+number of voxels in the seed mask. 
+
+<p>TWO MASKS -  SYMMETRIC - generates a connectivity distribution from all
+voxels in mask image 1 and retains only those pathways that pass through mask
+image 2.  Also
+generates a connectivity distribution from all voxels in mask image 2 and retains
+pathways that pass through mask image 1.  Ouput is the sum of these connectivity
+distributions.
+<br>Setting up the GUI
+<br>Mask image 1 and Mask image 2: Use the browse buttons to locate your binary
+mask of area one and area two.  These must be in the same space.
+
+<br>OUTPUT:
+<br>The output directory will contain:
+<br>logfile - a text record of the command that was run
+<br>The output file -  will be a single image in the space of the specified masks.  All
+brain voxels will have a value (though many of these may be zero)
+representing the number of particles that pass through that voxel from either
+of the
+seed masks.  Connectivity distributions from multiple seed voxels are summed to
+produce this output.  Therefore the connectivity values will depend on the
+number of voxels in the seed masks. 
+
+<p><b>CONNECTIVITY BASED SEED CLASSIFICATION</b>
+<br>This mode quantifies connectivity values
+between a seed mask and any number of user-specified target masks. 
+<br>Setting up the GUI
+<br>Seed image: use the browse button to locate your binary mask of seed voxels. 
+<br>Target list: Use the add button to locate each target mask. Targets must be
+binary masks in the same space as the seed mask.  When all targets are loaded you
+can press the save list button to save the list of targets as a text file.  If
+you already have a text file list of required targets (including their path)
+then you can load it with the load list button.
+<br>OUTPUT:
+<br>The output directory will contatin:
+<br>logfile - a text record of the command that was run
+<br>A single volume for each target mask, named seeds_to_<target>.(img,hdr) where
+<target> is replaced by the file name of the relevant target mask.  In these
+output images, the value of each voxel within
+the seed mask is the number of particles seeded from that voxel reaching the
+target mask.  The value of all voxels outside the seed mask will be zero.
+
+
+<p><b>********* DTIFit ***************</b>
+<br>FDT can be used to fit a diffusion tensor model at each voxel. 
+<br>Setting up the GUI
+<br>Input: You can specify an input directory containing all the required files
+with standardized filenames,
+or alternatively you can specific input files manually.  If an input directory is specified then all files must be named as shown in
+parentheses below. If input files are specified manually they can have any
+filename.  Required files are:
+
+<br>Diffusion weighted data (data.{img,hdr}): A 4-dimensional series of analyze images.  This will
+include diffusion-weighted volumes and volume(s) with no diffusion weighting.
+
+<br>BET binary brain mask (nodif_brain_mask.{hdr,img}): A single binarised
+volume in diffusion space containing ones inside the brain and zeroes outside
+the brain.
+
+<br>Output basename: User specifies a basename that will be used to name the
+outputs of DTIFit.  If the directory input option is used then the basename
+will be dtifit (??IS THIS RIGHT)
+
+<br>Gradient directions (bvecs): A text file containing a list of gradient
+directions applied during diffusion weighted volumes.  The order of entries in
+this file must match the order of volumes in the input data series.(??in x,y,z, or phase,
+read, slice?  Do you only include rows for diffusion weighted vols? one entry
+per row?)
+
+<br>bvalues (bvals): A text file containing a list of bvalues applied during
+each volume acquisition. The order of entries in this file must match the
+order of volumes in the input data and entries in the gradient directions text file.

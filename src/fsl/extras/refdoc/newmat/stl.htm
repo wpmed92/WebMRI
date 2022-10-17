@@ -1,0 +1,47 @@
+<HTML>
+<HEAD><TITLE>Newmat10 - standard template library</TITLE></HEAD>
+<BODY bgcolor="#FFFFFF">
+<H2><font color="#FF0000">Standard template library</H2></font>
+<A HREF="namesp.htm">  next</A> - 
+<A HREF="namesp.htm">  skip</A> - 
+<A HREF="refer.htm">  up</A> - 
+<A HREF="index.htm">  start</A><P>
+
+The standard template library (STL) is the set of <I>container templates</I>
+(vector, deque, list etc) defined by the C++ standards committee.
+Newmat is intended to be compatible with the STL in the sense that you can store
+matrices in the standard containers. I have defined
+<A HREF="binary.htm"> <TT>==</TT> and inequality </A> operators
+to help make this possible. Probably there will have to be some other changes.
+My experiments with the Rogue Wave STL that comes with Borland C++ 5.0 showed
+that some things worked and some things unexpectedly didn't work. In particular,
+I couldn't get the list container to work. I don't know whose fault this is.
+<P>
+If you want to use the container classes with Newmat please note
+<UL>
+<LI> Don't use simulated exceptions.
+
+<LI> Make sure the option <A HREF="custom.htm">DO_FREE_CHECK</A> is <EM>not</EM>
+turned on.
+
+<LI> You can store only one type of matrix in a container. If you want to use
+a variety of types use the GenericMatrix type or store pointers to the matrices.
+
+<LI> The vector and deque container templates like to copy their elements.
+For the vector container this happens when you insert an element anywhere
+except at the end or when you append an element and the current vector
+storage overflows. Since Newmat does not have <I>copy-on-write</I> this
+could get very inefficient. (Later versions may have <I>copy-on-write</I>
+for the GenericMatrix type).
+
+<LI> You won't be able to sort the container or do anything that would call an
+inequality operator.
+</UL>
+<P>
+I doubt whether the STL container will be used often for matrices.
+So I don't think these limitations are very critical. If you think otherwise, please tell me.
+
+<P>
+</BODY>
+</HTML>
+

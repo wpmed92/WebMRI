@@ -1,0 +1,69 @@
+<HTML>
+<HEAD><TITLE>Newmat10 - constructors</TITLE></HEAD>
+<BODY bgcolor="#FFFFFF">
+<H2><font color="#FF0000">Constructors</H2></font>
+<A HREF="elements.htm">  next</A> - 
+<A HREF="elements.htm">  skip</A> - 
+<A HREF="refer.htm">  up</A> - 
+<A HREF="index.htm">  start</A><P>
+
+To construct an m x n matrix, <TT>A</TT>, (m and n are integers) use
+<PRE>
+    Matrix A(m,n);
+</PRE>
+The UpperTriangularMatrix, LowerTriangularMatrix, SymmetricMatrix and
+DiagonalMatrix types are square. To construct an n x n matrix use,
+for example
+<PRE>
+    UpperTriangularMatrix UT(n);
+    LowerTriangularMatrix LT(n);
+    SymmetricMatrix S(n);
+    DiagonalMatrix D(n);
+</PRE>
+Band matrices need to include bandwidth information in their
+constructors.
+<PRE>
+    BandMatrix BM(n, lower, upper);
+    UpperBandMatrix UB(n, upper);
+    LowerBandMatrix LB(n, lower);
+    SymmetricBandMatrix SB(n, lower);
+</PRE>
+The integers upper and lower are the number of non-zero diagonals above
+and below the diagonal (excluding the diagonal) respectively.
+<P> 
+The RowVector and ColumnVector types take just one argument in their
+constructors:
+<PRE>
+    RowVector RV(n);
+    ColumnVector CV(n);
+</PRE>
+These constructors do <EM>not</EM> initialise the elements of the matrices. To set
+all the elements to zero use, for example,
+<PRE>
+    Matrix A(m, n); A = 0.0;
+</PRE>
+You can also construct vectors and matrices without specifying the
+dimension. For example
+<PRE>
+    Matrix A;
+</PRE>
+In this case the dimension must be set by an
+<A HREF="copy.htm">assignment statement</A> or a
+<A HREF="dimen.htm">re-dimension statement</A>.
+<P>
+You can also use a constructor to set a matrix equal to another matrix
+or matrix expression.
+<PRE>
+    Matrix A = UT;
+    Matrix A = UT * LT;
+</PRE>
+Only conversions that don't lose information are supported - eg you
+cannot convert an upper triangular matrix into a diagonal matrix using =.
+<P>
+<A HREF="elements.htm">  next</A> - 
+<A HREF="elements.htm">  skip</A> - 
+<A HREF="refer.htm">  up</A> - 
+<A HREF="index.htm">  start</A><P>
+</BODY>
+</HTML>
+

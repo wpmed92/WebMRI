@@ -1,0 +1,79 @@
+<HTML>
+<HEAD><TITLE>Newmat10 - binary operators</TITLE></HEAD>
+<BODY bgcolor="#FFFFFF">
+<H2><font color="#FF0000">Binary operators</H2></font>
+<A HREF="matscal.htm">  next</A> - 
+<A HREF="matscal.htm">  skip</A> - 
+<A HREF="refer.htm">  up</A> - 
+<A HREF="index.htm">  start</A><P>
+
+The package supports binary operations
+<PRE>
+    X = A + B;       // matrix addition
+    X = A - B;       // matrix subtraction
+    X = A * B;       // matrix multiplication
+    X = A.i() * B;   // equation solve (square matrix A)
+    X = A | B;       // concatenate horizontally (concatenate the rows)
+    X = A &amp; B;       // concatenate vertically (concatenate the columns)
+    X = SP(A, B);    // elementwise product of A and B (Schur product)
+    bool b = A == B; // test whether A and B are equal
+    bool b = A != B; // ! (A == B)
+    A += B;          // A = A + B;
+    A -= B;          // A = A - B;
+    A *= B;          // A = A * B;
+    A |= B;          // A = A | B;
+    A &amp;= B;          // A = A &amp; B;
+    &lt;, &gt;, &lt;=, &gt;=     // included for compatibility with STL - see notes
+</PRE>
+<P>
+Notes:
+<UL>
+<LI>If you are doing repeated multiplication. For example <TT>A*B*C</TT>, use
+brackets to force the order of evaluation to minimise the number of
+operations. If <TT>C</TT> is a column vector and <TT>A</TT> is not a vector,
+then it will usually reduce the number of operations to use <TT>A*(B*C)</TT>.
+
+<LI>In the equation solve example case the inverse is not explicitly
+calculated. An LU decomposition of <TT>A</TT> is performed and this is
+applied to <TT>B</TT>. This is more efficient than calculating the inverse and
+then multiplying.
+See also <A HREF="solve.htm">multiple matrix solving</A>.
+
+<LI>The package does not (yet?) recognise <TT>B*A.i()</TT> as an equation
+solve and the inverse of <TT>A</TT> would be calculated.
+It is probably better to use <TT>(A.t().i()*B.t()).t()</TT>.
+
+<LI>Horizontal or vertical concatenation returns a result of type Matrix,
+RowVector or ColumnVector.
+
+<LI>If <TT>A</TT> is m x p, <TT>B</TT> is m x q, then <TT>A | B</TT> is m x
+(p+q) with the k-th row being the elements of the k-th row of <TT>A</TT>
+followed by the elements of the k-th row of <TT>B</TT>.
+
+<LI>If <TT>A</TT> is p x n, <TT>B</TT> is q x n, then <TT>A & B</TT> is (p+q)
+x n with the k-th column being the elements of the k-th column of <TT>A</TT>
+followed by the elements of the k-th column of <TT>B</TT>.
+
+<LI>For complicated concatenations of matrices, consider instead using
+<A HREF="submat.htm">submatrices</A>.
+
+<LI>See the section on <A HREF="submat.htm">submatrices</A> on
+using a submatrix on the RHS of an expression.
+
+<LI>Two matrices are equal if their difference is zero. They may be of
+different types. For the CroutMatrix or BandLUMatrix they must be of the
+same type and have all their elements equal. This is not a very useful
+operator and is included for compatibility with some container templates.
+
+<LI>The inequality operators are included for compatibility with the
+<A HREF="stl.htm"> standard template library</A>. If actually called, they will throw an exception. So don't
+try to sort a <I>list</I> of matrices.
+</UL>
+<P>
+<A HREF="matscal.htm">  next</A> - 
+<A HREF="matscal.htm">  skip</A> - 
+<A HREF="refer.htm">  up</A> - 
+<A HREF="index.htm">  start</A><P>
+</BODY>
+</HTML>
+

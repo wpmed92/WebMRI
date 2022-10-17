@@ -1,0 +1,170 @@
+<HTML>
+<HEAD><TITLE>Newmat10 - SUE</TITLE></HEAD>
+<BODY bgcolor="#FFFFFF">
+<H2><font color="#FF0000">Safety, usability, efficiency</H2></font>
+<A HREF="mat_arr.htm">  next</A> -
+<A HREF="mat_arr.htm">  skip</A> -
+<A HREF="design.htm">  up</A> -
+<A HREF="index.htm">  start</A><P>
+
+<H3><font color="#FF0000">Some general comments</H3></font>
+
+A library like <I>newmat</I> needs to balance <I>safety</I>,
+<I>usability</I> and <I>efficiency</I>.
+<P>
+By <B>safety</B>, I mean getting the right answer, and not causing crashes or
+damage to the computer system.
+<P>
+By <B>usability</B>, I mean being easy to learn and use, including not being too
+complicated, being intuitive, saving the users' time, being nice to use.
+<P>
+<B>Efficiency</B> means minimising the use of computer memory and time.
+<P>
+In the early days of computers the emphasis was on efficiency. But computer
+power gets cheaper and cheaper, halving in price every 18 months. On the other
+hand the unaided human brain is probably not a lot better than it was 100,000
+years ago!
+So we should expect the balance to shift to put more emphasis on safety and
+usability and a little less on efficiency.
+So I don't mind if my programs are a little less efficient than programs
+written in pure C (or Fortran) if I gain substantially in safety and usability.
+But I would mind if they were a lot less efficient.
+<P>
+<H3><font color="#FF0000">Type of use</H3></font>
+
+Second reason for putting extra emphasis on safety and usability is the way
+I and, I suspect, most other users actually use <I>newmat</I>. Most completed programs
+are used only a few times. Some result is required for a client, paper or thesis. The
+program is developed and tested, the result is obtained, and the program archived.
+Of course bits of the program will be recycled for the next project. But it may
+be less usual for the same program to be run over and over again. So the cost,
+computer time + people time, is
+in the development time and often, much less in the actual time to run the final
+program. So good use of people time, especially during development is really important.
+This means you need highly usable libraries.
+<P>
+So if you are dealing with matrices, you want the good interface that I have
+tried to provide in <I>newmat</I>, and, of course, reliable methods underneath it.
+<P>
+Of course, efficiency is still important. We often want to run the biggest problem
+our computer will handle and often a little bigger. The C++ language almost lets
+us have both worlds. We can define a reasonably good interface, and get good efficiency
+in the use of the computer.
+<P>
+<H3><font color="#FF0000">Levels of access</H3></font>
+
+We can imagine the <I>black box</I> model of a <I>newmat</I>. Suppose the inside
+is hidden but can be accessed by the methods described in the
+<A HREF="refer.htm">reference</A> section. Then the interface is reasonably
+consistent and intuitive. Matrices can be accessed and manipulated in much
+the same way as doubles or ints in regular C. All accesses are checked. It is
+most unlikely that an incorrect index will crash the system. In general, users do
+not need to use pointers, so one shouldn't get pointers pointing into space. And,
+hopefully, you will get simpler code and so less errors.
+<P>
+There are some exceptions to this. In particular, the
+<A HREF="elements.htm">C-like subscripts</A> are not checked for validity. They give
+faster access but with a lower level of safety.
+<P>
+Then there is the <A HREF="scalar.htm">Store()</A> function which takes you to the data
+array within a matrix. This takes you right inside the <I>black box</I>. But this is what
+you have to use if you are writing, for example, a new matrix factorisation, and
+require fast access to the data array. I have tried to write code to simplify access
+to the interior of a rectangular matrix, see file newmatrm.cpp, but I don't regard this
+as very successful, as yet, and have not included it in the documentation. Ideally we
+should have improved versions of this code for each of the major types of matrix. But,
+in reality, most of my matrix factorisations are written in what is basically the C
+language with very little C++.
+<P>
+So our <I>box</I> is not very <I>black</I>. You have a choice of how far you penetrate.
+On the outside you have a good level of safety, but in some cases efficiency is
+compromised a little. If you penetrate inside the <I>box</I> safety is reduced but
+you can get better efficiency.
+<P>
+<H3><font color="#FF0000">Some performance data</H3></font>
+
+This section looks at the performance on <I>newmat</I> for simple sums, comparing it
+with pure C code and with a somewhat unintelligent array program.
+<P>
+The following table lists the time (in seconds) for carrying out the operations
+<TT>X=A+B;</TT>, <TT>X=A+B+C;</TT>, <TT>X=A+B+C+D;</TT>, where <TT>X,A,B,C,D</TT>
+are of type ColumnVector, with a variety of programs.
+I am using Borland C++, version 5 in 32 bit console mode under windows NT 4.0
+on a PC with a 150 mhz pentium and 128 mbytes of memory.
+<PRE>
+        length	iters.	newmat	subs.	C	C-resz	array
+
+    X=A+B
+        2000000	2	1.2	3.7	1.2	1.4	3.3
+        200000	20	1.2	3.7	1.2	1.5	3.1
+        20000	200	1.0	3.6	1.0	1.2	2.9
+        2000	2000	1.0	3.6	0.9	0.9	2.2
+        200	20000	0.8	3.0	0.4	0.5	1.9
+        20	200000	5.5	2.9	0.4	0.9	2.8
+        2	2000000	43.9	3.2	1.0	4.2	12.3
+
+    X=A+B+C						
+        2000000	2	2.5	4.6	1.6	2.1	32.5
+        200000	20	2.1	4.6	1.6	1.8	6.2
+        20000	200	1.8	4.5	1.5	1.8	5.6
+        2000	2000	1.8	4.4	1.3	1.3	3.9
+        200	20000	2.2	4.3	1.0	0.9	2.3
+        20	200000	8.5	4.3	1.0	1.2	3.0
+        2	2000000	62.5	3.9	1.0	4.4	17.7
+
+    X=A+B+C+D						
+        2000000	2	3.7	6.7	2.4	2.8	260.7
+        200000	20	3.7	6.7	2.4	2.5	9.2
+        20000	200	3.4	6.6	2.3	2.9	8.2
+        2000	2000	2.9	6.4	2.0	2.0	5.9
+        200	20000	2.5	5.5	1.0	1.3	4.3
+        20	200000	9.9	5.5	1.0	1.6	4.5
+        2	2000000	76.5	5.8	1.7	5.0	24.9
+</PRE>
+The first column gives the lengths of the arrays, the second the number
+of iterations and the remaining columns the total time required in seconds.
+If the only thing that consumed time was the double precision addition then the
+numbers within each block of the table would be the same.
+<P>
+The column labelled <I>newmat</I> is using the standard <I>newmat</I> add. In the
+next column the calculation is using the usual C style <I>for</I> loop and accessing the
+elements using <I>newmat</I> subscripts such as <TT>A(i)</TT>. The column labelled
+<I>C</I> uses the usual C method: <TT>while (j--) *x++ = *a++ + *b++;</TT> . The
+following column also includes an <TT>X.ReSize()</TT> in the outer loop to correspond
+to the reassignment of memory that <I>newmat</I> would do. The final column is the
+time taken by a simple array package that makes no attempt to eliminate unnecessary
+copying or to recycle temporary memory but does have array definitions of the basic
+operators. It does, however, do its sums in blocks of 4 and
+copies in blocks of 8 in the same way that <I>newmat</I> does. 
+<P>
+Here are my conclusions.
+<UL>
+
+<LI><I>Newmat</I> does very badly for length 2 and doesn't do very well for length
+20. There is some particularly tortuous code in <I>newmat</I> for determining
+which sum algorithm to use and I am sure this could be improved. However the
+<I>array</I> program is also having difficulty with length 2 so it is unlikely
+that the problem could be completely eliminated. 
+
+<LI>The <I>array</I> program is running into problems for length 2,000,000. This
+is because RAM memory is being exhausted.
+
+<LI>For arrays of length 2000 or longer <I>newmat</I> is doing about as well as C
+and slightly better than C with resize in the <TT>X=A+B</TT> table. For the other two tables it
+is slower, but not dramatically so.
+
+<LI>Addition using the <I>newmat</I> subscripts, while considerably slower than the
+others, is still surprisingly good.
+
+<LI>The <I>array</I> program is more than 2 times slower than <I>newmat</I> for lengths
+2000 or higher.
+</UL>
+In summary: for the situation considered here, <I>newmat</I> is doing very well
+for large ColumnVectors, even for sums with several terms, but not so well
+for shorter ColumnVectors.
+<P>
+<A HREF="mat_arr.htm">  next</A> -
+<A HREF="mat_arr.htm">  skip</A> -
+<A HREF="design.htm">  up</A> -
+<A HREF="index.htm">  start</A><P>
+</BODY></HTML>

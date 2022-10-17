@@ -1,0 +1,77 @@
+<HTML>
+<HEAD><TITLE>Newmat10 - submatrices</TITLE></HEAD>
+<BODY bgcolor="#FFFFFF">
+<H2><font color="#FF0000">Submatrices</H2></font>
+<A HREF="dimen.htm">  next</A> - 
+<A HREF="dimen.htm">  skip</A> - 
+<A HREF="refer.htm">  up</A> - 
+<A HREF="index.htm">  start</A><P>
+
+<PRE>
+    A.SubMatrix(fr,lr,fc,lc)
+</PRE>
+This selects a submatrix from <TT>A</TT>. The arguments  fr,lr,fc,lc
+are the
+first row, last row, first column, last column of the submatrix with the
+numbering beginning at 1. This may be used in any matrix expression or
+on the left hand side of <TT>=</TT>, <TT>&lt;&lt;</TT> or Inject. Inject
+does not check no
+information loss. You can also use the construction
+<PRE>
+    Real c; .... A.SubMatrix(fr,lr,fc,lc) = c;
+</PRE>
+to set a submatrix equal to a constant.
+<P>
+The following are variants of SubMatrix:
+<PRE>
+    A.SymSubMatrix(f,l)             //   This assumes fr=fc and lr=lc.
+    A.Rows(f,l)                     //   select rows
+    A.Row(f)                        //   select single row
+    A.Columns(f,l)                  //   select columns
+    A.Column(f)                     //   select single column
+</PRE>
+In each case f and l mean the first and last row or column to be
+selected (starting at 1).
+<P>
+I allow lr = fr-1, lc = fc-1 or l = f-1 to indicate that a matrix of
+zero rows or columns is to be returned.
+<P>
+If SubMatrix or its variant occurs on the right hand side of an <TT>=</TT>
+or <TT>&lt;&lt;</TT>
+or within an expression its type is as follows
+<PRE>
+    A.SubMatrix(fr,lr,fc,lc):           If A is RowVector or
+                                        ColumnVector then same type
+                                        otherwise type Matrix
+    A.SymSubMatrix(f,l):                Same type as A
+    A.Rows(f,l):                        Type Matrix
+    A.Row(f):                           Type RowVector
+    A.Columns(f,l):                     Type Matrix
+    A.Column(f):                        Type ColumnVector
+</PRE>
+If SubMatrix or its variant appears on the left hand side of  <TT>=</TT> or
+<TT>&lt;&lt;</TT> ,
+think of its type being Matrix. Thus <TT>L.Row(1)</TT> where <TT>L</TT> is
+LowerTriangularMatrix expects <TT>L.Ncols()</TT> elements even though it
+will use only one of them. If you are using <TT>=</TT> the program will
+check for no loss of data.
+<P>
+A SubMatrix can appear on the left-hand side of <TT>+=</TT> or <TT>-=</TT> with
+a matrix expression on the right-hand side. It can also appear on the left-hand
+side of <TT>+=</TT>, <TT>-=</TT>, <TT>*=</TT> or <TT>/=</TT> with a Real on the
+right-hand side. In each case there must be no loss of information.
+<P>
+Do not use the <TT>+=</TT> and <TT>-=</TT> operations with a submatrix of a
+SymmetricMatrix or BandSymmetricMatrix on the LHS and a Real on the RHS. 
+<P>
+If you are are using the submatrix facility to build a matrix from a small
+number of components, consider instead using the
+<A HREF="binary.htm">concatenation operators</A>.
+<P>
+<A HREF="dimen.htm">  next</A> - 
+<A HREF="dimen.htm">  skip</A> - 
+<A HREF="refer.htm">  up</A> - 
+<A HREF="index.htm">  start</A><P>
+</BODY>
+</HTML>
+

@@ -1,0 +1,42 @@
+<HTML>
+<HEAD><TITLE>Newmat10 - Gnu G++</TITLE></HEAD>
+<BODY bgcolor="#FFFFFF">
+<H2><font color="#FF0000">Gnu G++</H2></font>
+<A HREF="hpux.htm">  next</A> - 
+<A HREF="hpux.htm">  skip</A> - 
+<A HREF="compiler.htm">  up</A> - 
+<A HREF="index.htm">  start</A><P>
+
+<B>Gnu G++ 2.6.0, 2.7.2, 2.8.1:</B>  These work OK.
+<P>
+If you are using 2.7 or later remember to edit include.h to deactivate my Boolean
+class - not necessary if you are using my <A HREF="make.htm">make</A> file. But
+if you are using a version earlier than 2.7 edit the second line of gnu.mak to
+<TT>CXXFLAGS = -O2 -Wall</TT>
+<P>
+For versions earlier than 2.6.0
+you must enable the options TEMPS_DESTROYED_QUICKLY and
+TEMPS_DESTROYED_QUICKLY_R.
+You can't use expressions
+like <TT>Matrix(X*Y)</TT> in the middle of an expression and
+<TT>(Matrix)(X*Y)</TT> is
+unreliable. If you write a function returning a matrix, you MUST use the
+<A HREF="memory.htm">ReturnMatrix</A> method described in this documentation.
+This is because g++
+destroys temporaries occurring in an expression too soon for the two
+stage way of evaluating expressions that newmat uses. You will have
+problems with versions of Gnu
+earlier than 2.3.1.
+<P>
+Gnu seems to
+leave some rubbish on the stack. Possibly this is a buffer or
+dynamically loaded subprogram so may not be a bug.
+<P>
+<B>Linux:</B> It works
+fine on my copy of G++ 2.7.2. In 2.6.?, <TT>fabs(*X++)</TT> causes a
+problem. You may need to write you own non-inlined version.
+<P>
+
+</BODY>
+</HTML>
+

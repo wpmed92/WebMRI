@@ -1,0 +1,55 @@
+<HTML>
+<HEAD><TITLE>Newmat10 - Eigenvalue decomposition</TITLE></HEAD>
+<BODY bgcolor="#FFFFFF">
+<H2><font color="#FF0000">Eigenvalue decomposition</H2></font>
+<A HREF="sorting.htm">  next</A> - 
+<A HREF="sorting.htm">  skip</A> - 
+<A HREF="refer.htm">  up</A> - 
+<A HREF="index.htm">  start</A><P>
+
+An eigenvalue decomposition of a SymmetricMatrix <TT>A</TT> is a
+decomposition
+<PRE>
+    A  = V * D * V.t()
+</PRE>
+where <TT>V</TT> is an orthogonal matrix (type <TT>Matrix</TT> in <I>Newmat</I>)
+and <TT>D</TT> is a DiagonalMatrix.
+<P>
+Eigenvalue analyses are used in a wide variety of engineering,
+statistical and other mathematical analyses.
+<P>
+The package includes two algorithms: Jacobi and Householder. The first
+is extremely reliable but much slower than the second.
+<P>
+The code is adapted from routines in <I>Handbook for Automatic
+Computation, Vol II, Linear Algebra</I> by Wilkinson and Reinsch, published
+by Springer Verlag. 
+
+<PRE>
+    Jacobi(A,D,S,V);                  // A, S symmetric; S is workspace,
+                                      //    S = A is OK; V is a matrix
+    Jacobi(A,D);                      // A symmetric
+    Jacobi(A,D,S);                    // A, S symmetric; S is workspace,
+                                      //    S = A is OK
+    Jacobi(A,D,V);                    // A symmetric; V is a matrix
+
+    EigenValues(A,D);                 // A symmetric
+    EigenValues(A,D,S);               // A, S symmetric; S is for back
+                                      //    transforming, S = A is OK
+    EigenValues(A,D,V);               // A symmetric; V is a matrix
+</PRE>
+where <TT>A</TT>, <TT>S</TT> are of type <TT>SymmetricMatrix</TT>,
+<TT>D</TT> is of type <TT>DiagonalMatrix</TT> and <TT>V</TT> is of type
+<TT>Matrix</TT>.
+The values of <TT>A</TT> are not changed unless <TT>A</TT> is also inserted
+as the third
+argument. If you need eigenvectors use one of the forms with matrix <TT>V</TT>.
+The eigenvectors are returned as the columns of <TT>V</TT>.
+<P>
+<A HREF="sorting.htm">  next</A> - 
+<A HREF="sorting.htm">  skip</A> - 
+<A HREF="refer.htm">  up</A> - 
+<A HREF="index.htm">  start</A><P>
+</BODY>
+</HTML>
+

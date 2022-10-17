@@ -1,0 +1,68 @@
+<HTML>
+<HEAD><TITLE>Newmat10 - QR decomposition</TITLE></HEAD>
+<BODY bgcolor="#FFFFFF">
+<H2><font color="#FF0000">QR decomposition</H2></font>
+<A HREF="svd.htm">  next</A> - 
+<A HREF="svd.htm">  skip</A> - 
+<A HREF="refer.htm">  up</A> - 
+<A HREF="index.htm">  start</A><P>
+
+This is a variant on the usual QR transformation.
+<P>
+Start with matrix
+<PRE>
+       / 0    0 \      s
+       \ X    Y /      n
+
+         s    t
+</PRE>
+Our version of the QR decomposition multiplies this matrix by an orthogonal
+matrix Q to get
+<PRE>
+       / U    M \      s
+       \ 0    Z /      n
+
+         s    t
+</PRE>
+where <TT>U</TT> is upper triangular (the R of the QR transform).
+<P>
+This is good for solving least squares problems: choose b (matrix or row
+vector) to minimise the sum of the squares of the elements of
+<PRE>
+         Y - X*b
+</PRE>
+Then choose <TT>b = U.i()*M;</TT> The residuals <TT>Y - X*b</TT> are in
+<TT>Z</TT>.
+<P>
+This is the usual QR transformation applied to the matrix <TT>X</TT> with
+the square zero matrix attached concatenated on top of it. It gives the
+same triangular matrix as the QR transform applied directly to <TT>X</TT> and
+generally seems to work in the same way as the usual QR transform.
+However it fits into the matrix package better and also gives us the
+residuals directly. It turns out to be essentially a
+modified Gram-Schmidt decomposition.
+<P>
+Two routines are provided:
+<PRE>
+    QRZ(X, U);
+</PRE>
+replaces <TT>X</TT> by orthogonal columns and forms <TT>U</TT>.
+<PRE>
+    QRZ(X, Y, M);
+</PRE>
+uses <TT>X</TT> from the first routine, replaces <TT>Y</TT> by <TT>Z</TT>
+and forms <TT>M</TT>.
+<P>
+The are also two routines <TT>QRZT(X, L)</TT> and <TT>QRZT(X, Y, M)</TT>
+which do the same
+decomposition on the transposes of all these matrices. QRZT replaces the
+routines HHDecompose in earlier versions of newmat. HHDecompose is still
+defined but just calls QRZT.
+<P>
+<A HREF="svd.htm">  next</A> - 
+<A HREF="svd.htm">  skip</A> - 
+<A HREF="refer.htm">  up</A> - 
+<A HREF="index.htm">  start</A><P>
+</BODY>
+</HTML>
+

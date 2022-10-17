@@ -1,0 +1,22 @@
+
+# # Target image parameters #
+
+Target blurring (in mm) = 0
+Target resolution (in mm) = 0
+
+# # Source image parameters #
+
+Source blurring (in mm) = 0
+Source resolution (in mm) = 0
+
+# # Registration parameters #
+
+No. of resolution levels = 1
+No. of bins = 64
+No. of iterations = 20
+No. of steps = 4
+Length of steps = 5
+Similarity measure = SSD
+Lambda = 0
+
+

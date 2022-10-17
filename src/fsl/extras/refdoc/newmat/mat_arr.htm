@@ -1,0 +1,75 @@
+<HTML>
+<HEAD><TITLE>Newmat10 - matrix vs array</TITLE></HEAD>
+<BODY bgcolor="#FFFFFF">
+<H2><font color="#FF0000">Matrix vs array library</H2></font>
+<A HREF="question.htm">  next</A> -
+<A HREF="question.htm">  skip</A> -
+<A HREF="design.htm">  up</A> -
+<A HREF="index.htm">  start</A>
+
+<P>The <I>newmat</I> library is for the manipulation of matrices,
+including the standard operations such as multiplication as
+understood by numerical analysts, engineers and mathematicians.
+
+<P>A matrix is a two dimensional array of numbers.
+However, very special operations such as matrix multiplication
+are defined specifically for matrices. This means that a
+<I>matrix</I> library, as I understand the term, is different
+from a general <I>array</I> library.
+<P>
+I see a matrix package as providing the following
+
+<BR>1. Evaluation of matrix expressions in a form familiar to
+scientists and engineers. For example <TT>A = B * (C + D.t());</TT>.
+In particular <TT>*</TT> means matrix multiply.
+
+<BR>2. Access to the elements of a matrix;
+
+<BR>3. Access to submatrices;
+
+<BR>4. Common elementary matrix functions such as determinant and
+trace;
+
+<BR>5. A platform for developing advanced matrix functions such as
+eigen-value analysis;
+
+<BR>6. Good efficiency and storage management;
+
+<BR>7. Graceful exit from errors.
+
+<BR>It may also provide
+
+<BR>8. A variety of types of elements (eg real and complex);
+
+<BR>9. A variety of types of matrices (eg rectangular and
+symmetric).
+
+<P>In contrast an array package should provide
+
+<BR>1'. Arrays can be copied with a single instruction; may have
+some arithmetic operations for elementwise combination of arrays,
+say <TT>+</TT>, <TT>-</TT>, <TT>*</TT>, <TT>/</TT>, it may provide matrix
+multiplication as a function;
+
+<BR>2'. High speed access to elements directly and perhaps with iterators;
+
+<BR>3'. Access to subarrays and rows (and columns?);
+
+<BR>6'. Good efficiency and storage management;
+
+<BR>7'. Graceful exit from errors;
+
+<BR>8'. A wide variety of types of elements (eg int, float, double, string etc);
+
+<BR>9'. One, two and three dimensional arrays, at least, with
+starting points of the indices set by user.
+
+<P>It may be possible to amalgamate these two sets of
+requirements to some extent. However <I>newmat</I> is definitely
+oriented towards the first set.
+<P>
+<A HREF="question.htm">  next</A> -
+<A HREF="question.htm">  skip</A> -
+<A HREF="design.htm">  up</A> -
+<A HREF="index.htm">  start</A>
+</BODY></HTML>

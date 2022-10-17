@@ -1,0 +1,54 @@
+<HTML>
+<HEAD><TITLE>Newmat10 - calculus</TITLE></HEAD> 
+<BODY bgcolor="#FFFFFF">
+<H2><font color="#FF0000">A calculus of matrix types</H2></font>
+<A HREF="err_hand.htm">  next</A> - 
+<A HREF="err_hand.htm">  skip</A> - 
+<A HREF="design.htm">  up</A> - 
+<A HREF="index.htm">  start</A><P>
+
+The program needs to be able to work out the class of the result of a
+matrix expression. This is to check that a conversion is legal or to
+determine the class of an intermediate result. To assist with this, a class
+MatrixType is defined. Operators <TT>+</TT>, <TT>-</TT>, <TT>*</TT>,
+<TT>>=</TT> are defined to calculate
+the types of the results of expressions or to check that conversions are
+legal.
+<P>
+Early versions of <I>newmat</I> stored the types of the results of operations in
+a table. So, for example, if you multiplied an UpperTriangularMatrix
+by a LowerTriangularMatrix, <I>newmat</I> would look up the table and see
+that the result was of type Matrix. With this approach the
+<A HREF="explode.htm">exploding</A> number
+of operations problem recurred although not as seriously as when code
+had to be written for each pair of types. But there was always the suspicion
+that somewhere, there was an error in one of those 9x9 tables, that would be
+very hard to find. And the problem would get worse as additional matrix types
+or operators were included.
+<P>
+The present version of <I>newmat</I> solves the problem by assigning
+<I>attributes</I> such as <I>diagonal</I> or <I>band</I> or
+<I>upper triangular</I> to each matrix type. Which attributes a
+matrix type has, is stored as bits in an integer. As an example,
+the DiagonalMatrix type has the bits corresponding to <I>diagonal</I>,
+<I>symmetric</I> and <I>band</I> equal to 1.
+By looking at the
+attributes of each of the operands of a binary operator, the program
+can work out the attributes of the result of the operation with
+simple bitwise operations.
+Hence it can deduce an appropriate type. The <I>symmetric</I> attribute is a
+minor problem because <I>symmetric</I> * <I>symmetric</I> does not yield
+<I>symmetric</I> unless both operands are <I>diagonal</I>. But otherwise
+very simple code can be used to deduce the attributes of the result of
+a binary operation.
+<P>
+Tables of the types resulting from the binary operators are output at the
+beginning of the <A HREF="testing.htm">test</A> program. 
+<P>
+<A HREF="err_hand.htm">  next</A> - 
+<A HREF="err_hand.htm">  skip</A> - 
+<A HREF="design.htm">  up</A> - 
+<A HREF="index.htm">  start</A><P>
+
+</BODY></HTML>
+

@@ -1,0 +1,143 @@
+<HTML><HEAD><TITLE>FSL</TITLE></HEAD><BODY BACKGROUND="../images/fsl-bg.jpg" BGCOLOR="white">
+
+<H3>Installing FSL on Apple Mac</H3>
+
+Thanks to Robert Coghill for sponsoring the Apple port.
+
+
+<p>
+To install FSL on a Mac you need to do the following:
+<p>
+<ol>
+<li><b>Check that you have the X11 window system installed</b> <br>Do
+this by looking for the X11 application in the <code>Utilities</code>
+folder within the <code>Applications</code> folder; by default Macs
+don't generally come with this installed (you'll almost certainly need
+X11 later for things other than FSL anyway.)  <br>If you do not have
+X11 then install it from the OS X Install CD. Insert the CD, open it
+in a file browser, scroll down to the <code>Optional Installs</code>,
+then click on <code>Applications -> X11</code>.
+
+
+<p>
+<li><b>Unpack the FSL distribution</b>
+<ul>
+  <li>Open up a <code>Terminal</code> (you can find this application in 
+<code>Utilities</code> folder inside the <code>Applications</code> folder).
+<li>In the terminal, change to the directory where you want FSL
+installed, e.g.
+<br> &nbsp; &nbsp; &nbsp;  <code>cd /usr/local</code>
+<li>Unpack the fsl download file - for example, if you downloaded it
+onto your Desktop,
+<br> &nbsp; &nbsp; &nbsp;  <code>tar -zxvf ~/Desktop/fsl-3.3-macosx.tar.gz</code>
+<br>This will create a directory called <code>fsl</code> in the current
+directory which will contain all the required files for FSL and
+FSLView. Note that you might need to add <code>sudo</code> to the
+start of the
+<code>tar</code> command if you don't automatically have the right to
+create files in <code>/usr/local</code>.
+</ul>
+
+<p>
+<li><b>Install the applications</b> <br>To get a clickable application
+icon FSLView, open a file browser in the toplevel fsl directory, e.g.
+<br> &nbsp; &nbsp; &nbsp; <code>open /usr/local/fsl</code><br> and
+drag the <b>fslview.app</b> directory into your Applications folder or
+your Desktop.
+
+<p>
+<li><b>Find out which shell you are running</b>
+<br>In a terminal, type:
+<br> &nbsp; &nbsp; &nbsp; <code>help</code>
+<br>the output will be either a list of commands, in which case you are using the <code><b>bash</b></code> shell, or an error saying "command not found" or similar message, in which case you are using the <code><b>tcsh</b></code> or <code><b>csh</b></code> shell.
+
+<p>
+<li><b>Set up your user environment</b>
+<br>If you are using the <code><b>bash</b></code> shell then do the following -
+<ul>
+ <li> In a running terminal type:
+   <pre>
+  cd 
+  touch .bash_profile
+  open -a TextEdit .bash_profile
+   </pre>
+ <li> This will bring up a TextEdit window
+ <li> Select <code>Make Plain Text</code> from the <code>Format</code> menu if it is available (if only <code>Make Rich Text</code> is there then do nothing as it is already in plain text mode)
+ <li> In the window type the following lines at the end of the document (or better still, use copy and paste to do this):
+<pre>
+  FSLDIR=/usr/local/fsl
+  . ${FSLDIR}/etc/fslconf/fsl.sh
+  PATH=${FSLDIR}/bin:${PATH}
+  export FSLDIR PATH
+</pre>
+  <p>Note that the second line starts with a dot (i.e. full stop or period), then a space, then <code>${FSLDIR}/etc/fslconf/fsl.sh</code> - the dot and space are very important!
+ <li> Change the line <code>FSLDIR=/usr/local/fsl</code> and replace <code>/usr/local/fsl</code> with the directory name of the place where you installed FSL.
+ <li> Save the file and exit <code>TextEdit</code>
+</ul>
+
+<hr width="60%">
+
+<p>If you are using the <code><b>tcsh</b></code> or the <code><b>csh</b></code> shell then follow the above instructions, but instead type the following in the terminal:
+   <pre>
+  cd 
+  touch .cshrc
+  open -a TextEdit .cshrc
+   </pre>
+and add the following to the <code>.cshrc</code> file (as opened in TextEdit, but after selecting plain text mode - as above):
+ <pre>
+  setenv FSLDIR /usr/local/fsl
+  source ${FSLDIR}/etc/fslconf/fsl.csh
+  setenv PATH ${FSLDIR}/bin:${PATH}
+ </pre>
+then change the <code>/usr/local/fsl</code> as instructed above, and save the file.
+
+<p>
+<li><b>Check the installation</b>
+<br> Test that the environment and command line tools are set up correctly by doing the following:
+<ul>   
+<li> Quit the terminal program and start it again
+<li> Check that your environment is correct by typing:
+  <br>&nbsp; &nbsp; &nbsp; <code>echo $FSLDIR</code>
+<p>This should display the name of the directory that you installed FSL in.
+<li>Check that your path is correct by typing:
+  <br>&nbsp; &nbsp; &nbsp; <code>flirt -version</code>
+<br>which should display a line like:
+  <br>&nbsp; &nbsp; &nbsp; <code>FLIRT version 5.4.2</code>
+<br> (although the version number might be different).
+</ul>
+
+<P>In general, to run the FSL tools from the command line (within a
+terminal) you need to enter the program name in lower case
+(e.g. <code>bet</code>). Typing a command on its own (without any
+arguments or options) gives you a help message for that command.
+
+<p>
+A more complete test of the FSL installation can be run at this point
+by using the testing and evaluation suite: FEEDS.  See the <a href="http://www.fmrib.ox.ac.uk/fslfaq/#general_feeds">FSL FAQ</a> for more information about this.
+
+<p>
+<li><b>Running the GUIs</b> <br>Once you have checked the environment
+and command line programs, as described above, then start X11 (click
+on it in the <code>Utilities</code> folder inside the
+<code>Applications</code> folder) .  All of the FSL GUIs should now
+work.  To run a GUI version of a program you can either type its
+capitalised name with an additional '_gui' appended in the terminal
+(e.g. <code>Bet_gui</code>), or you can start the main FSL GUI by just
+typing <code>fsl</code>.
+
+<p>
+<li><b>Customising FSL</b>
+<br>To customise FSL for particular ouput datatypes etc., see the
+page on <a href="customising.html">Customising FSL</a>.
+
+
+<p>
+<li><b>Further help</b>
+<br>If any problems occur when installing or running the FSL tools, please
+consult the <a href="http://www.fmrib.ox.ac.uk/fslfaq">FSL FAQ</a>.  This
+also contains instructions on how to join and use the FSL email list to
+ask specific questions which are not covered in the FAQ.
+
+</ol>
+
+</BODY></HTML>

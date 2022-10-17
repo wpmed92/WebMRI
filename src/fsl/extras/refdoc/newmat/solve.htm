@@ -1,0 +1,69 @@
+<HTML>
+<HEAD><TITLE>Newmat10 - multiple matrix solve</TITLE></HEAD>                    
+<BODY bgcolor="#FFFFFF">
+<H2><font color="#FF0000">Multiple matrix solve</H2></font>
+<A HREF="memory.htm">  next</A> - 
+<A HREF="memory.htm">  skip</A> - 
+<A HREF="refer.htm">  up</A> - 
+<A HREF="index.htm">  start</A><P>
+
+To solve the matrix equation <TT>Ay = b</TT> where <TT>A</TT> is a
+square matrix of equation coefficients, <TT>y</TT> is a column
+vector of values to be solved for, and <TT>b</TT> is a column vector,
+use the code
+<PRE>
+    int n = something
+    Matrix A(n,n); ColumnVector b(n);
+    ... put values in A and b
+    ColumnVector y = A.i() * b;       // solves matrix equation
+</PRE>
+The following notes are for the case where you want to solve more than
+one matrix equation with different values of <TT>b</TT> but the same
+<TT>A</TT>. Or where
+you want to solve a matrix equation and also find the determinant of
+<TT>A</TT>.
+In these cases you probably want to avoid repeating the LU decomposition of
+<TT>A</TT>
+for each solve or determinant calculation.
+<P>
+
+
+If <TT>A</TT> is a square or symmetric matrix use
+<PRE>
+    CroutMatrix X = A;                // carries out LU decomposition
+    Matrix AP = X.i()*P; Matrix AQ = X.i()*Q;
+    LogAndSign ld = X.LogDeterminant();
+</PRE>
+rather than
+<PRE>
+    Matrix AP = A.i()*P; Matrix AQ = A.i()*Q;
+    LogAndSign ld = A.LogDeterminant();
+</PRE>
+since each operation will repeat the LU decomposition.
+<P>
+If <TT>A</TT> is a BandMatrix or a SymmetricBandMatrix
+begin with
+<PRE>
+    BandLUMatrix X = A;               // carries out LU decomposition
+</PRE>
+A CroutMatrix or a BandLUMatrix can't be manipulated or
+copied. Use
+references as an alternative to copying.
+<P>
+Alternatively use
+<PRE>
+    LinearEquationSolver X = A;
+</PRE>
+This will choose the most appropriate decomposition of <TT>A</TT>. That is, the
+band form if <TT>A</TT> is banded; the Crout decomposition if <TT>A</TT> is
+square or symmetric and no decomposition if <TT>A</TT> is triangular or
+diagonal. If you want to use the LinearEquationSolver <TT>#include
+newmatap.h</TT>.
+<P>
+<A HREF="memory.htm">  next</A> - 
+<A HREF="memory.htm">  skip</A> - 
+<A HREF="refer.htm">  up</A> - 
+<A HREF="index.htm">  start</A><P>
+</BODY>
+</HTML>
+

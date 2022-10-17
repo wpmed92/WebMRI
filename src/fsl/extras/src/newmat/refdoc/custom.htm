@@ -1,0 +1,79 @@
+<HTML>
+<HEAD><TITLE>Newmat10 - customising</TITLE></HEAD>
+<BODY bgcolor="#FFFFFF">
+<H2><font color="#FF0000">Customising</H2></font>
+<A HREF="compiler.htm">  next</A> - 
+<A HREF="compiler.htm">  skip</A> - 
+<A HREF="starting.htm">  up</A> - 
+<A HREF="index.htm">  start</A><P>
+
+The file <I>include.h</I> sets a variety of options including several
+compiler dependent options. You may need to edit include.h to get the options
+you require.
+If you are using
+a compiler different from one I have worked with you may have to set up
+a new section in  include.h  appropriate for your compiler.
+<P>
+Borland, Turbo, Gnu, Microsoft and Watcom are recognised
+automatically. If none of these are recognised a default set of options is
+used. These are fine for AT&amp;T, HPUX and Sun C++.
+If you using a compiler I don't know about you may have to write a new set of
+options.
+<P>
+There is an option in include.h for selecting whether you use compiler
+supported exceptions, simulated exceptions, or disable exceptions. Use
+the option for compiler supported exceptions if and only if you have
+set the option on your compiler to recognise exceptions. Disabling
+exceptions sometimes helps with compilers that are incompatible with
+my exception simulation scheme.
+<P>
+If your compiler recognises bool as required by the standard activate the
+statement <TT>#define bool_LIB</TT>. This will deactivate my Boolean class.
+If you are using my make file with the Gnu compiler, then this #define is
+automatically activated.
+<P>
+Activate the appropriate statement to make the element type float or
+double.
+<P>
+I suggest you leave the option TEMPS_DESTROYED_QUICKLY activated, even though
+the Gnu compiler (&lt;2.6) is the only one I know about that requires it
+(C-Set also requires it?). This stores
+the <I>trees</I> describing matrix expressions on the heap rather than the
+stack and, surprisingly, seems to give better performance. See the discussion
+on <A HREF="destr.htm">  destruction of temporaries</A> for more explanation.
+<P>
+Leave the option TEMPS_DESTROYED_QUICKLY_R not activated unless you are using
+the <A HREF="gcc.htm">Gnu G++</A> compiler earlier than version 2.6.
+This option controls whether the
+<A HREF="memory.htm">ReturnMatrix</A> construct uses the stack or the heap.
+The heap version is rather kludgy and probably should be avoided where
+possible.
+<P>
+The option <A HREF="testing.htm">DO_FREE_CHECK</A> is used for tracking
+memory leaks and normally should not be activated.
+<P>
+Activate SETUP_C_SUBSCRIPTS if you want to use traditional C style
+<A HREF="elements.htm">element access</A>. 
+<P>
+Activate <TT>#define use_namespace</TT> if you want to use
+<A HREF="namesp.htm">namespaces</A>. Do this only if you are sure
+your compiler supports namespaces. If you do turn this option on, be
+prepared to turn it off again if the linker reports missing links.
+<P>
+Activate <TT>#define _STANDARD_</TT> to use the standard names for the
+included files and to find the floating point precision data using the
+floating point standard. Assume that this doesn't work at present.
+<P>
+If you are using a compiler that <I>include.h</I> does not recognise and you
+want to pick up the floating point precision data from <I>float.h</I> then
+activate <TT>#define use_float_h</TT>. Otherwise the floating point
+precision data will be accessd from <I>values.h</I>. You will may need
+to do this with computers from Digital, in particular. 
+<P>
+<A HREF="compiler.htm">  next</A> - 
+<A HREF="compiler.htm">  skip</A> - 
+<A HREF="starting.htm">  up</A> - 
+<A HREF="index.htm">  start</A><P>
+</BODY>
+</HTML>
+

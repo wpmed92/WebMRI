@@ -1,0 +1,102 @@
+<HTML>
+<HEAD><TITLE>Newmat10 - memory management</TITLE></HEAD>
+<BODY bgcolor="#FFFFFF">
+<H2><font color="#FF0000">Memory management - reference counting or status variable?</H2></font>
+<A HREF="evalx.htm">  next</A> -
+<A HREF="evalx.htm">  skip</A> -
+<A HREF="design.htm">  up</A> -
+<A HREF="index.htm">  start</A>
+
+<P>Consider the instruction
+<PRE>
+   X = A + B + C;
+</PRE>
+To evaluate this a simple program will add <TT>A</TT>
+to <TT>B</TT> putting the
+total in a temporary <TT>T1</TT>. Then it will add <TT>T1</TT>
+to <TT>C</TT> creating
+another temporary <TT>T2</TT> which will be copied into <TT>X</TT>.
+<TT>T1</TT> and <TT>T2</TT> will
+sit around till the end of the execution of the statement and perhaps
+of the block. It would be faster if the
+program recognised that <TT>T1</TT> was temporary and stored
+the sum of <TT>T1</TT>
+and <TT>C</TT> back into <TT>T1</TT> instead of creating <TT>T2</TT>
+and then avoided the
+final copy by just assigning the contents of <TT>T1</TT> to
+<TT>X</TT> rather than copying.
+In this case there will be no temporaries requiring deletion.
+(More precisely there will be a header to be deleted but no
+contents).
+
+<P>For an instruction like
+<PRE>
+   X = (A * B) + (C * D);
+</PRE>
+we can't easily avoid one temporary being left over, so we
+would like this temporary deleted as quickly as possible.
+<P>
+I provide the functionality for doing all this by attaching a status
+variable to each matrix. This indicates if the matrix is
+temporary so that its memory is available for recycling or deleting.
+Any matrix operation checks the status variables of the matrices
+it is working with and recycles or deletes any temporary memory.
+<P>
+An alternative or additional approach would be to use
+<I>reference counting and delayed copying</I> - also known
+as <I>copy on write</I>. If a program requests a
+matrix to be copied, the copy is delayed until an instruction is
+executed which modifies the memory of either the original matrix
+or the copy. If the original matrix is deleted before either
+matrix is modified, in effect, the values of the original matrix are
+transfered to the copy without any actual copying taking place.
+This solves the difficult problem of returning an
+object from a function without copying and
+saves the unnecessary copying in the previous examples. 
+<P>
+There are downsides to the delayed copying approach. Typically, for
+delayed copying one uses a structure like the following:
+<PRE>
+
+   Matrix
+     |
+     +------> Array Object
+     |          |
+     |          +------> Data array
+     |          |
+     |          +------- Counter
+     |
+     +------ Dimension information
+
+</PRE>
+where the arrows denote a pointer to a data structure. If one wants
+to access the <I>Data array</I> one will need to track through two
+pointers.
+If one is going to write, one will have to check whether one needs to
+copy first. This is not important when one is going to access the
+whole array, say, for a add operation. But if one wants to access just
+a single element, then it imposes a significant additional overhead
+on that operation.
+Any subscript operation would need to check whether an update was
+required - even read since it is hard for the compiler to tell
+whether a subscript access is a read or write.
+<P>
+Some matrix libraries don't bother to do this. So if you write
+<TT>A = B;</TT> and then modify an element of one of <TT>A</TT>
+or <TT>B</TT>, then the same element of the other is also modified.
+I don't think this is acceptable behaviour.
+<P>
+Delayed copy does not provide the additional functionality
+of my approach but I suppose it would be possible to have both
+delayed copy and tagging temporaries.
+<P>
+My approach does not automatically avoid all copying. In particular,
+you need use a special technique to return a matrix from a function
+without copying.
+<P>
+<A HREF="evalx.htm">  next</A> -
+<A HREF="evalx.htm">  skip</A> -
+<A HREF="design.htm">  up</A> -
+<A HREF="index.htm">  start</A>
+
+</BODY></HTML>

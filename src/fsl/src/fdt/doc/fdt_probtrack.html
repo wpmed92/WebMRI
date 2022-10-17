@@ -1,0 +1,284 @@
+<HTML><TITLE>FDT - FMRIB's Diffusion Toolbox - User Guide</TITLE><BODY
+BACKGROUND="fdt_images/fsl-bg.jpg">
+<p><h3>PROBTRACK - probabilistic tracking</h3><br>
+
+ For details about probabilistic tractography as implemented by FDT,
+ see <a
+ href="http://www.fmrib.ox.ac.uk/analysis/techrep/tr03tb1/tr03tb1/">here</a>.
+ Briefly, FDT repetitively samples from the distributions on
+ voxel-wise principal diffusion directions, each time comupting a
+ streamline through these local samples to generate a
+ <em>probabilistic streamline</em> or a <em>sample</em> from the
+ distribution on the location of the true streamline. By taking many
+ such samples FDT is able to build up the posterior distribution on the
+streamline location or the <em>connectivity distribution</em>.
+
+<p>After Bedpost has been applied it is possible to run tractography analyses
+using ProbTrack.
+
+Probtrack can be run in several different modes:
+<ul><li><a href="#path">Path distribution estimation</a></li>
+<ul><li><a href="#single">Single seed voxel</a></li>
+<li><a href="#seedmask">Seed mask</a></li>
+<li><a href="#seedwaypoint">Seed mask and waypoint masks</a></li>
+<li><a href="#twomask">Two masks - symmetric </a></li></ul>
+<li><a href="#seedclass">Connectivity-based seed classification</a></li>
+</ul>
+
+Each mode is explained in detail below.
+Every mode requires the user to
+specify a bedpost directory.  For all modes, the bedpost directory must contain the following 4D images:
+
+<li><b>merged_phsamples</b></li>
+<li><b>merged_thsamples</b></li>
+<li><b>nodif_brain_mask</b></li>
+
+<p>Results from probtrack can be binned in any available space -e.g.,
+diffusion space, structural space or standard space.  Note, however,
+that tractography itself ALWAYS takes place in diffusion space - it is
+simply the <em>results</em> of probtrack that are stored in the
+required space.  If probtrack results are to be stored in a space
+other than diffusion space then you will need transformations from
+this space back into the space of thediffusion data. The <a
+ref="fdt_registration.html">FDT registration tab</a> creates the
+following transformations in the <code>xfms</code> subdirectory of the
+bedpost directory.
+
+
+<p>for running analyses in structural space:
+<li><b>xfms/str2diff.mat</b></li>
+<li><b>xfms/diff2str.mat</b></li>
+
+<p>for running analyses in standard space:
+<li><b>xfms/standard2diff.mat</b></li>
+<li><b>xfms/diff2standard.mat</b></li>
+
+<hr>
+<a name="path"></a>
+<h3>Path Distribution Estimation - basics</h3>
+The first four modes of ProbTrack involve generating connectivity
+distributions from user-specified seed voxel(s).  The output will be a single
+image in the space of the specified seed like <a href="fdt_images/fdt_simple_tract3.gif">this</a>.  All
+brain voxels will have a value (though many of these will be zero)
+representing the connectivity value between that voxel and the seed voxel
+(i.e., the number of samples that pass through that voxel). Note that when
+connectivity distributions are generated from multiple seed voxels within a
+region of interest then the time required for the analysis to run will be
+approximately the number of seed voxels multiplied by the time taken to
+generate a distribution from a single voxel.
+
+<p><h4>Setting up the GUI for Path Distribution Estimation - settings common
+to all modes:</h4>
+
+<p><b>Seeds space:</b> specification of seeds is different for each mode - see below.
+
+<p>If <b>seed space is not diffusion</b>, then check this button. If
+you are in <b>Single seed voxel</b> mode use the browse buttons to
+locate a reference image (e.g., subject1.bedpost/struct.hdr if seed
+space is structral space or subject1.bedpost/standard.hdr if seed
+space is standard space). Next set the transformation matrix from seed
+space to diffusion space (e.g., subject1.bedpost/xfms/str2diff.mat if
+seed space is structural space or
+subject1.bedpost/xfms/standard2diff.mat if seed space is standard
+space). Note that, in all cases, the smaller the voxel size in your
+seed space image, the lower will be the resulting connectivity values
+to these voxels (This is intuitive - the smaller a voxel is, the less
+chance that the true streamline will pass through it!). This
+highlights the problem with binning a continuous distribution into
+meaningless discrete bins. In order for the probability values to be
+truly meaningful, the dicrete bins chosen should be anatomically
+meaningful, as is the case in <a href="#seedclass">Connectivity-based
+seed classification</a>.
+
+<p>If an <b>exclusion mask</b> is to be used then check the box and
+use the browse button to locate the mask file.  This must be a
+binarised analyze file in seed space.  Pathways will be terminated if
+they enter the exclusion mask.  For example, an exclusion mask of the
+midline will terminate pathways that cross into the other
+hemisphere. (Note that paths are always terminated when they reach the
+brain surface as defined by nodif_brain_mask)
+
+<br>Use the browse button to specify an <b>output</b> name.  This will
+be a filename or a directory name depending on the mode.
+
+<hr>
+
+<h3>Path Distribution Estimation - available modes and mode-specific settings:</h3>
+<ul><li><a href="#single">Single seed voxel</a></li>
+<li><a href="#seedmask">Seed mask</a></li>
+<li><a href="#seedwaypoint">Seed mask and waypoint masks</a></li>
+<li><a href="#twomask">Two masks - symmetric </a></li></ul>
+
+<a name="single"></a>
+
+<h3>Single Seed Voxel:</h3>
+<IMG ALIGN=RIGHT height=100 SRC="fdt_images/fdt_simple_tract3.gif"
+ALT="simple tract">  
+Generates a connectivity distribution from a single,
+user-specified voxel
+<p>Gui Options: <br><b>Seeds space:</b>
+Enter the x,y,z co-ordinates of a single seed voxel.  Use the buttons
+to the right to specify whether the co-ordinates are given in voxels
+or millimetres. Note if the "seed space is not diffusion" is set, and
+the seed space reference image is the MNI152 average brain, then mm
+coordinates will have their origin at the AC.
+
+<p>The output will be a single image in the space of the specified seed.  All
+brain voxels will have a value (though many of these will be zero)
+representing the connectivity value between that voxel and the seed voxel
+(i.e., the number of samples that pass through that voxel).  The example on
+the right shows the connectivity distribution from a single seed in the
+internal capsule overlaid on an FA image. 
+
+<a name="seedmask"></a>
+<h3>Seed Mask Mode:</h3>
+Generates a connectivity distribution from a user-specified
+region of interest.
+<p>Gui Options: <br><b>Seed image:</b>
+Use the browse button to locate the seed image - this should be a
+binary mask. Probabilistic tractography will be run from every voxel
+with a value greater than 0 in this mask.
+<p>The output directory will contain: <br>
+<b>probtrack.log</b> - a text record of the command that was run.<br>
+<b>fdt.log</b> - a log of the setup of the FDT GUI when the analysis was run.
+To recover this GUI setup, type <code>Fdt fdt.log</code>
+ <br>The output file - will be a
+single image in the space of the specified seed mask. All brain voxels
+will have a value (though many of these may be zero) representing the
+number of samples that pass through that voxel from the seed mask.
+Connectivity distributions from multiple seed voxels are summed to
+produce this output.  Therefore the connectivity values will depend on
+the number of voxels in the seed mask.
+
+<a name="seedwaypoint"></a> <h3>Seed Mask and Waypoint Masks</h3> <IMG
+ALIGN=RIGHT height=200 SRC="fdt_images/fdt_twomasks_tracts.gif"
+ALT="constraining tracts"> Generates a connectivity distribution from
+voxels in the seed mask and retains only those paths that pass through
+all of the waypoint masks. The example on the right shows the outputs
+from two different analyses which use the same seed mask (orange) but
+different waypoint masks (red).
+
+<p>GUI Options:
+<br><b>Seed Image:</b> Use the browse button to locate the binary seed mask.
+
+<br><b>Waypoint Masks:</b> Use the add and remove buttons to make a
+list of waypoint masks. These must be in the same space as the seed image.
+
+<BR>
+<br>The output directory will contain:<br>
+<b>probtrack.log</b> - a text record of the command that was run.<br>
+<b>fdt.log</b> - a log of the setup of the FDT GUI when the analysis
+was run.  To recover this GUI setup, type <code>Fdt fdt.log</code>
+<br>The output file - will be a single image in the space of the
+specified seed mask.  All brain voxels will have a value (though many
+of these may be zero) representing the number of samples that pass
+through that voxel starting the seed mask and which have also passed through all of
+the waypoint masks.  Connectivity distributions from multiple seed
+voxels are summed to produce this output.  Therefore the connectivity
+values will depend on the number of voxels in the seed mask.
+
+<a name="twomask"></a>
+<h3>Two Masks - symmetric</h3>
+ Generates a connectivity distribution from all
+voxels in <b>mask image 1</b> and retains only those pathways that pass
+ through <b>mask image 2</b>.  Also
+generates a connectivity distribution from all voxels in <b>mask image 2</b> and retains
+pathways that pass through <b>mask image 1</b>.  Ouput is the sum of these connectivity
+distributions.  
+<p>GUI Options:
+<br><b>Mask image 1</b> and <b>Mask image 2</b>: Use the browse buttons to locate your binary
+mask of area one and area two.  These must be in the same space.
+
+<p>The output directory will contain:
+<br>
+<b>probtrack.log</b> - a text record of the command that was run.<br>
+<b>fdt.log</b> - a log of the setup of the FDT GUI when the analysis
+was run.  To recover this GUI setup, type <code>Fdt fdt.log</code>
+<br>The output file - will be a single image in the space of the
+specified masks.  All brain voxels will have a value (though many of
+these may be zero) representing the number of samples that pass
+through that voxel from either of the seed masks and which also pass
+through the other seedmask.  Connectivity distributions from multiple
+seed voxels are summed to produce this output.  Therefore the
+connectivity values will depend on the number of voxels in the seed
+masks.
+
+<hr>
+<a name="seedclass"></a>
+<h3>Connectivity-based seed classification</h3>
+<IMG ALIGN=RIGHT height=150 SRC="fdt_images/fdt_seeds2targets_quant_eg.gif"
+ALT="connectivity-based classification of thalamus">
+This mode quantifies connectivity values
+between a seed mask and any number of user-specified target masks. In the
+example on the right, seed voxels in the thalamus are classified according to
+the probabilty of connection to different cortical target masks. 
+<p>Setting up the GUI
+<br><b>Seed image</b>: use the browse button to locate your binary mask of seed voxels. 
+<br><b>Target list</b>: Use the add button to locate each target mask. Targets must be
+binary masks in the same space as the seed mask.  When all targets are loaded you
+can press the save list button to save the list of targets as a text file.  If
+you already have a text file list of required targets (including their path)
+then you can load it with the load list button.
+<p>
+
+<br>The output directory will contatin:
+<IMG ALIGN=RIGHT height=150 SRC="fdt_images/fdt_seeds2targets_thal.gif"
+ALT="connectivity-based classification of thalamus">
+<br><b>probtrack.log</b> - a text record of the command that was run.<br>
+<b>fdt.log</b> - a log of the setup of the FDT GUI when the analysis
+was run.  To recover this GUI setup, type <code>Fdt fdt.log</code>
+<br>A single volume for each target mask, named <b>seeds_to_{target}</b> where
+{target} is replaced by the file name of the relevant target mask.  In these
+output images, the value of each voxel within
+the seed mask is the number of samples seeded from that voxel reaching the relevant
+target mask.  The value of all voxels outside the seed mask will be zero.
+
+<p>
+There are command line utilities that can be run on the outputs of
+<b>Connectivity-based seed classification</b>:
+<ul><li><a href="fdt_thresh.html">proj_thresh</a> - for thresholding some outputs
+of ProbTrack</li>
+<li><A href="fdt_biggest.html">find_the_bigggest</a> - for performing hard
+segmentation on the outputs of connectivity-based thersholding in ProbTrack,
+see example on the right</li></ul>
+<hr>
+<a name="options"></a>
+<h3>Options Tab </h3>
+For all modes in probtrack, the user is able to change the setting of certain
+parameters by clicking the <b>options</b> tab.
+
+<p><b>Number of samples</b> (default 5000): This determines the number of individual
+pathways (or samples) that are drawn through the probability distributions on
+principle fibre direction (see <a href="http://www.fmrib.ox.ac.uk/analysis/techrep/tr03tb1/tr03tb1/"> appendix </a>for more details on the modelling and
+tractography methods).  By default this is set to 5000 as we are confident
+that convergence is reached with this number of samples. However, reducing
+this number will speed up processing and can be useful for preliminary or
+exploratory analyses. 
+
+<p><b>Curvature Threshold</b> (default 0.2): We limit how sharply pathways can turn
+in order to
+exclude implausible pathways. This number is the cosine of the minimum allowable
+angle between two steps.  By default this is set to 0.2 (corresponding to a
+minimum angle of approximately &#177;80 degrees).  Adjusting this number can enable
+pathways with sharper angles to be detected. 
+
+<p><b>Verbose:</b> If this option is selected then FDT prints additional logging
+information to screen while it is running.
+
+<p><b>Loopcheck:</b> By default, we terminate pathways that loop back on themselves
+-i.e paths that travel to a point where they have already been.
+
+<p><h4>Advanced options:</h4>
+
+<p><b>Use modified Euler streamlining:</b> Use modified Euler
+integration as opposed to simple Euler for computing probabilistic
+streamlines. More accurate but slower.
+
+<p><b>Maximum number of steps</b> (default 2000): By default, samples are terminated
+when they have travelled 2000 steps.  Using a step length of 0.5mm this
+corresponds to a distance of 1m.  These values can be adjusted if required.
+
+<p><b>Step length</b> (default 0.5mm): This determines the length of each step.  This
+setting may be adjusted from default e.g., depending on the voxel size being
+used, or if tracking is being performed on different sized brains
+(e.g., infants or animals).

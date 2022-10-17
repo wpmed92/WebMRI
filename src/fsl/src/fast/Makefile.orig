@@ -1,0 +1,31 @@
+include ${FSLCONFDIR}/default.mk
+
+PROJNAME = fast
+
+OPTFLAGS = -O
+CXXFLAGS += -fpermissive
+
+CXX_alphaev6-dec-osf5.0-gcc2.95.2 = /usr/people/flitney/src/GCC3.2/install/bin/c++
+CXX_alphaev67-dec-osf5.1-gcc3.2 = /usr/people/flitney/src/GCC3.2/install/bin/c++
+
+USRINCFLAGS = -Izimage/common -Izimage/fundamental -Izimage/imagebase -Izimage/imageio -Izimage/imageprocess -Izimage/math -I${INC_ZLIB}
+USRLDFLAGS = -L${LIB_ZLIB}
+
+LIBS = -lm -lz
+
+XFILES=fast_exe mfast_exe
+
+SCRIPTS=fast mfast
+
+RUNTCLS=Fast
+
+all: ${XFILES}
+
+%.o:	%.cpp zimage/*/*.cpp zimage/*/*.h
+	$(CXX) $(CXXFLAGS) -c $*.cpp
+
+fast_exe: 	fast.o mriseg.o
+	$(CXX) -o fast_exe $(CXXFLAGS) fast.o mriseg.o $(LDFLAGS) $(LIBS) 
+
+mfast_exe: 	mfast.o mmriseg.o
+	$(CXX) -o mfast_exe $(CXXFLAGS) mfast.o mmriseg.o $(LDFLAGS) $(LIBS)

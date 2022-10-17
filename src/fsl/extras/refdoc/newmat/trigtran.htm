@@ -1,0 +1,83 @@
+<HTML>
+<HEAD><TITLE>Newmat10 - fast trig transforms</TITLE></HEAD>
+<BODY bgcolor="#FFFFFF">
+<H2><font color="#FF0000">Fast trigonometric transforms</H2></font>
+<A HREF="nric.htm">  next</A> - 
+<A HREF="nric.htm">  skip</A> - 
+<A HREF="refer.htm">  up</A> - 
+<A HREF="index.htm">  start</A><P>
+
+These are the sin and cosine transforms as defined by Charles Van Loan
+(1992) in <I>Computational frameworks for the fast Fourier transform</I>
+published by SIAM. See page 229. Some other authors use slightly
+different conventions.
+All the functions call the <A HREF="fft.htm">fast Fourier transforms</A>
+and require an even
+transform length, denoted by <I>m</I> in these notes. As with the FFT
+<I>m</I> should be the product of numbers less than about 10 for fast
+execution. 
+<P>
+The functions I define are 
+<PRE>
+   DCT(U,V);                // U, V are ColumnVectors, length <I>m+1</I>
+   DCT_inverse(U,V);        // inverse of DCT
+   DST(U,V);                // U, V are ColumnVectors, length <I>m+1</I>
+   DST_inverse(U,V);        // inverse of DST
+   DCT_II(U,V);             // U, V are ColumnVectors, length <I>m</I>
+   DCT_II_inverse(U,V);     // inverse of DCT_II
+   DST_II(U,V);             // U, V are ColumnVectors, length <I>m</I>
+   DST_II_inverse(U,V);     // inverse of DST_II
+</PRE>
+where <TT>U</TT> is the input and <TT>V</TT> is the output. <TT>V = U</TT> is OK.
+The length of <TT>V</TT> is set by the functions.
+<P>
+Here are the formulae:
+<P>
+<H3><font color="#FF0000">DCT</H3></font>
+<PRE>
+                   m-1                             k
+   v[k] = u[0]/2 + SUM { u[j] cos (pi jk/m) } + (-) u[m]/2
+                   j=1
+</PRE>
+for <TT>k = 0...m</TT>, where <TT>u[j]</TT> and <TT>v[k]</TT> are stored in
+<TT>U(j+1)</TT> and <TT>V(k+1)</TT>.
+<P>
+<H3><font color="#FF0000">DST</H3></font>
+<PRE>
+          m-1
+   v[k] = SUM { u[j] sin (pi jk/m) }
+          j=1
+</PRE>
+for <TT>k = 1...(m-1)</TT>, where <TT>u[j]</TT> and <TT>v[k]</TT> are stored
+in <TT>U(j+1)</TT> and <TT>V(k+1)</TT>.
+<TT>u[0]</TT> and <TT>u[m]</TT> are ignored and <TT>v[0]</TT> and <TT>v[m]</TT>
+are set to zero.
+<P>
+<H3><font color="#FF0000">DCT_II</H3></font>
+<PRE>
+          m-1
+   v[k] = SUM { u[j] cos (pi (j+1/2)k/m) }
+          j=0
+</PRE>
+for <TT>k = 0...(m-1)</TT>, where <TT>u[j]</TT> and <TT>v[k]</TT> are stored
+in <TT>U(j+1)</TT> and <TT>V(k+1)</TT>.
+<P>
+<H3><font color="#FF0000">DST_II</H3></font>
+<PRE>
+           m
+   v[k] = SUM { u[j] sin (pi (j-1/2)k/m) }
+          j=1
+</PRE>
+for <TT>k = 1...m</TT>, where <TT>u[j]</TT> and <TT>v[k]</TT> are stored in
+<TT>U(j)</TT> and <TT>V(k)</TT>.
+<P>
+Note that the relationship between the subscripts in the formulae and those
+used in <I>newmat</I> is different for DST_II (and DST_II_inverse).
+<P>
+<A HREF="nric.htm">  next</A> - 
+<A HREF="nric.htm">  skip</A> - 
+<A HREF="refer.htm">  up</A> - 
+<A HREF="index.htm">  start</A><P>
+</BODY>
+</HTML>
+

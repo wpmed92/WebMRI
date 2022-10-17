@@ -1,0 +1,51 @@
+<HTML>
+<HEAD><TITLE>Newmat10 - change dimensions</TITLE></HEAD>
+<BODY bgcolor="#FFFFFF">
+<H2><font color="#FF0000">Change dimensions</H2></font>
+<A HREF="ch_type.htm">  next</A> - 
+<A HREF="ch_type.htm">  skip</A> - 
+<A HREF="refer.htm">  up</A> - 
+<A HREF="index.htm">  start</A><P>
+
+The following operations change the dimensions of a matrix. The values
+of the elements are lost.
+<PRE>
+    A.ReSize(nrows,ncols);        // for type Matrix or nricMatrix
+    A.ReSize(n);                  // for all other types, except Band
+    A.ReSize(n,lower,upper);      // for BandMatrix
+    A.ReSize(n,lower);            // for LowerBandMatrix
+    A.ReSize(n,upper);            // for UpperBandMatrix
+    A.ReSize(n,lower);            // for SymmetricBandMatrix
+    A.ReSize(B);                  // set dims to those of B 
+</PRE>
+Use <TT>A.CleanUp()</TT> to set the dimensions of <TT>A</TT> to zero
+and release all the heap memory.
+<P>
+<TT>A.ReSize(B)</TT> sets the dimensions of <TT>A</TT> to those of a matrix
+<TT>B</TT>. This includes the band-width in the case of a band matrix. It is
+an error for <TT>A</TT> to be a band matrix and <TT>B</TT> not a band matrix
+(or diagonal matrix).
+<P>
+Remember that <TT>ReSize</TT> destroys values.
+If you want to <TT>ReSize</TT>, but
+keep the values in the bit that is left use something like
+<PRE>
+   ColumnVector V(100);
+   ...                            // load values
+   V = V.Rows(1,50);              // to get first 50 values.
+</PRE>
+If you want to extend a matrix or vector use something like
+<PRE>
+   ColumnVector V(50);
+   ...                            // load values
+   { V.Release(); ColumnVector X=V; V.ReSize(100); V.Rows(1,50)=X; }
+                                  // V now length 100
+</PRE>
+<P>
+<A HREF="ch_type.htm">  next</A> - 
+<A HREF="ch_type.htm">  skip</A> - 
+<A HREF="refer.htm">  up</A> - 
+<A HREF="index.htm">  start</A><P>
+</BODY>
+</HTML>
+

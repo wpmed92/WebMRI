@@ -1,0 +1,91 @@
+<HTML>
+<HEAD><TITLE>Newmat10 - assignment and copying</TITLE></HEAD>
+<BODY bgcolor="#FFFFFF">
+<H2><font color="#FF0000">Assignment and copying</H2></font>
+<A HREF="entering.htm">  next</A> - 
+<A HREF="entering.htm">  skip</A> - 
+<A HREF="refer.htm">  up</A> - 
+<A HREF="index.htm">  start</A><P>
+
+The operator <TT>=</TT> is used for copying matrices, converting matrices, or
+evaluating expressions. For example
+<PRE>
+    A = B;  A = L;  A = L * U;
+</PRE>
+Only conversions that don't lose information are supported. The
+dimensions of the matrix on the left hand side are adjusted to those of
+the matrix or expression on the right hand side. Elements on the right
+hand side which are not present on the left hand side are set to zero.
+<P>
+The operator <TT>&lt;&lt;</TT> can be used in place of <TT>=</TT> where
+it is permissible for information to be lost.
+<P>
+For example
+<PRE>
+    SymmetricMatrix S; Matrix A;
+    ......
+    S &lt;&lt; A.t() * A;
+</PRE>
+is acceptable whereas
+<PRE>
+    S = A.t() * A;                            // error
+</PRE>
+will cause a runtime error since the package does not (yet?) recognise
+<TT>A.t()*A</TT> as symmetric.
+<P>
+Note that you can not use <TT>&lt;&lt;</TT> with constructors. For example
+<PRE>
+    SymmetricMatrix S &lt;&lt; A.t() * A;           // error
+</PRE>
+does not work.
+<P>
+Also note that <TT>&lt;&lt;</TT> cannot be used to load values from a full
+matrix into
+a band matrix, since it will be unable to determine the bandwidth of the
+band matrix.
+<P>
+A third copy routine is used in a similar role to <TT>=</TT>. Use
+<PRE>
+    A.Inject(D);
+</PRE>
+to copy the elements of <TT>D</TT> to the corresponding elements of <TT>A</TT>
+but leave
+the elements of <TT>A</TT> unchanged if there is no corresponding element of
+<TT>D</TT>
+(the <TT>=</TT> operator would set them to 0). This is useful, for example, for
+setting the diagonal elements of a matrix without disturbing the rest of
+the matrix. Unlike <TT>=</TT> and <TT>&lt;&lt;</TT>, Inject does not reset
+the dimensions of
+<TT>A</TT>,
+which must match those of <TT>D</TT>. Inject does not test for no loss of
+information.
+<P>
+You cannot replace <TT>D</TT> by a matrix expression. The effect of
+<TT>Inject(D)</TT>
+depends on the type of <TT>D</TT>. If <TT>D</TT> is an expression it might
+not be obvious
+to the user what type it would have. So I thought it best to disallow
+expressions.
+<P>
+Inject can be used for loading values from a regular matrix into a band
+matrix. (Don't forget to zero any elements of the left hand side that
+will not be set by the loading operation).
+<P>
+Both <TT>&lt;&lt;</TT> and Inject can be used with submatrix expressions
+on the left
+hand side. See the section on <A HREF="submat.htm">submatrices</A>.
+<P>
+To set the elements of a matrix to a scalar use operator <TT>=</TT>
+<PRE>
+    Real r; int m,n;
+    ......
+    Matrix A(m,n); A = r;
+</PRE>
+<P>
+<A HREF="entering.htm">  next</A> - 
+<A HREF="entering.htm">  skip</A> - 
+<A HREF="refer.htm">  up</A> - 
+<A HREF="index.htm">  start</A><P>
+</BODY>
+</HTML>
+

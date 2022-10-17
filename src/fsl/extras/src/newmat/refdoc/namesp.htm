@@ -1,0 +1,45 @@
+<HTML>
+<HEAD><TITLE>Newmat10 - namespace</TITLE></HEAD>
+<BODY bgcolor="#FFFFFF">
+<H2><font color="#FF0000">Namespace</H2></font>
+<A HREF="error.htm">  next</A> - 
+<A HREF="error.htm">  skip</A> - 
+<A HREF="refer.htm">  up</A> - 
+<A HREF="index.htm">  start</A><P>
+
+<I>Namespace</I> is a new facility in C++. Its purpose is to avoid name clashes
+between different libraries. I have included the namespace capability.
+Activate the line <TT>#define use_namespace</TT> in <TT>include.h</TT>. Then
+include either the statement
+<PRE>
+   using namespace NEWMAT;
+</PRE>
+at the beginning of any file that needs to access the newmat library or 
+<PRE>
+   using namespace RBD_LIBRARIES;
+</PRE>
+at the beginning of any file that needs to access all my libraries. 
+<P>
+This works correctly with <A HREF="borland.htm">Borland</A> C++ version 5.
+<P>
+<A HREF="microso.htm">Microsoft</A> Visual C++ version 5 works in my example and test
+files, but fails with apparently insignificant changes (it may be more reliable if you have
+applied service pack 3). If you #include "newmatap.h",
+but no other newmat include file, then also #include "newmatio.h".
+<P>
+My use of namespace does not work with <A HREF="gcc.htm">Gnu g++</A> version 2.7.2.
+<P>
+I have defined the following namespaces:
+<UL>
+<LI> RBD_COMMON for functions and classes used by most of my libraries
+<LI> NEWMAT for the newmat library
+<LI> RBD_LIBRARIES for all my libraries
+</UL>
+<P>
+<A HREF="error.htm">  next</A> - 
+<A HREF="error.htm">  skip</A> - 
+<A HREF="refer.htm">  up</A> - 
+<A HREF="index.htm">  start</A><P>
+</BODY>
+</HTML>
+

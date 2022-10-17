@@ -1,0 +1,78 @@
+<HTML><TITLE>FDT - FMRIB's Diffusion Toolbox - User Guide</TITLE><BODY BACKGROUND="fdt_images/fsl-bg.jpg">
+
+<hr><TABLE BORDER=0 WIDTH="100%"><TR><TD ALIGN=CENTER><td align="center">
+
+<h1>FDT - FMRIB's Diffusion Toolbox</h1>
+
+User Guide - FDT version 1.0 
+
+
+<center>
+<form target="dynamic">
+  <p><select name="section" size="1" language="javascript" target="dynamic" onChange="gotoPage(this.selectedIndex);">
+  <option selected>----------Select Module-----------</option>
+  <option>Introduction</option>
+  <option>Processing pipeline</option>
+  <option>Eddy current correction</option>
+  <option>DTIFit</option>
+  <option>Bedpost</option>
+  <option>Parallelising Bedpost</option>
+  <option>Registration</option>
+  <option>Probtrack</option>
+  <option>Proj_thresh</option>
+  <option>find_the_biggest</option>
+  <option>Displaying DW images in fslview </option>
+  <option>Overview of FDT theory </option>
+  </select></p>
+</form>
+</center>
+<script language="JavaScript">
+<!--
+function gotoPage(varItem)
+{
+  switch(varItem)
+  {
+    case 1:
+      window.top.dynamic.location="fdt_intro.html";
+      break;
+    case 2:
+      window.top.dynamic.location="fdt_pipeline.html";
+      break;
+    case 3:
+      window.top.dynamic.location="fdt_eddy.html";
+      break;
+    case 4:
+      window.top.dynamic.location="fdt_dtifit.html";
+      break;
+    case 5:
+      window.top.dynamic.location="fdt_bedpost.html";
+      break
+    case 6:
+      window.top.dynamic.location="fdt_bedpost_parallel.html";
+      break;
+    case 7:
+      window.top.dynamic.location="fdt_reg.html";
+      break;
+    case 8:
+      window.top.dynamic.location="fdt_probtrack.html";
+      break;
+    case 9:
+      window.top.dynamic.location="fdt_thresh.html";
+      break;
+    case 10:
+      window.top.dynamic.location="fdt_biggest.html";
+      break;
+    case 11:
+      window.top.dynamic.location="fdt_display.html";
+      break;
+    case 12:
+      window.top.dynamic.location="http://www.fmrib.ox.ac.uk/analysis/techrep/tr03tb1/tr03tb1/";
+      break;
+  }
+}
+// -->
+</script>
+
+<TD ALIGN=RIGHT><a href="../index.html" target="_top"><IMG BORDER=0 SRC="fdt_images/fsl-logo.jpg"></a>
+
+</TR></TABLE><hr></BODY></HTML>

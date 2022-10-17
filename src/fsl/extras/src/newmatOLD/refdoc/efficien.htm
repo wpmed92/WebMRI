@@ -1,0 +1,23 @@
+<HTML>
+<HEAD><TITLE>Newmat10 - efficiency</TITLE></HEAD>
+<BODY bgcolor="#FFFFFF">
+<H2><font color="#FF0000">Efficiency</H2></font>
+<A HREF="output.htm">  next</A> - 
+<A HREF="output.htm">  skip</A> - 
+<A HREF="refer.htm">  up</A> - 
+<A HREF="index.htm">  start</A><P>
+
+The package tends to be not very efficient for dealing with matrices
+with short rows. This is because some administration is required for
+accessing rows for a variety of types of matrices. To reduce the
+administration a special multiply routine is used for rectangular
+matrices in place of the generic one. Where operations can be done
+without reference to the individual rows (such as adding matrices of the
+same type) appropriate routines are used.
+<P>
+When you are using small matrices (say smaller than 10 x 10) you may
+find it faster to use rectangular matrices rather than the
+triangular or symmetric ones.
+</BODY>
+</HTML>
+
