@@ -1,15 +1,16 @@
-gd.o: gd.c /Users/ahmedharmouche/Documents/fsl/extras/include/zlib/zlib.h \
-  /Users/ahmedharmouche/Documents/fsl/extras/include/zlib/zconf.h gd.h \
-  gd_io.h gdhelpers.h
+gd.o: gd.c \
+  /Users/ahmedharmouche/Documents/fsljs/src/fsl/extras/include/zlib/zlib.h \
+  /Users/ahmedharmouche/Documents/fsljs/src/fsl/extras/include/zlib/zconf.h \
+  gd.h gd_io.h gdhelpers.h
 gd2copypal.o: gd2copypal.c gd.h gd_io.h
 gd2time.o: gd2time.c gd.h gd_io.h
 gd2topng.o: gd2topng.c gd.h gd_io.h
 gd_arc_f_buggy.o: gd_arc_f_buggy.c
 gd_gd.o: gd_gd.c gd.h gd_io.h
 gd_gd2.o: gd_gd2.c \
-  /Users/ahmedharmouche/Documents/fsl/extras/include/zlib/zlib.h \
-  /Users/ahmedharmouche/Documents/fsl/extras/include/zlib/zconf.h gd.h \
-  gd_io.h gdhelpers.h
+  /Users/ahmedharmouche/Documents/fsljs/src/fsl/extras/include/zlib/zlib.h \
+  /Users/ahmedharmouche/Documents/fsljs/src/fsl/extras/include/zlib/zconf.h \
+  gd.h gd_io.h gdhelpers.h
 gd_io.o: gd_io.c gd.h gd_io.h
 gd_io_dp.o: gd_io_dp.c gd.h gd_io.h gdhelpers.h
 gd_io_file.o: gd_io_file.c gd.h gd_io.h gdhelpers.h
