@@ -1,9 +1,9 @@
 # FSL.js
 
-FSL.js is an asm.js port (using [Emscripten](https://emscripten.org)) of [BET](https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/BET) (Brain Extraction Tool) and [FLIRT](https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/FLIRT) (FMRIB's Linear Registration Tool) of [FSL](https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/FSL) (FMRIB Software Library).
+FSL.js is a WebAssembly port (using [Emscripten](https://emscripten.org)) of [BET](https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/BET) (Brain Extraction Tool) and [FLIRT](https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/FLIRT) (FMRIB's Linear Registration Tool) of [FSL](https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/FSL) (FMRIB Software Library).
 The port is based on FSL version [3.3.11](https://fsl.fmrib.ox.ac.uk/fsldownloads/oldversions/fsl-3.3.11-sources.tar.gz)
 
-Try it out [here](https://wpmed92.github.io/fsljs)!
+Try it out [here](https://wpmed92.github.io/fsljs/src/app)!
 
 ## Background
 
@@ -12,6 +12,11 @@ The popularity of FSL in the neuroimaging community and my curiousity in bringin
 Besides porting the tools I built a small volume viewer on top of [BrainBrowser](https://brainbrowser.cbrain.mcgill.ca), and integrated bet.js and flirt.js into this viewer.
 
 ## Project overview
+
+The projects consists of `app` and `fsl`. The `app` folder contains the code of the application based on BrainBrowser. It integrates `bet2.wasm` and `flirt.wasm`.
+The `fsl` folder contains the FSL 3.3.11 codebase modified so that it builds with Emscripten.
+
+The directory structure of `app` is as follows:
 
 */color-maps:* contains the color maps used by BrainBrowser to render volumes
 
