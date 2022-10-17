@@ -1,11 +1,12 @@
 .vscode
-.DS_Store
+**/*.DS_Store
 *.o
-*.a
+**/*.a
 /build/*
-build.log
+src/fsl/build.log
 *
 !/**/
 !*.*
 !build
+!Makefile
 *.nii

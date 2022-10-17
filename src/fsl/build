@@ -4,6 +4,8 @@ BET2_WASM_OUT=src/bet2/bet2.wasm
 BET2_JS_OUT=src/bet2/bet2.js
 FLIRT_WASM_OUT=src/flirt/flirt.wasm
 FLIRT_JS_OUT=src/flirt/flirt.js
+BET2_HTML_OUT=src/bet2/bet2.html
+FLIRT_HTML_OUT=src/flirt/flirt.html
 WASM_BIN_DIR=emscripten/
 FLIRT_JS_UNWRAPPED_BIN=emscripten/flirt_unwrapped.js
 BET2_JS_UNWRAPPED_BIN=emscripten/bet2_unwrapped.js
@@ -27,6 +29,7 @@ if test -f "$BET2_WASM_OUT"; then
   mv $BET2_JS_OUT $BET2_JS_UNWRAPPED_BIN
   cat $PRE_JS $BET2_JS_UNWRAPPED_BIN $POST_JS > $BET2_JS_BIN
   rm $BET2_JS_UNWRAPPED_BIN
+  rm $BET2_HTML_OUT
   echo "bet2 successfully ported to WASM"
 else 
   echo "bet2 failed to compile to WASM. See build.log for more details."  
@@ -37,6 +40,7 @@ if test -f "$FLIRT_WASM_OUT"; then
   mv $FLIRT_JS_OUT $FLIRT_JS_UNWRAPPED_BIN
   cat $PRE_JS $FLIRT_JS_UNWRAPPED_BIN $POST_JS > $FLIRT_JS_BIN
   rm $FLIRT_JS_UNWRAPPED_BIN
+  rm $FLIRT_HTML_OUT
   echo "flirt successfully ported to WASM"
 else 
   echo "flirt failed to compile to WASM. See build.log for more details."  
