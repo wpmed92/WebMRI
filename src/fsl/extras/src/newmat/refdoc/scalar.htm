@@ -1,0 +1,99 @@
+<HTML>
+<HEAD><TITLE>Newmat10 - scalar functions of a matrix</TITLE></HEAD>
+<BODY bgcolor="#FFFFFF">
+<H2><font color="#FF0000">Scalar functions of a matrix</H2></font>
+<A HREF="submat.htm">  next</A> - 
+<A HREF="submat.htm">  skip</A> - 
+<A HREF="refer.htm">  up</A> - 
+<A HREF="index.htm">  start</A><P>
+
+<PRE>
+    int i, j;
+    int m = A.Nrows();                     // number of rows
+    int n = A.Ncols();                     // number of columns
+    Real r = A.AsScalar();                 // value of 1x1 matrix
+    Real ssq = A.SumSquare();              // sum of squares of elements
+    Real sav = A.SumAbsoluteValue();       // sum of absolute values
+    Real s = A.Sum();                      // sum of values
+    Real mv = A.MaximumAbsoluteValue();    // maximum of absolute values
+    Real mv = A.MinimumAbsoluteValue();    // minimum of absolute values
+    Real mv = A.Maximum();                 // maximum value
+    Real mv = A.Minimum();                 // minimum value
+    Real mv = A.MaximumAbsoluteValue1(i);  // maximum of absolute values
+    Real mv = A.MinimumAbsoluteValue1(i);  // minimum of absolute values
+    Real mv = A.Maximum1(i);               // maximum value
+    Real mv = A.Minimum1(i);               // minimum value
+    Real mv = A.MaximumAbsoluteValue2(i,j);// maximum of absolute values
+    Real mv = A.MinimumAbsoluteValue2(i,j);// minimum of absolute values
+    Real mv = A.Maximum2(i,j);             // maximum value
+    Real mv = A.Minimum2(i,j);             // minimum value
+    Real norm = A.Norm1();                 // maximum of sum of absolute
+                                              values of elements of a column
+    Real norm = A.NormInfinity();          // maximum of sum of absolute
+                                              values of elements of a row
+    Real t = A.Trace();                    // trace
+    Real d = A.Determinant();              // determinant
+    LogAndSign ld = A.LogDeterminant();    // log of determinant
+    bool z = A.IsZero();                   // test all elements zero
+    MatrixType mt = A.Type();              // type of matrix
+    Real* s = Store();                     // pointer to array of elements
+    int l = Storage();                     // length of array of elements
+    bool s = A.IsSingular();               // A is a CroutMatrix or
+                                              BandLUMatrix
+    MatrixBandWidth mbw = A.BandWidth();   // upper and lower bandwidths
+</PRE>
+<P>
+The functions <TT>A.MaximumAbsoluteValue()</TT>, <TT>A.MinimumAbsoluteValue()</TT>,
+<TT>A.Maximum()</TT> and <TT>A.Minimum()</TT> throw an exception if <TT>A</TT>
+has no rows or no columns. The versions <TT>A.MaximumAbsoluteValue1(i)</TT>, etc
+return the location of the extreme element in a RowVector, ColumnVector or
+DiagonalMatrix. The versions <TT>A.MaximumAbsoluteValue2(i,j)</TT>, etc return
+the row and column numbers of the extreme element. These versions also
+throw an exception if <TT>A</TT> has no rows or no columns.
+If the extreme value occurs more than once the location of the last one is given. 
+<P>
+<TT>A.LogDeterminant()</TT> returns a value of type LogAndSign.
+If ld is of type LogAndSign  use
+<PRE>
+    ld.Value()    to get the value of the determinant
+    ld.Sign()     to get the sign of the determinant (values 1, 0, -1)
+    ld.LogValue() to get the log of the absolute value.
+</PRE>
+Note that the direct use of the function <TT>Determinant()</TT> will often
+cause a floating point overflow exception.
+<P>
+<TT>A.IsZero()</TT> returns Boolean value <TT>true</TT>
+if the matrix <TT>A</TT>
+has all elements equal to 0.0.
+<P>
+<TT>IsSingular</TT> is defined only for CroutMatrix and BandLUMatrix. It returns
+<TT>true</TT> if one of the diagonal elements of the LU decomposition is
+exactly zero.  
+<P>
+<TT>MatrixType mt = A.Type()</TT> returns the type of a matrix.
+Use <TT>(char*)mt</TT> to
+get a string  (UT, LT, Rect, Sym, Diag, Band, UB, LB, Crout, BndLU)
+showing the type
+(Vector types are returned as Rect).
+<P>
+<TT>MatrixBandWidth</TT> has member functions <TT>Upper()</TT> and
+<TT>Lower()</TT> for finding the upper and lower bandwidths (number of diagonals
+above and below the diagonal, both zero for a diagonal matrix). For non-band
+matrices -1 is returned for both these values.
+<P>
+The versions
+Sum(A), SumSquare(A), SumAbsoluteValue(A), MaximumAbsoluteValue(A),
+MinimumAbsoluteValue(A), Maximum(A), Minimum(A), Trace(A),
+LogDeterminant(A), Determinant(A), Norm1(A), NormInfinity(A)
+can be used in place of
+A.Sum(), A.SumSquare(), A.SumAbsoluteValue(), A.MaximumAbsoluteValue(),
+A.MinimumAbsoluteValue(), A.Maximum(), A.Minimum(),
+A.Trace(), A.LogDeterminant(), A.Norm1(), A.NormInfinity().
+<P>
+<A HREF="submat.htm">  next</A> - 
+<A HREF="submat.htm">  skip</A> - 
+<A HREF="refer.htm">  up</A> - 
+<A HREF="index.htm">  start</A><P>
+</BODY>
+</HTML>
+

@@ -1,0 +1,50 @@
+<HTML>
+<HEAD><TITLE>Newmat10 - example</TITLE></HEAD>
+<BODY bgcolor="#FFFFFF">
+<H2><font color="#FF0000">Example</H2></font>
+<A HREF="testing.htm">  next</A> - 
+<A HREF="testing.htm">  skip</A> - 
+<A HREF="starting.htm">  up</A> - 
+<A HREF="index.htm">  start</A><P>
+
+An example is given in <TT>example.cpp</TT>.  This gives a simple linear
+regression example using five different algorithms. The correct output
+is given in <TT>example.txt</TT>. The program carries out a rough check
+that no memory
+is left allocated on the heap when it terminates. See
+the section on <A HREF="testing.htm">testing</A> for a
+comment on the reliability of this check and the use of the DO_FREE_CHECK
+option.
+<P>
+I include a variety of make files. To compile the example use a command like
+<PRE>
+   gmake example -f gnu.mak               (Gnu G++)
+   gmake example -f cc.mak                (AT&amp;T, HPUX, Sun)
+   nmake example.exe -f ms_nt.mak         (Microsoft Visual C++ 2.0)
+   nmake example.exe -f ms.mak            (Microsoft Visual C++ 1.51)
+   make -f bc.mak example.exe             (Borland C++ 4.5, 5)
+   make -f bc32.mak example.exe           (Borland C++ 4.5, 5, 32 bit)
+   wmake example.exe -f watcom.mak        (Watcom C++ 10A)
+   wmake example.exe -f watco_nt.mak      (Watcom C++ 10A, for win NT)
+</PRE>
+To compile all the example and test files use a command like
+<PRE>
+   gmake -f gnu.mak                       (Gnu G++)
+</PRE>
+
+<HR>
+<B>The example uses io manipulators. It will not work with a compiler that
+does not support the standard io manipulators.</B>
+<HR>
+<P>
+Other example files are <TT>nl_ex.cpp</TT> and <TT>garch.cpp</TT> for demonstrating
+the non-linear fitting routines, <TT>sl_ex</TT> for demonstrating the solve
+function and <TT>test_exc</TT> for demonstrating the exceptions.
+<P>
+<A HREF="testing.htm">  next</A> - 
+<A HREF="testing.htm">  skip</A> - 
+<A HREF="starting.htm">  up</A> - 
+<A HREF="index.htm">  start</A><P>
+</BODY>
+</HTML>
+

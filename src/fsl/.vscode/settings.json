@@ -1,0 +1,10 @@
+{
+    "files.associations": {
+        "fstream": "cpp",
+        "iostream": "cpp",
+        "cmath": "cpp",
+        "chrono": "cpp",
+        "stdio.h": "c",
+        "zutil.h": "c"
+    }
+}

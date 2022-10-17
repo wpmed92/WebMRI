@@ -1,0 +1,45 @@
+<HTML>
+<HEAD><TITLE>Newmat10 - entering values</TITLE></HEAD>
+<BODY bgcolor="#FFFFFF">
+<H2><font color="#FF0000">Entering values</H2></font>
+<A HREF="unary.htm">  next</A> - 
+<A HREF="unary.htm">  skip</A> - 
+<A HREF="refer.htm">  up</A> - 
+<A HREF="index.htm">  start</A><P>
+
+You can load the elements of a matrix from an array:
+<PRE>
+    Matrix A(3,2);
+    Real a[] = { 11,12,21,22,31,33 };
+    A &lt;&lt; a;
+</PRE>
+This construction does not check that the numbers of elements match
+correctly. This version of <TT>&lt;&lt;</TT> can be used with
+submatrices on the left hand side. It is not defined for band matrices.
+<P>
+Alternatively you can enter short lists using a sequence of numbers
+separated by <TT>&lt;&lt;</TT> .
+<PRE>
+    Matrix A(3,2);
+    A &lt;&lt; 11 &lt;&lt; 12
+      &lt;&lt; 21 &lt;&lt; 22
+      &lt;&lt; 31 &lt;&lt; 32;
+</PRE>
+This does check for the correct total number of entries, although the
+message for there being insufficient numbers in the list may be delayed
+until the end of the block or the next use of this construction. This
+does not work for band matrices or submatrices, or for long lists. Also
+try to restrict its use to numbers. You can include expressions, but
+these must not call a function which includes the same construction.
+<P>
+Remember that matrices are stored by rows and that
+symmetric matrices are stored as lower triangular matrices
+when using these methods to enter data. 
+<P>
+<A HREF="unary.htm">  next</A> - 
+<A HREF="unary.htm">  skip</A> - 
+<A HREF="refer.htm">  up</A> - 
+<A HREF="index.htm">  start</A><P>
+</BODY>
+</HTML>
+

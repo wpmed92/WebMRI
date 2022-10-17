@@ -1,0 +1,136 @@
+<HTML><HEAD><TITLE>FSL</TITLE></HEAD><BODY BACKGROUND="../images/fsl-bg.jpg" BGCOLOR="white">
+
+<H3>Windows XP</H3>
+
+<p>We recommend having at least 1GB RAM and not using older Windows
+operating systems than XP. We suggest that you run the FEEDS
+evaluation suite before starting to do your own analyses.
+
+<p>One option for running FSL under Windows is to install Linux inside
+an emulator - for example, <a href="http://www.vmware.com/"
+target="_top">VMware</a> works really well, and allows you to run
+Linux inside Windows; you can then install and run a linux version of
+FSL inside the Linux. Or you could setup your windows computer as
+dual-boot, with both Windows and Linux installed, and boot into Linux
+for your data analysis.
+ 
+<p>Alternatively, FSL can run natively under Windows XP once you have
+installed a free package called Cygwin, which is a unix-like
+environment running inside Windows. Programs that run under Cygwin are
+real native Windows programs but typically run within the unix-like
+directory structure that lives in C:\cygwin, which is accessible to
+all Windows programs. Please note that we cannot offer any support
+relating to the installation or running of Cygwin!
+
+<p>Cygwin is (normally) extremely easy to install, but unfortunately
+the latest Cygwin distribution is broken at present - it doesn't work
+correctly with the latest TCL/TK/Tix, which FSL uses for the
+GUIs. Therefore it is necessary, if you don't already have Cygwin
+installed, to install a slightly older version of Cygwin. The
+following steps are pretty easy - hopefully Cygwin will get fixed soon
+and we can revert to the easier default Cygwin installation!
+
+<UL>
+
+<LI>Download the <a
+href="http://inst.eecs.berkeley.edu/~instcd/iso//cygwin-cd-release-20051220.iso"
+target="_window">disk image (basically a single-file copy of the
+original install CD) of the December 2005 build of Cygwin</a> - save
+it to your Windows desktop</a>.
+
+<LI>Annnoyingly, Windows can't read disk images, so you will now need
+a third-party program in order to be able to mount the Cygwin disk
+image as if it were a mounted CD. We've tried the following freeware
+and it seems to work ok and is pretty easy. Go to <a
+href="http://www.daemon-tools.cc/dtcc/" target="_window">Daemon
+Tools</a>, click on "Downloads" then "Daemon Tools" then the "DAEMON
+Tools 4.0 X86" link - run this setup script. After it reboots windows,
+the installation program asks you to click "Run" so it can finish the
+installation. If you accept all the defaults it should start the
+Daemon and a new icon appears in the bottom-right icon tray.
+
+<LI>Right-click on the red Daemon icon in the tray, go to "Virtual
+CD/DVD-ROM -> Device 0: -> Mount image" and then select the Cygwin
+file from your Desktop. Now if you go to "Start -> My Computer" you
+should see the Cygwin file mounted as if it's a DVD drive. Open it and
+then click on the black+green Setup icon to start the Cygwin setup.
+
+<LI>Press "Next" then "Install from Local Directory". Accept the
+various following questions until it brings up the "Select Packages"
+list.
+
+<LI>Once the list of packages appears, next to "All" there is the word
+"Default". Click <i>once</i> on the word "Default" and
+<i>wait</i>....it may take several minutes to change all the "Default"
+settings to "Install". This then means that you get all packages, and
+not just the default ones. Then press "Next" twice and wait whilst all
+of Cygwin installs....this may take an hour or more.
+
+<LI>You probably now want to uninstall the Daemon Tools.
+
+</UL>
+
+<!-- <UL> -->
+
+<!-- <LI>Go to the <a href="http://www.cygwin.com/" target="_window">Cygwin website</a>. -->
+
+<!-- <LI>Click on the "Install Cygwin now" button in the top right. Accept -->
+<!-- all default options as they appear. -->
+
+<!-- <LI>Press "Run from current location". -->
+
+<!-- <LI>Press "Install from internet". -->
+
+<!-- <LI>Choose a download site. -->
+
+<!-- <LI>Once the list of packages appears, next to "All" there is the word -->
+<!-- "Default". Click <i>once</i> on the word "Default" and -->
+<!-- <i>wait</i>....it may take several minutes to change all the "Default" -->
+<!-- settings to "Install". This then means that you get all packages, and -->
+<!-- not just the default ones. Then press "Next" and wait whilst all of -->
+<!-- Cygwin installs....this may take an hour or more. -->
+
+<!-- <LI>The install process probably put a temporary ftp directory of all -->
+<!-- the installed stuff onto your desktop - you can delete that now. -->
+
+<!-- </UL> -->
+
+
+
+
+
+You now have Cygwin installed and should have a Cygwin icon on the
+desktop which opens a unix-like shell where you can type commands. You
+are now ready to install FSL:
+
+<UL>
+
+<LI>Assuming that you have downloaded the FSL distribution file onto
+your desktop, use a Windows file browser to move this file into
+C:\cygwin\usr\local
+
+<LI>In the Cygwin terminal:<UL>
+
+<LI>cd /usr/local
+
+<LI>tar xvfz fsl-*.tar.gz  (<b>don't</b> use WinZip to do this
+unpacking - it can corrupt the files!)
+
+<LI>echo 'export FSLDIR=/usr/local/fsl; . ${FSLDIR}/etc/fslconf/fsl.sh; export PATH=${FSLDIR}/bin:$PATH' >> ~/.bash_profile
+
+</UL>
+(make sure you type that <b>EXACTLY</b> including the "." and the spacing!!)
+
+<LI>Now close the terminal. Again using a Windows file browser, move
+file C:\cygwin\usr\local\fsl\FSL.lnk onto your Desktop - this should
+give you a new icon which starts the FSL GUI.
+
+</UL>
+
+<p>To customise FSL for particular ouput datatypes etc., see the
+page on <a href="customising.html">Customising FSL</a>.
+
+
+
+
+</BODY></HTML>

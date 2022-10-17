@@ -1,0 +1,58 @@
+<HTML>
+<HEAD><TITLE>Newmat10 - Microsoft</TITLE></HEAD>
+<BODY bgcolor="#FFFFFF">
+<H2><font color="#FF0000">Microsoft</H2></font>
+<A HREF="sun.htm">  next</A> - 
+<A HREF="sun.htm">  skip</A> - 
+<A HREF="compiler.htm">  up</A> - 
+<A HREF="index.htm">  start</A><P>
+
+Microsoft Visual C++ 2.0: Seems to work OK. You can use the makefile
+<TT>ms_nt.mak</TT>.
+<P>
+You must <TT>#define
+TEMPS_DESTROYED_QUICKLY</TT> owing to a bug in version 7 (at least) of MSC.
+There are some notes in the file <TT>include.h</TT> on changes to run under
+version 7. I haven't tried newmat10 on version 7.
+<P>
+Microsoft Visual C++ 1.51. Disable exceptions, comment out the line in
+include.h <TT>#define TEMPS_DESTROYED_QUICKLY_R</TT>. In <TT>tmt.cpp</TT>,
+comment out the <TT>Try</TT> and <TT>CatchAll</TT> lines at the beginning
+of <TT>main()</TT> and the line <TT>trymati()</TT>. You can use the makefile
+<TT>ms.mak</TT>. You will probably need to break the
+<A HREF="testing.htm">tmt</A> test files into two parts to get the program
+to link.
+<P>
+If you can, upgrade to windows 95, 98 or window NT and use the 32 bit console
+model.
+<P>
+If you are using the 16 bit large model, don't forget to keep all matrices
+less than 64K bytes in length (90x90 for a rectangular matrix if you are
+using <TT>double</TT> as your element type). Otherwise your program will
+crash without warning or explanation.
+You may need to break the <A HREF="testing.htm">tmt</A> set of test
+files into two parts to get the program to fit into your computer. 
+<P>
+Microsoft Visual C++ 4: I haven't tried this - a correspondent reports:
+I use Microsoft Visual C++ Version 4. there is only one minor problem.
+In all files you must include
+<TT>#include "stdafx.h"</TT> (presumably if you are using MFC).
+This file contains essential information for VC++. Leave it out and
+you get <I>Unexpected end of file</I>.
+<P>
+Microsoft Visual C++ 5: I have tried this in console mode and it seems to work
+satisfactorily. There may be a problem with <A HREF="namesp.htm">namespace</A>
+(fixed by Service Pack 3?).
+<B>Turn optimisation off</B>. Edit <TT>include.h</TT> to use the
+compiler supported exceptions. If you want to work under MFC
+<TT>#include "stdafx.h"</TT> at the beginning of each .cpp file.
+<P>
+Microsoft Visual C++ 6: Get the latest service pack. I have tried this in
+console mode and it seems to work
+satisfactorily. Edit <TT>include.h</TT> to use the
+compiler supported exceptions. If you want to work under MFC
+<TT>#include "stdafx.h"</TT> at the beginning of each .cpp file.
+
+</BODY>
+</HTML>
+

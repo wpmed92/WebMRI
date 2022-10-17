@@ -1,0 +1,146 @@
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
+<class>ModeToolbarBase</class>
+<widget class="QWidget">
+    <property name="name">
+        <cstring>ModeToolbarBase</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>124</width>
+            <height>34</height>
+        </rect>
+    </property>
+    <property name="caption">
+        <string>Form1</string>
+    </property>
+    <hbox>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+        <widget class="QButtonGroup">
+            <property name="name">
+                <cstring>buttonGroup3</cstring>
+            </property>
+            <property name="sizePolicy">
+                <sizepolicy>
+                    <hsizetype>1</hsizetype>
+                    <vsizetype>1</vsizetype>
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                </sizepolicy>
+            </property>
+            <property name="frameShape">
+                <enum>NoFrame</enum>
+            </property>
+            <property name="title">
+                <string></string>
+            </property>
+            <property name="alignment">
+                <set>AlignVCenter</set>
+            </property>
+            <hbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <property name="margin">
+                    <number>1</number>
+                </property>
+                <property name="spacing">
+                    <number>1</number>
+                </property>
+                <widget class="QToolButton">
+                    <property name="name">
+                        <cstring>m_movieModeButton</cstring>
+                    </property>
+                    <property name="enabled">
+                        <bool>false</bool>
+                    </property>
+                    <property name="acceptDrops">
+                        <bool>false</bool>
+                    </property>
+                    <property name="text">
+                        <string></string>
+                    </property>
+                    <property name="toggleButton">
+                        <bool>true</bool>
+                    </property>
+                    <property name="iconSet">
+                        <iconset>image0</iconset>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>Movie Mode&lt;hr&gt;Cycles through volumes in multi-volume images.</string>
+                    </property>
+                </widget>
+                <widget class="QToolButton">
+                    <property name="name">
+                        <cstring>m_sliceRollButton</cstring>
+                    </property>
+                    <property name="enabled">
+                        <bool>false</bool>
+                    </property>
+                    <property name="text">
+                        <string></string>
+                    </property>
+                    <property name="toggleButton">
+                        <bool>true</bool>
+                    </property>
+                    <property name="iconSet">
+                        <iconset>image1</iconset>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>Slice-roll Mode&lt;hr&gt;Cycles through slice in multi-slice images.</string>
+                    </property>
+                </widget>
+                <widget class="QToolButton">
+                    <property name="name">
+                        <cstring>m_switchViewsButton</cstring>
+                    </property>
+                    <property name="enabled">
+                        <bool>false</bool>
+                    </property>
+                    <property name="text">
+                        <string></string>
+                    </property>
+                    <property name="iconSet">
+                        <iconset>image2</iconset>
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>Switch View&lt;hr&gt;Changes between sagital, coronal and axial views.</string>
+                    </property>
+                </widget>
+            </hbox>
+        </widget>
+        <spacer>
+            <property name="name">
+                <cstring>spacer5</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Horizontal</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Expanding</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>1</width>
+                    <height>20</height>
+                </size>
+            </property>
+        </spacer>
+    </hbox>
+</widget>
+<images>
+    <image name="image0">
+        <data format="PNG" length="602">89504e470d0a1a0a0000000d49484452000000140000001408060000008d891d0d0000022149444154789c8d94cf6a1a5118c57f5375da180329a509a441c8ce8dd465366db3f109ca2ce26b14826f50114aa1d03728924d5fa0ee52dc9ac04048938c1d2477b0a2e3f8673a23894e178e218e933a07eee69ef3fd38173e2e2c2b06488aa2c43dcf0b3d8aa2c401c9cf2e281e02dc065c6023c4c3b66d69329978c010780618ab805b40177815345cd7959acda6ecbaee04f80dbc880a7cee87ef757b7b2be9babea669dabae3382366cf4d04871f7bf209f0fae1a5a669c9ababab0d5dd753b66db7fdccdb28c01de0d0b2acedb3b333000cc378aa695a4a08916cb55ac94ea7b30e1c025e70580a017e027e028510efa12ac01be0c3aa86db403a9bcdee140ae1cc4aa582aaaa693fbba0c780fb994c66b7582c2e99fd7e5faad56aa8aaba0fbc8c02dc023e034ad0188d469c9f9fd3ebf500be011fa30063c097a037180c383d3da55eafd3ed76f1336e70f8490810e06bb0d91c56afd7b12c6b29f3bf862360efe2e262502a9500304d9366b3891002c330e6c03d3fbba0b0b5f90edc10b2b4019d00bbc0fb550d05709ccfe7d3e572399474747444b55a3d66b6dc0b0a03eac0c1e6e6e6af5c2eb7604ca753a9d56ac9894462021cf8d995c01b4005de0560b4db6df9f2f232351e8f6de007908d021480ccec7bba57a7d3895f5f5f278510c9bbbbbbbe9f11511b3ac0dff985699ab146a3210b2164d33465cff386c01f602d6a4309e8cd2f2ccb62381c4a8ee348e3f158f23c6fcaeca73183c3ff005daa0110ce9069020000000049454e44ae426082</data>
+    </image>
+    <image name="image1">
+        <data format="PNG" length="751">89504e470d0a1a0a0000000d49484452000000140000001408060000008d891d0d000002b649444154789cd5944f68545714c67ff7cd7bf3cc64de1b6932328aaf5802832b21108650902c5ce85a2512ec4a864218c8a25bdb65376e240bc936a194d495429a802e5a922eba10836610b1755226cc60fac768de30f39279f78f8b8c438c1329d84dbfcdbd1ccef9ce77ceb9e7c2ff1e2f3299ee7dca75c57f42f6dcf7bdeffbfbfbb39695b8f131a4f1d1a302a0eafb5f3ef6bc71c03f2e84fb512a7ff3bcb335dfdfacf87ef91bd7bd089c005ca0a7d2c487c82abe7f3a25c43d5b8863ae10c702cbfa7c0b9e3d51ea1f6007500763ac0f113a5adf898d11b13132d25abac6644bb6fd2d1000477ac50b00a594bfbebe2e2a958ad05a0350afd713bfdcbe9dfd6163e3d39feaf55bcfb556d75cf741d671ea5e26f3309fcfaf2d2d2d558178626242cdcfcf77098552aaacb596ed76bb2da5b4df666bc7b18a5aad44a258ccc741a0b74aa5979ee7292f9d5609db0e878787bfa8d56a9ba3a3a3cd6c362b171616f6ca6e341a5f6d6f6fff6c0ec1d6952b26bc7efd3dfbeaeaea0a50003e191b1bb3df0e45acadad3d6ab55ab52008463ccf1b3cd897687616cbf3702f5c78c79ecbe582919191932b2b2b4fcbe57208c409c0249349bdb8b8f83a0cc33f0a85c2b9bebebebefd8171b94ce2d4299285c2bb0310420c0d0d7d96cbe5fce5e5e5dfa3286a003039394910044e3a9dce158bc5f1288a54b72ead8d0e43a39b4d63b4eed992dddddd9db9b9b939e04c37dbd4d4148003e44aa5d25529e5612ded0929a5042ef77aed0e30303d3d3d5ead56f3954a25f3359cff5b889d9bcde6b3c1c14169db761b301d7f6359964ea552ed999999fb872d7a12c802278181078e736b43a95797b4be0b6c022f01bdcfdf00127865bf47b58736f017d00052a1657db7010e5a3f01d6813fd95bbbfd820c200f2304883b595b3f5ad6ecaf5a0f005147e1eb030abbf8b77f9b05f477cea853414fbc014e4387842fe9b7f90000000049454e44ae426082</data>
+    </image>
+    <image name="image2">
+        <data format="PNG" length="837">89504e470d0a1a0a0000000d49484452000000140000001408060000008d891d0d0000030c49444154789c95945f68935718c67fdff9be347f5bd2d67e69aa16bd706957a7588582b3545bb0ea6417c2d015c6bcb1c2f44241dcc54058c728de4d878a171377e7245045188581a9082a3a29d44a48d5cd4d45d2a6b64968d324cd39bbf83eb54da38bcfddf9f3bee7799fe77d8f4ef9108003d03f20e69dd80f5c17422442a1d073b7db7d0df81a080286fd58d9d0809540b7ffa38df181b1b48cc56285fefefe5c5b5b5b5c0831049c02aaecbb65c101b4383ffd326d5e48a88bd18c524a2929a51a1c1ccc01d78126402ca1da6e0e7b59aa531e8867877fcf6763b70b3ffc394b2aa7d0348d7038ac010f8019402d8ada16781cda114c8f98ce5d1b6d560be10486f4551bf2cb7e49a8c8f39c4a26933210088c037b010f2c1653d3303e53c8469fa3f90ba0b204cbd3851751a972b3f25556128944543c1e1f031e01734b840abaf7367498a377817d582217a31238e5686ecf9c1ff8a3d0d5d53507f40126a50c595379a2a633f0d70da003a85870a4db6bdd0e3e0a3c014680edb61c14978c43f8250805c8d77bab7d47dcddc1e4bd0e337a49d73c263089e56a0238078c02b9d7f78d1265bdc1faea5fbdb5ceaddf4b95a94dcf8fa60a6ab60e1807d601a781fbc0040bdc3500ad33f074df83e9dea174fea1ac77ed01d036d55c6dae766efe693a77e7ef91a903df698829e0a5cd3e0cf8802496592c4c2814f39bd7555ff8762a777b4092757fe23fffb9bfa2adf351aaeff2d3999f6f01312005646d36192c5717f79d0d0df02f777fb57b4bddfdc8ce864cbec38c3ef31a4d4781569b49d92325ec5752cb3d3d29975e5f9d95e3c939f962b6b5e6524fa8eac71096bba2dca43aa075d53f3be4d283c7c7d27d572a1d1fafb835d17ed22996451b3c3d071bbdbdbb74cd135fed3bb2f265263c59ac594996ede6f03197be6287cf68d9b42df0f826561f56099cabd6facf1eefacffe761773095aaadd8ba0770bd2f9901a89be31bce008e46ef6e5dc398c1123d23c9fe3b3afdcd99d69adf923ea3e9b0536f68c49af1a56366a3581701d461e99ae06d83bbb13ed339ac3e9cffbfb28b9396fa81cb32e63ff49d06c56fd2adf10000000049454e44ae426082</data>
+    </image>
+</images>
+<layoutdefaults spacing="1" margin="1"/>
+</UI>

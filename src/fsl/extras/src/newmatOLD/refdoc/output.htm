@@ -1,0 +1,32 @@
+<HTML>
+<HEAD><TITLE>Newmat10 - output</TITLE></HEAD>
+<BODY bgcolor="#FFFFFF">
+<H2><font color="#FF0000">Output</H2></font>
+<A HREF="unspec.htm">  next</A> - 
+<A HREF="unspec.htm">  skip</A> - 
+<A HREF="refer.htm">  up</A> - 
+<A HREF="index.htm">  start</A><P>
+
+To print a matrix use an expression like
+<PRE>
+    Matrix A;
+    ......
+    cout &lt;&lt; setw(10) &lt;&lt; setprecision(5) &lt;&lt; A;
+</PRE>
+This will work only with systems that support the standard input/output
+routines including manipulators. You need to #include the file
+newmatio.h.
+<P>
+The present version of this routine is useful only for matrices small enough
+to fit within a page or screen width.
+<P>
+To print several vectors or matrices in columns use a
+<A HREF="binary.htm">concatenation operator</A>:
+<PRE>
+   ColumnVector A, B;
+   .....
+   cout &lt;&lt; setw(10) &lt;&lt; setprecision(5) &lt;&lt; (A | B);
+</PRE>
+</BODY>
+</HTML>
+

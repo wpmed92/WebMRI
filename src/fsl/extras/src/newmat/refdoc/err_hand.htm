@@ -1,0 +1,39 @@
+<HTML>
+<HEAD><TITLE>Newmat10 - error handling</TITLE></HEAD>
+<BODY bgcolor="#FFFFFF">
+<H2><font color="#FF0000">Error handling</H2></font>
+<A HREF="sparse.htm">  next</A> -
+<A HREF="sparse.htm">  skip</A> -
+<A HREF="design.htm">  up</A> -
+<A HREF="index.htm">  start</A>
+<P>
+The library now does have a moderately graceful exit from
+errors. One can use either the simulated exceptions or the
+compiler supported exceptions. When newmat08 was released
+(in 1995), compiler exception handling in the compilers I
+had access to was
+unreliable. I recommended you used my simulated exceptions.
+Now (in 1997) compiler supported exceptions do seem to work
+on a variety of compilers - but not all compilers.
+<P>
+The approach in the present library, attempting to simulate
+C++ exceptions, is not completely satisfactory, but seems a good
+interim solution for those who cannot use compiler supported
+exceptions. People who don't want exceptions in any shape
+or form, can set the option to exit the program if an exception
+is thrown.
+<P>
+The exception mechanism cannot clean-up objects explicitly
+created by new. This must be explicitly carried out by the
+package writer or the package user. I have not yet done this
+completely with
+the present package so occasionally a little garbage may be left
+behind after an exception. I don't think this is a big problem,
+but it is one that needs fixing.
+<P>
+<A HREF="sparse.htm">  next</A> -
+<A HREF="sparse.htm">  skip</A> -
+<A HREF="design.htm">  up</A> -
+<A HREF="index.htm">  start</A>
+<P>
+</BODY></HTML>

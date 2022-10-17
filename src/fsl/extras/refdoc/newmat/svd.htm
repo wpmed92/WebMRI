@@ -1,0 +1,45 @@
+<HTML>
+<HEAD><TITLE>Newmat10 - Singular value decomposition</TITLE></HEAD>
+<BODY bgcolor="#FFFFFF">
+<H2><font color="#FF0000">Singular value decomposition</H2></font>
+<A HREF="evalues.htm">  next</A> - 
+<A HREF="evalues.htm">  skip</A> - 
+<A HREF="refer.htm">  up</A> - 
+<A HREF="index.htm">  start</A><P>
+
+The singular value decomposition of an m x n <TT>Matrix</TT> <TT>A</TT>
+(where m >= n) is a decomposition
+<PRE>
+    A  = U * D * V.t()
+</PRE>
+where <TT>U</TT> is m x n with  <TT>U.t() * U</TT>  equalling the identity,
+<TT>D</TT> is an n x n
+<TT>DiagonalMatrix</TT> and <TT>V</TT> is an n x n orthogonal matrix
+(type <TT>Matrix</TT> in <I>Newmat</I>).
+<P>
+Singular value decompositions are useful for understanding the structure
+of ill-conditioned matrices, solving least squares problems, and for
+finding the eigenvalues of <TT>A.t() * A</TT>.
+<P>
+To calculate the singular value decomposition of <TT>A</TT>
+(with m >= n) use one of
+<PRE>
+    SVD(A, D, U, V);                  // U = A is OK
+    SVD(A, D);
+    SVD(A, D, U);                     // U = A is OK
+    SVD(A, D, U, false);              // U (can = A) for workspace only
+    SVD(A, D, U, V, false);           // U (can = A) for workspace only
+</PRE>
+where <TT>A</TT>, <TT>U</TT> and <TT>V</TT> are of type <TT>Matrix</TT> and
+<TT>D</TT>
+is a <TT>DiagonalMatrix</TT>. 
+The values of <TT>A</TT> are not changed unless <TT>A</TT> is also
+inserted as the third argument.
+<P>
+<A HREF="evalues.htm">  next</A> - 
+<A HREF="evalues.htm">  skip</A> - 
+<A HREF="refer.htm">  up</A> - 
+<A HREF="index.htm">  start</A><P>
+</BODY>
+</HTML>
+

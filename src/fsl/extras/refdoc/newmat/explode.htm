@@ -1,0 +1,72 @@
+<HTML>
+<HEAD><TITLE>Newmat10 - explode</TITLE></HEAD>
+<BODY bgcolor="#FFFFFF">
+<H2><font color="#FF0000">How to overcome an explosion in number of operations</H2></font>
+<A HREF="destr.htm">  next</A> -
+<A HREF="destr.htm">  skip</A> -
+<A HREF="design.htm">  up</A> -
+<A HREF="index.htm">  start</A>
+
+<P>The package attempts to solve the problem of the large number
+of versions of the binary operations required when one has a
+variety of types.
+
+<P>With <I>n</I> types of matrices the binary operations will each
+require <I>n</I>-squared separate algorithms. Some reduction in the
+number may be possible by carrying out conversions. However, the
+situation rapidly becomes impossible with more than 4 or 5 types.
+Doug Lea told me that it was possible to avoid this problem. I
+don't know what his solution is. Here's mine.
+
+<P>Each matrix type includes routines for extracting individual
+rows or columns. I assume a row or column consists of a sequence
+of zeros, a sequence of stored values and then another sequence
+of zeros. Only a single algorithm is then required for each
+binary operation. The rows can be located very quickly since most
+of the matrices are stored row by row. Columns must be copied and
+so the access is somewhat slower. As far as possible my
+algorithms access the matrices by row.
+
+<P>There is another approach. Each of the matrix types defined in
+this package can be set up so both rows and columns have their
+elements at equal intervals provided we are prepared to store the
+rows and columns in up to three chunks. With such an approach one
+could write a single &quot;generic&quot; algorithm for each of
+multiply and add. This would be a reasonable alternative to my
+approach.
+
+<P>I provide several algorithms for operations like + . If one is
+adding two matrices of the same type then there is no need to
+access the individual rows or columns and a faster general
+algorithm is appropriate.
+
+<P>Generally the method works well. However symmetric matrices
+are not always handled very efficiently (yet) since complete rows
+are not stored explicitly.
+
+<P>The original version of the package did not use this access by
+row or column method and provided the multitude of algorithms for
+the combination of different matrix types. The code file length
+turned out to be just a little longer than the present one when
+providing the same facilities with 5 distinct types of matrices.
+It would have been very difficult to increase the number of
+matrix types in the original version. Apparently 4 to 5 types is
+about the break even point for switching to the approach adopted in
+the present package.
+
+<P>However it must also be admitted that there is a substantial
+overhead in the approach adopted in the present package for small
+matrices. The test program developed for the original version of
+the package takes 30 to 50% longer to run with the current
+version (though there may be some other reasons for this).
+This is for matrices in the range 6x6 to 10x10.
+
+<P>To try to improve the situation a little I do provide an
+ordinary matrix multiplication routine for the case when all the
+matrices involved are rectangular.
+<P>
+<A HREF="destr.htm">  next</A> -
+<A HREF="destr.htm">  skip</A> -
+<A HREF="design.htm">  up</A> -
+<A HREF="index.htm">  start</A>
+</BODY></HTML>

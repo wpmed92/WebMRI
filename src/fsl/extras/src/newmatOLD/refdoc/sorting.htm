@@ -1,0 +1,28 @@
+<HTML>
+<HEAD><TITLE>Newmat10 - sorting</TITLE></HEAD>
+<BODY bgcolor="#FFFFFF">
+<H2><font color="#FF0000">Sorting</H2></font>
+<A HREF="fft.htm">  next</A> - 
+<A HREF="fft.htm">  skip</A> - 
+<A HREF="refer.htm">  up</A> - 
+<A HREF="index.htm">  start</A><P>
+
+To sort the values in a matrix or vector, <TT>A</TT>, (in general this
+operation
+makes sense only for vectors and diagonal matrices) use
+<PRE>
+    SortAscending(A);
+</PRE>
+or
+<PRE>
+    SortDescending(A);
+</PRE>
+I use the quicksort algorithm. The algorithm is similar to that in
+Sedgewick's algorithms in C++. If the sort seems to be failing (as quicksort
+can do) an exception is thrown.
+<P>
+You will get incorrect results if you try to sort a band matrix - but why would
+you want to sort a band matrix?
+</BODY>
+</HTML>
+

@@ -1,0 +1,53 @@
+<HTML>
+<HEAD><TITLE>Newmat10 - error messages</TITLE></HEAD>
+<BODY bgcolor="#FFFFFF">
+<H2><font color="#FF0000">Error messages</H2></font>
+<A HREF="bugs.htm">  next</A> - 
+<A HREF="bugs.htm">  skip</A> - 
+<A HREF="index.htm">  up</A> - 
+<A HREF="index.htm">  start</A><P>
+
+Most error messages are self-explanatory. The message gives the size of
+the matrices involved.
+Matrix types are referred to by the following codes:
+<PRE>
+   Matrix or vector                   Rect
+   Symmetric matrix                   Sym
+   Band matrix                        Band
+   Symmetric band matrix              SmBnd
+   Lower triangular matrix            LT
+   Lower triangular band matrix       LwBnd
+   Upper triangular matrix            UT
+   Upper triangular band matrix       UpBnd
+   Diagonal matrix                    Diag
+   Crout matrix (LU matrix)           Crout
+   Band LU matrix                     BndLU
+</PRE>
+Other codes should not occur.
+<P>
+See the section on
+<A HREF="except.htm">exceptions</A> for more details on the structure of
+the exception classes.
+<P>
+I have defined a class Tracer that is intended to help locate the place
+where an error has occurred. At the beginning of a function I suggest
+you include a statement like
+<PRE>
+   Tracer tr("name");
+</PRE>
+where name is the name of the function. This name will be printed as
+part of the error message, if an exception occurs in that function, or
+in a function called from that function. You can change the name as you
+proceed through a function with the ReName function
+<PRE>
+   tr.ReName("new name");
+</PRE>
+if, for example, you want to track progress through the function.
+<P>
+<A HREF="bugs.htm">  next</A> - 
+<A HREF="bugs.htm">  skip</A> - 
+<A HREF="index.htm">  up</A> - 
+<A HREF="index.htm">  start</A><P>
+</BODY>
+</HTML>
+

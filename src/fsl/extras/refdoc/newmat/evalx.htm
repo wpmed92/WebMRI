@@ -1,0 +1,105 @@
+<HTML>
+<HEAD><TITLE>Newmat10 - evaluation</TITLE></HEAD>
+<BODY bgcolor="#FFFFFF">
+<H2><font color="#FF0000">Evaluation of expressions - lazy evaluation</H2></font>
+<A HREF="explode.htm">  next</A> -
+<A HREF="explode.htm">  skip</A> -
+<A HREF="design.htm">  up</A> -
+<A HREF="index.htm">  start</A><P>
+
+Consider the instruction
+<PRE>
+   X = B - X;
+</PRE>
+A simple program will subtract <TT>X</TT> from <TT>B</TT>, store the result in
+a temporary <TT>T1</TT> and copy <TT>T1</TT> into <TT>X</TT>. It would be faster
+if the program recognised that the result could be stored directly into
+<TT>X</TT>. This would happen automatically if the program could look at
+the instruction first and mark <TT>X</TT> as temporary.
+
+<P>C programmers would expect to avoid the same problem with
+<PRE>
+   X = X - B;
+</PRE>
+by using an operator <TT>-=</TT> 
+<PRE>
+   X -= B;
+</PRE>
+However this is an unnatural notation for non C users and it
+may be nicer to write <TT>X = X - B</TT>; and know that the
+program will carry out the simplification.
+
+<P>Another example where this intelligent analysis of an
+instruction is helpful is in
+<PRE>
+   X = A.i() * B;
+</PRE>
+where <TT>i()</TT> denotes inverse. Numerical analysts know it is
+inefficient to evaluate this expression by carrying out the
+inverse operation and then the multiply. Yet it is a convenient
+way of writing the instruction. It would be helpful if the
+program recognised this expression and carried out the more
+appropriate approach.
+<P>
+I regard this interpretation of <TT>A.i() * B</TT> as just
+providing a convenient notation. The objective is not to correct
+the errors of people who are unaware of the inefficiency of
+<TT>A.i() * B</TT> if interpreted literally.
+<P>
+There is a third reason for the two-stage evaluation of
+expressions and this is probably the most important one. In C++
+it is quite hard to return an expression from a function
+such as (<TT>*</TT>, <TT>+</TT> etc) without a copy. This is
+particularly the case
+when an assignment (<TT>=</TT>) is involved. The mechanism
+described here provides one way for avoiding this in matrix
+expressions.
+<P>
+To carry out this <I>intelligent</I> analysis of an
+instruction matrix expressions are evaluated in two stages. In
+the the first stage a tree representation of the expression is
+formed. For example <TT>(A+B)*C</TT> is represented by a tree
+
+<PRE><TT>
+       *
+      / \
+     +   C
+    / \
+   A   B
+</TT></PRE>
+
+<P>Rather than adding <TT>A</TT> and <TT>B</TT> the <TT>+</TT> operator
+yields an object of
+a class <I>AddedMatrix</I> which is just a pair of pointers to
+<TT>A</TT> and <TT>B</TT>. Then the <TT>*</TT> operator yields a
+<I>MultipliedMatrix</I>
+which is a pair of pointers to the <I>AddedMatrix</I> and <TT>C</TT>.
+The tree is examined for any simplifications and then evaluated recursively.
+
+<P>Further possibilities not yet included are to recognise
+<TT>A.t()*A</TT> and <TT>A.t()+A</TT> as symmetric or to improve the
+efficiency of
+evaluation of expressions like <TT>A+B+C</TT>, <TT>A*B*C</TT>,
+<TT>A*B.t()</TT> (<TT>t()</TT> denotes transpose).
+
+<P>One of the disadvantages of the two-stage approach is that the
+types of matrix expressions are determined at run-time. So the
+compiler will not detect errors of the type
+
+<PRE>
+   Matrix M;
+   DiagonalMatrix D;
+   ....;
+   D = M;
+</PRE>
+
+<P>We don't allow conversions using <TT>=</TT> when information would be
+lost. Such errors will be detected when the statement is
+executed. 
+<P>
+<A HREF="explode.htm">  next</A> -
+<A HREF="explode.htm">  skip</A> -
+<A HREF="design.htm">  up</A> -
+<A HREF="index.htm">  start</A>
+
+</BODY></HTML>

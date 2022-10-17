@@ -1,0 +1,47 @@
+<HTML>
+<HEAD><TITLE>Newmat10 - elements</TITLE></HEAD>
+<BODY bgcolor="#FFFFFF">
+<H2><font color="#FF0000">Accessing elements</H2></font>
+<A HREF="copy.htm">  next</A> - 
+<A HREF="copy.htm">  skip</A> - 
+<A HREF="refer.htm">  up</A> - 
+<A HREF="index.htm">  start</A><P>
+
+Elements are accessed by expressions of the form <TT>A(i,j)</TT>
+where i and j
+run from 1 to the appropriate dimension. Access elements of vectors with
+just one argument. Diagonal matrices can accept one or two subscripts.
+<P>
+This is different from the earliest version of the package in which the
+subscripts ran from 0 to one less than the appropriate dimension. Use
+<TT>A.element(i,j)</TT> if you want this earlier convention.
+<P>
+<TT>A(i,j)</TT> and <TT>A.element(i,j)</TT> can appear on either side
+of an = sign.
+<P>
+If you activate the <TT>#define SETUP_C_SUBSCRIPTS</TT> in <TT>include.h</TT>
+you can also
+access elements using the traditional C style notation. That is <TT>A[i][j]</TT>
+for matrices (except diagonal) and <TT>V[i]</TT> for vectors and diagonal
+matrices. The subscripts start at zero (ie like element) and there is no
+range checking. Because of the possibility of confusing <TT>V(i)</TT>
+and <TT>V[i]</TT>, I suggest you do not activate this option unless you really
+want to use it.
+<P>
+Symmetric matrices are stored as lower triangular matrices. It is important to
+remember this if you are using the <TT>A[i][j]</TT> method of accessing elements.
+Make
+sure the first subscript is greater than or equal to the second subscript.
+However, if you
+are using the <TT>A(i,j)</TT> method the program will swap <TT>i</TT> and
+<TT>j</TT> if necessary; so it doesn't
+matter if you think of the storage as being in the upper triangle (but it
+<I>does</I> matter in some other situations such as when
+<A HREF="entering.htm">entering</A> data).
+<P>
+<A HREF="copy.htm">  next</A> - 
+<A HREF="copy.htm">  skip</A> - 
+<A HREF="refer.htm">  up</A> - 
+<A HREF="index.htm">  start</A><P>
+</BODY>
+</HTML>

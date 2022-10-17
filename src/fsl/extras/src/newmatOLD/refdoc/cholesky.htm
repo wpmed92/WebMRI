@@ -1,0 +1,27 @@
+<HTML>
+<HEAD><TITLE>Newmat10 - Cholesky decomposition</TITLE></HEAD>
+<BODY bgcolor="#FFFFFF">
+<H2><font color="#FF0000">Cholesky decomposition</H2></font>
+<A HREF="qr.htm">  next</A> - 
+<A HREF="qr.htm">  skip</A> - 
+<A HREF="refer.htm">  up</A> - 
+<A HREF="index.htm">  start</A><P>
+
+Suppose <TT>S</TT> is symmetric and positive definite. Then there exists a
+unique lower triangular matrix <TT>L</TT> such that <TT>L * L.t() = S</TT>.
+To calculate this use
+<PRE>
+    SymmetricMatrix S;
+    ......
+    LowerTriangularMatrix L = Cholesky(S);
+</PRE>
+If <TT>S</TT> is a symmetric band matrix then <TT>L</TT> is a band matrix and an
+alternative procedure is provided for carrying out the decomposition:
+<PRE>
+    SymmetricBandMatrix S;
+    ......
+    LowerBandMatrix L = Cholesky(S);
+</PRE>
+</BODY>
+</HTML>
+

@@ -1,0 +1,91 @@
+#!/bin/sh
+
+if [ X${FSLDIR}X = XX ] ; then
+    echo "Please set FSLDIR first"
+    exit 1
+fi
+
+if [ ! -d ${FSLDIR} ] ; then
+    echo "Please set FSLDIR first"
+    exit 1
+fi
+
+echo "using FSLDIR as $FSLDIR"
+
+FSLESRCDIR=`pwd`/src
+FSLDEVDIR=`pwd`
+FSLCONFDIR=${FSLDIR}/config
+FSLMACHTYPE=`gcc -dumpmachine`-gcc`gcc -dumpversion`
+FSLEXTLIB=${FSLDEVDIR}/lib
+FSLEXTINC=${FSLDEVDIR}/include
+export FSLDIR FSLDEVDIR FSLCONFDIR FSLMACHTYPE FSLEXTLIB FSLEXTINC
+if [ X$FSLPPC32 = X ] ; then
+    if [ X`echo $FSLMACHTYPE | grep "powerpc"`X != "XX"  ]; then 
+	PROCESSOR=`system_profiler -detailLevel -2 | grep "CPU Type" | sed 's/^[ \t]*//' | sed 's/CPU Type: PowerPC \(G[3-6]\).*/\1/'`
+	export PROCESSOR
+	if [ X$PROCESSOR = "XG5" ]; then
+	    FSLMACHTYPE=${FSLMACHTYPE}-$PROCESSOR
+	fi
+    fi
+fi
+
+MAKE=none
+if [ X"`make --version 2>&1 | grep -i gnu`"X != XX ] ; then
+   MAKE=make;
+else if [ X"`gmake --version 2>&1 | grep -i gnu`"X != XX ] ; then
+   MAKE=gmake;
+fi; fi
+if [ ${MAKE} = none ] ; then
+   echo "Could not find the gnu make utility in path" ;
+   exit 1 ;
+fi
+
+
+MAKEOPTIONS="${MAKEOPTIONS} FSLEXTLIB=${FSLEXTLIB} FSLEXTINC=${FSLEXTINC}"
+
+errorprojs="" ; export errorprojs ;
+
+PROJECTS="zlib libpng libgd libgdc libprob libcprob newmat"
+
+for projname in $PROJECTS; do
+
+    if [ -d $FSLESRCDIR/$projname ] ; then
+
+	echo " " ;
+	echo " " ;
+	echo "Making project $projname" ;
+	echo " " ;
+	cd $FSLESRCDIR/$projname ;
+	# ${MAKE} distclean ;
+	if [ -x fslconfigure ] ; then
+	  echo "Running configure with FSL options" ;
+	  ./fslconfigure ;
+	fi
+	if ${MAKE} ${MAKEOPTIONS} ; then 
+	    ${MAKE} install ;
+	    echo " "
+	    echo " ------------------------- "
+	    echo "Successfully made $projname";
+	else
+	    echo " "
+	    echo " ========================= "
+	    echo "ERROR::Could not make $projname successfully" ;
+	    echo " "
+	    echo " "
+	    errorprojs="$errorprojs $projname" ; export errorprojs ;
+	fi
+    fi
+done
+
+echo " ";
+echo " ";
+echo " ";
+if [ "X${errorprojs}X" != XX ] ; then
+  echo "!!ERROR in BUILD!!" ;
+  echo "  Could not make the following projects successfully:" ;
+  echo "   $errorprojs" ;
+else
+  echo "BUILD successfully made all projects" ;
+fi
+echo " ";
+

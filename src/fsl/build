@@ -1,0 +1,43 @@
+#!/bin/sh
+
+BET2_WASM_OUT=src/bet2/bet2.wasm
+BET2_JS_OUT=src/bet2/bet2.js
+FLIRT_WASM_OUT=src/flirt/flirt.wasm
+FLIRT_JS_OUT=src/flirt/flirt.js
+WASM_BIN_DIR=emscripten/
+FLIRT_JS_UNWRAPPED_BIN=emscripten/flirt_unwrapped.js
+BET2_JS_UNWRAPPED_BIN=emscripten/bet2_unwrapped.js
+FLIRT_JS_BIN=emscripten/flirt.js
+BET2_JS_BIN=emscripten/bet2.js
+PRE_JS=emscripten/fsl_pre.js
+POST_JS=emscripten/fsl_post.js
+
+if [ $# -ge 1 ] ; then
+  PROJECTS="$@";
+else
+  PROJECTS="utils znzlib niftiio fslio miscmaths newimage meshclass bet2 flirt";
+fi
+
+echo "Building projects - see build.log file for progress..."
+./config/common/buildproj $PROJECTS > ./build.log 2>&1
+echo "Finished build."
+
+if test -f "$BET2_WASM_OUT"; then
+  mv $BET2_WASM_OUT $WASM_BIN_DIR
+  mv $BET2_JS_OUT $BET2_JS_UNWRAPPED_BIN
+  cat $PRE_JS $BET2_JS_UNWRAPPED_BIN $POST_JS > $BET2_JS_BIN
+  rm $BET2_JS_UNWRAPPED_BIN
+  echo "bet2 successfully ported to WASM"
+else 
+  echo "bet2 failed to compile to WASM. See build.log for more details."  
+fi
+
+if test -f "$FLIRT_WASM_OUT"; then
+  mv $FLIRT_WASM_OUT $WASM_BIN_DIR
+  mv $FLIRT_JS_OUT $FLIRT_JS_UNWRAPPED_BIN
+  cat $PRE_JS $FLIRT_JS_UNWRAPPED_BIN $POST_JS > $FLIRT_JS_BIN
+  rm $FLIRT_JS_UNWRAPPED_BIN
+  echo "flirt successfully ported to WASM"
+else 
+  echo "flirt failed to compile to WASM. See build.log for more details."  
+fi

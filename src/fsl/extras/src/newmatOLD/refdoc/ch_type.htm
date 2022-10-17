@@ -1,0 +1,26 @@
+<HTML>
+<HEAD><TITLE>Newmat10 - change type</TITLE></HEAD>
+<BODY bgcolor="#FFFFFF">
+<H2><font color="#FF0000">Change type</H2></font>
+<A HREF="solve.htm">  next</A> - 
+<A HREF="solve.htm">  skip</A> - 
+<A HREF="refer.htm">  up</A> - 
+<A HREF="index.htm">  start</A><P>
+
+The following functions interpret the elements of a matrix
+(stored row by row) to be a vector or matrix of a different type. Actual
+copying is usually avoided where these occur as part of a more
+complicated expression.
+<PRE>
+    A.AsRow()
+    A.AsColumn()
+    A.AsDiagonal()
+    A.AsMatrix(nrows,ncols)
+    A.AsScalar()
+</PRE>
+The expression <TT>A.AsScalar()</TT> is used to convert a 1 x 1 matrix to a
+scalar.
+<P>
+</BODY>
+</HTML>
+

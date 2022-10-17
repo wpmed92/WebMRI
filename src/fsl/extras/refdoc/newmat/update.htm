@@ -1,0 +1,127 @@
+<HTML>
+<HEAD><TITLE>Newmat10 - updating</TITLE></HEAD>
+<BODY bgcolor="#FFFFFF">
+<H2><font color="#FF0000">Updating from previous versions</H2></font>
+<A HREF="example.htm">  next</A> - 
+<A HREF="example.htm">  skip</A> - 
+<A HREF="starting.htm">  up</A> - 
+<A HREF="index.htm">  start</A><P>
+
+Newmat10 includes new <A HREF="scalar.htm">maxima, minima and Determinant</A> functions,
+a faster <A HREF="fft.htm">FFT</A>,
+revised <A HREF="make.htm">make</A> files for
+GCC and CC compilers and several corrections,
+new <A HREF="dimen.htm">ReSize</A> function.
+The program files include a new file, <TT>newfft.cpp</TT>, so you will need to
+include this in the list of files in your IDE and make files.
+If you are updating from a
+beta version of newmat09 look through the next section as there were some
+late changes to newmat09.
+<P>
+If you are upgrading from newmat08 note the following:
+<UL>
+<LI>Boolean, TRUE, FALSE are now bool, true, false. See
+<A HREF="custom.htm">customising</A> if your compiler supports the bool
+class.
+
+<LI>ReDimension is now <A HREF="dimen.htm">ReSize</A>.
+
+<LI>The <A HREF="except.htm">simulated exception</A> package has been updated.
+
+<LI>Operators <TT>==</TT>, <TT>!=</TT>, <TT>+=</TT>, <TT>-=</TT>, <TT>*=</TT>,
+<TT>|=</TT>, <TT>&=</TT> are
+now supported
+as <A HREF="binary.htm">binary</A> matrix operators.
+
+<LI><TT>A+=f</TT>, <TT>A-=f</TT>, <TT>A*=f</TT>, <TT>A/=f</TT>, <TT>f+A</TT>,
+<TT>f-A</TT>, <TT>f*A</TT> are supported for 
+<A HREF="matscal.htm">A matrix, f scalar</A>.
+
+<LI><A HREF="trigtran.htm">Fast trigonometric transforms</A>.
+
+<LI><A HREF="unary.htm">Reverse</A> function for reversing order
+of elements in a vector or matrix.
+
+<LI><A HREF="scalar.htm">IsSingular</A> function.
+
+<LI>An option is included for defining <A HREF="namesp.htm">namespaces</A>.
+
+<LI>Dummy inequality operators are defined for compatibiity with the STL.
+
+<LI>The row/column classes in newmat3.cpp have been modified to improve
+efficiency and correct an invalid use of pointer arithmetic. Most users
+won't be using these classes explicitly; if you are, please contact me
+for details of the changes.
+
+<LI>Matrix LU decomposition rewritten (faster for large arrays).
+
+<LI>The sort function rewritten (faster).
+
+<LI>The documentation files newmata.txt and newmatb.txt have been amalgamated
+and both are included in the hypertext version. 
+
+<LI>Some of the <A HREF="make.htm">make</A> files reorganised again. 
+</UL>
+<P>
+If you are upgrading from <B>newmat07</B> note the following:
+<UL>
+<LI>.cxx files are now .cpp files. Some versions of won't accept .cpp. The
+<I>make</I>
+files for Gnu and AT&amp;T link the .cpp files to .cxx files before
+compilation and delete the links after compilation.
+
+<LI>An <A HREF="custom.htm">option</A>
+in include.h allows you to use
+compiler supported exceptions,
+simulated exceptions or disable exceptions.
+Edit the file include.h to select one of these three options.
+Don't simulate exceptions if you have set your compiler's
+option to implement exceptions.
+
+<LI>New <A HREF="qr.htm">QR decomposition</A>
+functions.
+
+<LI>A <A HREF="nonlin.htm">non-linear least squares</A> class.
+
+<LI>No need to explicitly set the AT&amp;T option in include.h.
+
+<LI><A HREF="binary.htm">Concatenation and elementwise multiplication</A>.
+
+<LI>A new <A HREF="unspec.htm">GenericMatrix</A> class.
+
+<LI><A HREF="scalar.htm">Sum</A> function.
+
+<LI>Some of the <A HREF="make.htm">make</A> files reorganised. 
+</UL>
+<P>
+If you are upgrading from <B>newmat06</B> note the following:
+<UL>
+<LI>If you are using &lt;&lt; to load a Real into a submatrix change this to =.
+</UL>
+<P>
+If you are upgrading from <B>newmat03</B> or <B>newmat04</B>
+note the following
+<UL>
+<LI>.hxx files are now .h files
+
+<LI>real changed to Real
+
+<LI>BOOL changed to Boolean
+
+<LI>CopyToMatrix changed to AsMatrix, etc
+
+<LI>real(A) changed to A.AsScalar()
+</UL>
+<P>
+The current version is quite a bit longer that newmat04, so if you are
+almost out of space with newmat04, don't throw newmat04 away until you
+have checked your program will work under this version.
+<P>
+See the <A HREF="changes.htm">  change history</A> for other changes.
+<P>
+<A HREF="example.htm">  next</A> - 
+<A HREF="example.htm">  skip</A> - 
+<A HREF="starting.htm">  up</A> - 
+<A HREF="index.htm">  start</A><P>
+</BODY>
+</HTML>

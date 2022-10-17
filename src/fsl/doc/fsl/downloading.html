@@ -1,0 +1,76 @@
+<HTML><HEAD><TITLE>FSL</TITLE></HEAD><BODY BACKGROUND="../images/fsl-bg.jpg" BGCOLOR="white">
+
+<H2>DOWNLOADING AND INSTALLING</H2>
+ 
+<p><br><H3>Downloading</H3>
+
+<P> FSL is available precompiled for various different operating
+systems (Linux, Mac OS X, Windows, SunOS). The sources are also
+available if you want to compile it yourself.
+
+<P> <B><A HREF="http://www.fmrib.ox.ac.uk/fsldownloads/"
+target="_top">Download FSL</A></B>
+
+
+<br><br><H3>Special installation instructions for:</H3> 
+<UL>
+
+<LI><a href="macosx.html">Mac OS X</a>
+
+<LI><a href="windowsxp.html">Windows XP</a>
+
+<LI><a href="compiling.html">Compiling the source distribution
+</a> (instead of taking a binary distribution)
+
+</UL>
+
+<p>
+
+<hr>
+
+<p><H2>Installing on Linux/Unix</H2>
+
+<p><H3>Unpacking</H3>
+
+<P>To unpack a distribution, you need gunzip and tar. First cd to the
+directory where you want FSL installed (for example /usr/local). Then
+uncompress and untar the distribution - for example, if you have
+downloaded the Redhat 9 distribution to your home directory, type
+
+<PRE>
+gunzip ~/fsl-3.2-redhat9.tar.gz
+tar xvf ~/fsl-3.2-redhat9.tar
+</PRE>
+
+<br><H3>Running</H3>
+
+<P>Put the following somewhere in your shell setup file (.bashrc,
+.profile, .cshrc etc., depending on what shell you use), setting the
+"/usr/local/fsl" to wherever you have installed FSL:
+
+<p><b>bash / sh / ksh</b><code><br>
+FSLDIR=/usr/local/fsl<br>
+. ${FSLDIR}/etc/fslconf/fsl.sh<br>
+PATH=${FSLDIR}/bin:${PATH}<br>
+export FSLDIR PATH</code>
+
+<p><b>tcsh / csh</b><code><br>
+setenv FSLDIR /usr/local/fsl<br>
+source ${FSLDIR}/etc/fslconf/fsl.csh<br>
+setenv PATH ${FSLDIR}/bin:${PATH}</code>
+
+<P>To run the FSL tools from the command line, you can find the
+tools in $FSLDIR/bin. In general command-line programs are lower case
+(e.g. '<b>bet</b>'). In general the GUI version is capitalised
+(e.g. '<b>Bet</b>').
+
+<p>To bring up a simple GUI which is just a menu of the main
+individual FSL GUI tools, just type <b>fsl</b>.
+
+<br><H3>Customising</H3>
+
+To customise FSL for particular ouput datatypes etc., see the
+page on <a href="customising.html">Customising FSL</a>.
+<hr>
+
+</BODY></HTML>

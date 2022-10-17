@@ -1,0 +1,65 @@
+<HTML>
+<HEAD><TITLE>Newmat10 - general description</TITLE></HEAD>
+<BODY bgcolor="#FFFFFF">
+<H2><font color="#FF0000">General description</H2></font>
+<A HREF="which.htm">  next</A> - 
+<A HREF="which.htm">  skip</A> - 
+<A HREF="intro.htm">  up</A> - 
+<A HREF="index.htm">  start</A><P>
+
+The package is intended for scientists and engineers who need to
+manipulate a variety of types of matrices using standard matrix
+operations. Emphasis is on the kind of operations needed in statistical
+calculations such as least squares, linear equation solve and
+eigenvalues.
+<P>
+It supports matrix types
+<PRE>
+    Matrix                       (rectangular matrix)
+    nricMatrix                   (variant of rectangular matrix)
+    UpperTriangularMatrix
+    LowerTriangularMatrix
+    DiagonalMatrix
+    SymmetricMatrix
+    BandMatrix
+    UpperBandMatrix              (upper triangular band matrix)
+    LowerBandMatrix              (lower triangular band matrix)
+    SymmetricBandMatrix
+    RowVector                    (derived from Matrix)
+    ColumnVector                 (derived from Matrix).
+</PRE>
+Only one element type (float or double) is supported.
+<P>
+The package includes the operations <TT>*</TT>, <TT>+</TT>, <TT>-</TT>,
+concatenation, inverse, transpose,
+conversion between types, submatrix, determinant, Cholesky
+decomposition, QR triangularisation, singular value
+decomposition, eigenvalues of a symmetric matrix, sorting, fast Fourier
+transform, printing and an interface with <I>Numerical Recipes in C</I>.
+<P>
+It is intended for matrices in the range 15 x 15 to the maximum size
+your machine will accommodate in a single array. On a PC using the large
+model, this is 90 x 90 (125 x 125 for triangular matrices). For Unix
+machines or PCs running under a 32 bit flat model the limit is
+set by the size of available memory.
+The number of elements in an array cannot
+exceed the maximum size of an <I>int</I>. The package will work for very
+small matrices but becomes rather inefficient. Some of the factorisation
+functions are not (yet) optimised for paged memory and so become inefficient
+when used with very large matrices.
+<P>
+A <I>lazy evaluation</I> approach to evaluating matrix expressions is
+used to improve
+efficiency and reduce the use of temporary storage.
+<P>
+I have tested the package on variety of compilers and platforms including
+AT&T, Borland, Gnu, HP, Microsoft, Sun and Watcom. For more details see the
+section on <A HREF="compiler.htm"> compiler performance</A>.
+<P>
+<A HREF="which.htm">  next</A> - 
+<A HREF="which.htm">  skip</A> - 
+<A HREF="intro.htm">  up</A> - 
+<A HREF="index.htm">  start</A><P>
+</BODY>
+</HTML>
+

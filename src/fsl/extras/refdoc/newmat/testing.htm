@@ -1,0 +1,62 @@
+<HTML>
+<HEAD><TITLE>Newmat10- testing</TITLE></HEAD> 
+<BODY bgcolor="#FFFFFF">
+<H2><font color="#FF0000">Testing</H2></font>
+<A HREF="refer.htm">  next</A> - 
+<A HREF="refer.htm">  skip</A> - 
+<A HREF="starting.htm">  up</A> - 
+<A HREF="index.htm">  start</A><P>
+
+The library package contains a comprehensive test program in the form of
+a series of files with names of the form tmt?.cxx.
+The files consist of a large number of matrix formulae
+all of which evaluate to zero (except the first one which is used to
+check that we are detecting non-zero matrices). The printout should
+state that it has found just one non-zero matrix.
+<P>
+The test program should be run with <I>Real</I> typedefed to <I>double</I>
+rather than <I>float</I> in <A HREF="custom.htm">include.h</A>.
+<P>
+Make sure the <A HREF="elements.htm">C subscripts</A> are enabled if you
+want to test these.
+<P>
+Various versions of the make file (extension .mak) are included with the
+package. See the section on <A HREF="make.htm">make files</A>.
+<P>
+The program also allocates and deletes a large block and small block of
+memory before it starts the main testing and then at the end of the
+test. It then checks that the blocks of memory were allocated in the
+same place. If not then one suspects that there has been a memory leak.
+i.e. a piece of memory has been allocated and not deleted.
+<P>
+This is not completely foolproof. Programs may allocate extra print
+buffers while the program is running. I have tried to overcome this by
+doing a print before I allocate the first memory block. Programs may
+allocate memory for different sized items in different places, or might
+not allocate items consecutively. Or they might mix the items with memory
+blocks from other programs. Nevertheless, I seem to get consistent
+answers from many of the compilers I am working with, so I think this is
+a worthwhile test.
+<P>
+If the <A HREF="custom.htm">DO_FREE_CHECK</A> option in include.h is activated, the program checks that
+each <TT>new</TT> is balanced with exactly one <TT>delete</TT>. This provides
+a more definitive test of no memory leaks. There are additional statements in
+myexcept.cpp which can be activated to print out details of the memory being
+allocated and released.
+<P>
+I have included a facility for checking that each piece of code in the
+library is really exercised by the test routines. Each block of code in the
+main part of the library contains a word <TT>REPORT</TT>.
+<TT>newmat.h</TT> has a line defining <TT>REPORT</TT> that can be
+activated (deactivate the dummy version). This gives a printout of the number
+of times each of the <TT>REPORT</TT> statements in the <TT>.cpp</TT> files
+is accessed. Use a
+grep with line numbers to locate the lines on which <TT>REPORT</TT> occurs and
+compare these with the lines that the printout shows were actually accessed.
+One can then see which lines of code were not accessed.
+<P>
+<A HREF="refer.htm">  next</A> - 
+<A HREF="refer.htm">  skip</A> - 
+<A HREF="starting.htm">  up</A> - 
+<A HREF="index.htm">  start</A><P>
+</BODY></HTML>

@@ -1,0 +1,74 @@
+<HTML><TITLE>FDT - FMRIB's Diffusion Toolbox - User Guide</TITLE><BODY BACKGROUND="fdt_images/fsl-bg.jpg">
+<p><h3>Parallelising bedpost</h3> Bedpost runs Markov Chain Monte
+Carlo sampling to build up distributions on diffusion parameters at
+each voxel. This is a very slow process, so bedpost is very processor
+hungry (a typical bedpost run might take around 20hrs for 60
+direction 2.5mm isotropic data!). However, fortunately bedpost
+processes every voxel independently, so it is very easy to
+parallelise.  
+
+<br><br> In order to parallelise bedpost you need
+multiple processors which can see the same data directory, and which
+you can log onto using a remote call which does not require a
+password.
+<br><br>
+When you have this, you need to set the following environment variables:
+<br><br>
+<table><TR> <TD> <code>FSLMACHINELIST</code>:</TD><TD> a list of
+machines on which bedpost should be run. Each machine can be included
+more than once to make use of multiple processor machines.</TD></TR>
+<TD> <code>FSLREMOTECALL</code>:</TD><TD>The program you want to use
+to make the remote calls, e.g. ssh or rsh</TD></table>
+<br>
+e.g. for a <code>bash </code> user:<br>
+<code>FSLMACHINELIST="machine1 machine1 machine2 machine3 machine5"</code><br>
+<code> FSLREMOTECALL=ssh</code><br>
+<code> export FSLMACHINELIST FSLREMOTECALL</code><br><br>
+
+This will enable <code>bedpost</code> to use <code>ssh</code> to send jobs to two processors on <code>machine1</code>, and one each on <code>machine2 machine3 machine5</code>.<br><br>
+
+You also need to make a file called <code>fsl.sh</code>, on each
+machine listed, in one of the following places.<br>
+<code>/usr/local/etc/fslconf/fsl.sh</code><br>
+<code>/etc/fslconf/fsl.sh</code><br>
+<code>${HOME}/.fslconf/fsl.sh</code><br><br>
+
+in this file you need to set your <code>FSLDIR</code> in <code>sh</code> language. e.g.:<br>
+<code>FSLDIR=/usr/local/fsl</code><br>
+<code>export FSLDIR</code><br><br>
+ 
+NB(1): you may already have this file, and it may set other config
+variables (e.g. <code>FSLMACHINELIST</code> and <code>FSLREMOTECALL</code>). This is absolutely fine, as long as it also sets FSLDIR<br><br>
+NB(2): If you are a <code>csh</code> or <code>tcsh</code> user you may
+already have an equivalent <code>fsl.csh</code> in one of the above
+directories. Note that you still need to specify the
+<code>fsl.sh</code> file as above. Parallel bedpost uses
+<code>sh</code> not <code>csh</code>.<br><br>
+NB(3): If you have this file in more than one of
+the above locations, bedpost will read them in the order specified
+above, hence the the last setting of FSLDIR will be the one that
+stands in the case of conflicts.
+
+<p><h3>Locking bedpost</h3> You may want to set up a system whereby
+only one person can use bedpost at any one time (thus keeping the
+system load down). In order to do this, set the
+<code>FSLLOCKDIR</code> environment variable to a directory which is
+writeable by all users.  Every time a bedpost starts, it will write
+<code>${FSLLOCKDIR}/.bedpost.lock</code> which will be removed when
+bedpost completes. If this file is present, new bedpost processes will
+not start.
+
+<p><h3>Cleaning up bedpost</h3> Bedpost should be relatively well
+behaved in most circumstances. e.g. If bedpost is cancelled from the
+keyboard, then it first logs onto all machines in the list and kills
+its child processes, leaving no trace. However, there are some
+circumstances where bedpost might not behave so well - e.g. if the
+master machine (from where bedpost is called) crashes, the processes
+on the other machines will probably not be stopped. If this situation
+occurs, there is a program called <code>bedpost_cleanup</code>, which
+will kill all <code>bedpost</code> related processes owned by the user
+on all machines in <code>$FSLMACHINELIST</code>.
+
+
+
+</BODY></HTML>

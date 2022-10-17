@@ -1,0 +1,72 @@
+<HTML>
+<HEAD><TITLE>Newmat10 - Borland</TITLE></HEAD>
+<BODY bgcolor="#FFFFFF">
+<H2><font color="#FF0000">Borland</H2></font>
+<A HREF="gcc.htm">  next</A> - 
+<A HREF="gcc.htm">  skip</A> - 
+<A HREF="compiler.htm">  up</A> - 
+<A HREF="index.htm">  start</A><P>
+
+<B>Borland C++ 3.1, 4.5, 5.02</B>: Recently this has been my main development
+platform, so naturally everything works with this compiler. There was a
+problem with the library utility in version 2.0 which is now fixed. You
+will need to use the large or 32 bit flat model. If you are not debugging,
+turn off the
+options that collect debugging information. Make sure you don't run
+Borland's exceptions and my simulated exceptions at the same time.
+<P>
+If you are using version 5 remember to edit include.h to deactivate my Boolean
+class.
+<P>
+When running my test program under ms-dos you may run out of
+memory. Either compile the test routine to run under <I>easywin</I> or use
+simulated exceptions rather than the built in exceptions. Under <I>easywin</I>
+the test program indicates a memory leak. I presume this is partly because of
+the way windows organises its heap rather than there being a real problem.
+<P>
+If you can, upgrade to windows 95 or window NT and use the 32 bit console
+model.
+<P>
+If you are using the 16 bit large model, don't forget to keep all matrices
+less than 64K bytes in length (90x90 for a rectangular matrix if you are
+using <TT>double</TT> as your element type). Otherwise your program will
+crash without warning or explanation.
+You may need to break the <A HREF="testing.htm">tmt</A> set of test
+files into two parts to get the program to fit into your computer. 
+<P>
+In version 4.5, under <I>easywin</I> the automatic
+clean-up of objects by
+the exception mechanism does not seem to work correctly.
+Use my simulated exceptions if
+this is a problem.
+<P>
+One version of Borland had DBL_MIN incorrectly defined. If you
+are using an older version of Borland and are getting strange
+numerical errors in the test programs reinstate the commented out
+statements in precision.h.
+<P>
+I include make files that work under Borland 4.5 and 5. You will need
+to edit these to correctly locate the directories for the include and
+library files. Both assume you are using simulated exceptions. <TT>BC.MAK</TT>
+also works with version 3.1 if you delete the options that are not recognised
+and the reference to the library file that is not recognised.
+<P>
+<B>C++ Builder version 4</B>: I have successfully used this using the
+console wizard (menu item file/new - select new tab).
+Either use namespace or rename a couple of my exception names that conflict
+with Borland. Use compiler exceptions. Suppose you are compiling my test
+program tmt. Rename my <I>main()</I> function in <I>tmt.cpp</I> to
+<I>my_main()</I>. Rename
+<I>tmt.cpp</I> to <I>tmt_main.cpp</I>. Borland will generate a new
+file <I>tmt.cpp</I> containing
+their <I>main()</I> function. Put the line <TT>int my_main();</TT> above
+this function
+and put <TT>return my_main();</TT> into the body of <I>main()</I>. 
+<P>
+<A HREF="gcc.htm">  next</A> - 
+<A HREF="gcc.htm">  skip</A> - 
+<A HREF="compiler.htm">  up</A> - 
+<A HREF="index.htm">  start</A><P>
+</BODY>
+</HTML>
+

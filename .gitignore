@@ -1,0 +1,11 @@
+.vscode
+.DS_Store
+*.o
+*.a
+/build/*
+build.log
+*
+!/**/
+!*.*
+!build
+*.nii

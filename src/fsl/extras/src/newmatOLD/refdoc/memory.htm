@@ -1,0 +1,93 @@
+<HTML>
+<HEAD><TITLE>Newmat10 - memory management</TITLE></HEAD>
+<BODY bgcolor="#FFFFFF">
+<H2><font color="#FF0000">Memory management</H2></font>
+<A HREF="efficien.htm">  next</A> - 
+<A HREF="efficien.htm">  skip</A> - 
+<A HREF="refer.htm">  up</A> - 
+<A HREF="index.htm">  start</A><P>
+
+The package does not support delayed copy. Several strategies are
+required to prevent unnecessary matrix copies.
+<P>
+Where a matrix is called as a function argument use a constant
+reference. For example
+<PRE>
+    YourFunction(const Matrix&amp; A)
+</PRE>
+rather than
+<PRE>
+    YourFunction(Matrix A)
+</PRE>
+<P>
+Skip the rest of this section on your first reading.
+<HR>
+<B>Gnu g++ (&lt; 2.6) users please read on; if you are returning matrix values
+from a function, then you must use the ReturnMatrix construct.</B>     
+<HR>
+<P>
+A second place where it is desirable to avoid unnecessary copies is when
+a function is returning a matrix. Matrices can be returned from a
+function with the return command as you would expect. However these may
+incur one and possibly two copyings of the matrix. To avoid this use the
+following instructions.
+<P>
+Make your function of type  ReturnMatrix . Then precede the return
+statement with a Release statement (or a ReleaseAndDelete statement if
+the matrix was created with new). For example
+
+<PRE>
+    ReturnMatrix MakeAMatrix()
+    {
+       Matrix A;                // or any other matrix type
+       ......
+       A.Release(); return A;
+    }
+</PRE>
+or
+<PRE>
+    ReturnMatrix MakeAMatrix()
+    {
+       Matrix* m = new Matrix;
+       ......
+       m->ReleaseAndDelete(); return *m;
+    }
+</PRE>
+If your compiler objects to this code, replace the return statements with
+<PRE>
+    return A.ForReturn();
+</PRE>
+or
+<PRE>
+    return m->ForReturn();
+</PRE>
+
+If you are using AT&amp;T C++ you may wish to replace  <TT>return A;</TT> by
+return <TT>(ReturnMatrix)A;</TT>  to avoid a warning message; but this will
+give a runtime error with Gnu. (You can't please everyone.)
+<HR>
+<B>Do not forget to make the function of type ReturnMatrix; otherwise
+you may get incomprehensible run-time errors.</B>                       
+<HR>
+You can also use <TT>.Release()</TT> or <TT>->ReleaseAndDelete()</TT>
+to allow a matrix expression to recycle space. Suppose you call
+<PRE>
+    A.Release();
+</PRE>
+just before <TT>A</TT> is used just once in an expression. Then the memory
+used
+by <TT>A</TT> is either returned to the system or reused in the expression.
+In
+either case, <TT>A</TT>'s memory is destroyed. This procedure can be used to
+improve efficiency and reduce the use of memory.
+<P>
+Use <TT>->ReleaseAndDelete</TT> for matrices created by new if you want to
+completely delete the matrix after it is accessed.
+<P>
+<A HREF="efficien.htm">  next</A> - 
+<A HREF="efficien.htm">  skip</A> - 
+<A HREF="refer.htm">  up</A> - 
+<A HREF="index.htm">  start</A><P>
+</BODY>
+</HTML>
+

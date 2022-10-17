@@ -1,0 +1,5478 @@
+#!/bin/sh
+# This is a shell archive (produced by shar 3.50)
+# To extract the files from this archive, save it to a file, remove
+# everything above the "!/bin/sh" line above, and type "sh file_name".
+#
+# made 04/02/1996 02:24 UTC by moshier@world
+# Source directory /home/ie/moshier/cephes/cprob
+#
+# existing files will NOT be overwritten unless -c is specified
+#
+# This shar contains:
+# length  mode       name
+# ------ ---------- ------------------------------------------
+#   4677 -rw-rw-rw- bdtr.c
+#    931 -rw-rw-rw- btdtr.c
+#   3405 -rw-rw-rw- chdtr.c
+#   9532 -rw-rw-rw- const.c
+#    454 -rw-rw-rw- cprob.mak
+#   3064 -rw-rw-rw- drand.c
+#   5090 -rw-rw-rw- fdtr.c
+#  12801 -rw-rw-rw- gamma.c
+#   1855 -rw-rw-rw- gdtr.c
+#   3770 -rw-rw-rw- igam.c
+#   2905 -rw-rw-rw- igami.c
+#   6590 -rw-rw-rw- incbet.c
+#   4848 -rw-r--r-- incbi.c
+#   4160 -rw-rw-rw- mconf.h
+#   1601 -rw-rw-rw- msc.mak
+#    140 -rw-rw-rw- msc.rsp
+#   2369 -rw-rw-rw- mtherr.c
+#   3958 -rw-rw-rw- nbdtr.c
+#   9797 -rw-rw-rw- ndtr.c
+#   9992 -rw-r--r-- ndtri.c
+#   2460 -rw-rw-rw- pdtr.c
+#   1605 -rw-rw-rw- polevl.c
+#   2238 -rw-rw-rw- protos.h
+#   3921 -rw-rw-rw- stdtr.c
+#   2190 -rw-rw-rw- unity.c
+#
+# ============= bdtr.c ==============
+if test -f 'bdtr.c' -a X"$1" != X"-c"; then
+        echo 'x - skipping bdtr.c (File already exists)'
+else
+echo 'x - extracting bdtr.c (Text)'
+sed 's/^X//' << 'SHAR_EOF' > 'bdtr.c' &&
+/*                                                      bdtr.c
+X *
+X *     Binomial distribution
+X *
+X *
+X *
+X * SYNOPSIS:
+X *
+X * int k, n;
+X * double p, y, bdtr();
+X *
+X * y = bdtr( k, n, p );
+X *
+X * DESCRIPTION:
+X *
+X * Returns the sum of the terms 0 through k of the Binomial
+X * probability density:
+X *
+X *   k
+X *   --  ( n )   j      n-j
+X *   >   (   )  p  (1-p)
+X *   --  ( j )
+X *  j=0
+X *
+X * The terms are not summed directly; instead the incomplete
+X * beta integral is employed, according to the formula
+X *
+X * y = bdtr( k, n, p ) = incbet( n-k, k+1, 1-p ).
+X *
+X * The arguments must be positive, with p ranging from 0 to 1.
+X *
+X * ACCURACY:
+X *
+X * Tested at random points (a,b,p), with p between 0 and 1.
+X *
+X *               a,b                     Relative error:
+X * arithmetic  domain     # trials      peak         rms
+X *  For p between 0.001 and 1:
+X *    IEEE     0,100       100000      4.3e-15     2.6e-16
+X * See also incbet.c.
+X *
+X * ERROR MESSAGES:
+X *
+X *   message         condition      value returned
+X * bdtr domain         k < 0            0.0
+X *                     n < k
+X *                     x < 0, x > 1
+X */
+X/*                                                     bdtrc()
+X *
+X *     Complemented binomial distribution
+X *
+X *
+X *
+X * SYNOPSIS:
+X *
+X * int k, n;
+X * double p, y, bdtrc();
+X *
+X * y = bdtrc( k, n, p );
+X *
+X * DESCRIPTION:
+X *
+X * Returns the sum of the terms k+1 through n of the Binomial
+X * probability density:
+X *
+X *   n
+X *   --  ( n )   j      n-j
+X *   >   (   )  p  (1-p)
+X *   --  ( j )
+X *  j=k+1
+X *
+X * The terms are not summed directly; instead the incomplete
+X * beta integral is employed, according to the formula
+X *
+X * y = bdtrc( k, n, p ) = incbet( k+1, n-k, p ).
+X *
+X * The arguments must be positive, with p ranging from 0 to 1.
+X *
+X * ACCURACY:
+X *
+X * Tested at random points (a,b,p).
+X *
+X *               a,b                     Relative error:
+X * arithmetic  domain     # trials      peak         rms
+X *  For p between 0.001 and 1:
+X *    IEEE     0,100       100000      6.7e-15     8.2e-16
+X *  For p between 0 and .001:
+X *    IEEE     0,100       100000      1.5e-13     2.7e-15
+X *
+X * ERROR MESSAGES:
+X *
+X *   message         condition      value returned
+X * bdtrc domain      x<0, x>1, n<k       0.0
+X */
+X/*                                                     bdtri()
+X *
+X *     Inverse binomial distribution
+X *
+X *
+X *
+X * SYNOPSIS:
+X *
+X * int k, n;
+X * double p, y, bdtri();
+X *
+X * p = bdtr( k, n, y );
+X *
+X * DESCRIPTION:
+X *
+X * Finds the event probability p such that the sum of the
+X * terms 0 through k of the Binomial probability density
+X * is equal to the given cumulative probability y.
+X *
+X * This is accomplished using the inverse beta integral
+X * function and the relation
+X *
+X * 1 - p = incbi( n-k, k+1, y ).
+X *
+X * ACCURACY:
+X *
+X * Tested at random points (a,b,p).
+X *
+X *               a,b                     Relative error:
+X * arithmetic  domain     # trials      peak         rms
+X *  For p between 0.001 and 1:
+X *    IEEE     0,100       100000      2.3e-14     6.4e-16
+X *    IEEE     0,10000     100000      6.6e-12     1.2e-13
+X *  For p between 10^-6 and 0.001:
+X *    IEEE     0,100       100000      2.0e-12     1.3e-14
+X *    IEEE     0,10000     100000      1.5e-12     3.2e-14
+X * See also incbi.c.
+X *
+X * ERROR MESSAGES:
+X *
+X *   message         condition      value returned
+X * bdtri domain     k < 0, n <= k         0.0
+X *                  x < 0, x > 1
+X */
+X
+/*                                                              bdtr() */
+X
+X
+/*
+Cephes Math Library Release 2.3:  March, 1995
+Copyright 1984, 1987, 1995 by Stephen L. Moshier
+*/
+X
+#include "mconf.h"
+#ifndef ANSIPROT
+double incbet(), incbi(), pow(), log1p(), expm1();
+#endif
+X
+double bdtrc( k, n, p )
+int k, n;
+double p;
+{
+double dk, dn;
+X
+if( (p < 0.0) || (p > 1.0) )
+X       goto domerr;
+if( k < 0 )
+X       return( 1.0 );
+X
+if( n < k )
+X       {
+domerr:
+X       mtherr( "bdtrc", DOMAIN );
+X       return( 0.0 );
+X       }
+X
+if( k == n )
+X       return( 0.0 );
+dn = n - k;
+if( k == 0 )
+X       {
+X       if( p < .01 )
+X               dk = -expm1( dn * log1p(-p) );
+X       else
+X               dk = 1.0 - pow( 1.0-p, dn );
+X       }
+else
+X       {
+X       dk = k + 1;
+X       dk = incbet( dk, dn, p );
+X       }
+return( dk );
+}
+X
+X
+X
+double bdtr( k, n, p )
+int k, n;
+double p;
+{
+double dk, dn;
+X
+if( (p < 0.0) || (p > 1.0) )
+X       goto domerr;
+if( (k < 0) || (n < k) )
+X       {
+domerr:
+X       mtherr( "bdtr", DOMAIN );
+X       return( 0.0 );
+X       }
+X
+if( k == n )
+X       return( 1.0 );
+X
+dn = n - k;
+if( k == 0 )
+X       {
+X       dk = pow( 1.0-p, dn );
+X       }
+else
+X       {
+X       dk = k + 1;
+X       dk = incbet( dn, dk, 1.0 - p );
+X       }
+return( dk );
+}
+X
+X
+double bdtri( k, n, y )
+int k, n;
+double y;
+{
+double dk, dn, p;
+X
+if( (y < 0.0) || (y > 1.0) )
+X       goto domerr;
+if( (k < 0) || (n <= k) )
+X       {
+domerr:
+X       mtherr( "bdtri", DOMAIN );
+X       return( 0.0 );
+X       }
+X
+dn = n - k;
+if( k == 0 )
+X       {
+X       if( y > 0.8 )
+X               p = -expm1( log1p(y-1.0) / dn );
+X       else
+X               p = 1.0 - pow( y, 1.0/dn );
+X       }
+else
+X       {
+X       dk = k + 1;
+X       p = incbet( dn, dk, 0.5 );
+X       if( p > 0.5 )
+X               p = incbi( dk, dn, 1.0-y );
+X       else
+X               p = 1.0 - incbi( dn, dk, y );
+X       }
+return( p );
+}
+SHAR_EOF
+chmod 0666 bdtr.c ||
+echo 'restore of bdtr.c failed'
+Wc_c="`wc -c < 'bdtr.c'`"
+test 4677 -eq "$Wc_c" ||
+        echo 'bdtr.c: original size 4677, current size' "$Wc_c"
+fi
+# ============= btdtr.c ==============
+if test -f 'btdtr.c' -a X"$1" != X"-c"; then
+        echo 'x - skipping btdtr.c (File already exists)'
+else
+echo 'x - extracting btdtr.c (Text)'
+sed 's/^X//' << 'SHAR_EOF' > 'btdtr.c' &&
+X
+/*                                                      btdtr.c
+X *
+X *     Beta distribution
+X *
+X *
+X *
+X * SYNOPSIS:
+X *
+X * double a, b, x, y, btdtr();
+X *
+X * y = btdtr( a, b, x );
+X *
+X *
+X *
+X * DESCRIPTION:
+X *
+X * Returns the area from zero to x under the beta density
+X * function:
+X *
+X *
+X *                          x
+X *            -             -
+X *           | (a+b)       | |  a-1      b-1
+X * P(x)  =  ----------     |   t    (1-t)    dt
+X *           -     -     | |
+X *          | (a) | (b)   -
+X *                         0
+X *
+X *
+X * This function is identical to the incomplete beta
+X * integral function incbet(a, b, x).
+X *
+X * The complemented function is
+X *
+X * 1 - P(1-x)  =  incbet( b, a, x );
+X *
+X *
+X * ACCURACY:
+X *
+X * See incbet.c.
+X *
+X */
+X
+/*                                                              btdtr() */
+X
+X
+/*
+Cephes Math Library Release 2.0:  April, 1987
+Copyright 1984, 1987, 1995 by Stephen L. Moshier
+*/
+X
+#ifndef ANSIPROT
+double incbet();
+#endif
+X
+double btdtr( a, b, x )
+double a, b, x;
+{
+X
+return( incbet( a, b, x ) );
+}
+SHAR_EOF
+chmod 0666 btdtr.c ||
+echo 'restore of btdtr.c failed'
+Wc_c="`wc -c < 'btdtr.c'`"
+test 931 -eq "$Wc_c" ||
+        echo 'btdtr.c: original size 931, current size' "$Wc_c"
+fi
+# ============= chdtr.c ==============
+if test -f 'chdtr.c' -a X"$1" != X"-c"; then
+        echo 'x - skipping chdtr.c (File already exists)'
+else
+echo 'x - extracting chdtr.c (Text)'
+sed 's/^X//' << 'SHAR_EOF' > 'chdtr.c' &&
+/*                                                      chdtr.c
+X *
+X *     Chi-square distribution
+X *
+X *
+X *
+X * SYNOPSIS:
+X *
+X * double df, x, y, chdtr();
+X *
+X * y = chdtr( df, x );
+X *
+X *
+X *
+X * DESCRIPTION:
+X *
+X * Returns the area under the left hand tail (from 0 to x)
+X * of the Chi square probability density function with
+X * v degrees of freedom.
+X *
+X *
+X *                                  inf.
+X *                                    -
+X *                        1          | |  v/2-1  -t/2
+X *  P( x | v )   =   -----------     |   t      e     dt
+X *                    v/2  -       | |
+X *                   2    | (v/2)   -
+X *                                   x
+X *
+X * where x is the Chi-square variable.
+X *
+X * The incomplete gamma integral is used, according to the
+X * formula
+X *
+X *     y = chdtr( v, x ) = igam( v/2.0, x/2.0 ).
+X *
+X *
+X * The arguments must both be positive.
+X *
+X *
+X *
+X * ACCURACY:
+X *
+X * See igam().
+X *
+X * ERROR MESSAGES:
+X *
+X *   message         condition      value returned
+X * chdtr domain   x < 0 or v < 1        0.0
+X */
+X/*                                                     chdtrc()
+X *
+X *     Complemented Chi-square distribution
+X *
+X *
+X *
+X * SYNOPSIS:
+X *
+X * double v, x, y, chdtrc();
+X *
+X * y = chdtrc( v, x );
+X *
+X *
+X *
+X * DESCRIPTION:
+X *
+X * Returns the area under the right hand tail (from x to
+X * infinity) of the Chi square probability density function
+X * with v degrees of freedom:
+X *
+X *
+X *                                  inf.
+X *                                    -
+X *                        1          | |  v/2-1  -t/2
+X *  P( x | v )   =   -----------     |   t      e     dt
+X *                    v/2  -       | |
+X *                   2    | (v/2)   -
+X *                                   x
+X *
+X * where x is the Chi-square variable.
+X *
+X * The incomplete gamma integral is used, according to the
+X * formula
+X *
+X *     y = chdtr( v, x ) = igamc( v/2.0, x/2.0 ).
+X *
+X *
+X * The arguments must both be positive.
+X *
+X *
+X *
+X * ACCURACY:
+X *
+X * See igamc().
+X *
+X * ERROR MESSAGES:
+X *
+X *   message         condition      value returned
+X * chdtrc domain  x < 0 or v < 1        0.0
+X */
+X/*                                                     chdtri()
+X *
+X *     Inverse of complemented Chi-square distribution
+X *
+X *
+X *
+X * SYNOPSIS:
+X *
+X * double df, x, y, chdtri();
+X *
+X * x = chdtri( df, y );
+X *
+X *
+X *
+X *
+X * DESCRIPTION:
+X *
+X * Finds the Chi-square argument x such that the integral
+X * from x to infinity of the Chi-square density is equal
+X * to the given cumulative probability y.
+X *
+X * This is accomplished using the inverse gamma integral
+X * function and the relation
+X *
+X *    x/2 = igami( df/2, y );
+X *
+X *
+X *
+X *
+X * ACCURACY:
+X *
+X * See igami.c.
+X *
+X * ERROR MESSAGES:
+X *
+X *   message         condition      value returned
+X * chdtri domain   y < 0 or y > 1        0.0
+X *                     v < 1
+X *
+X */
+X
+/*                                                              chdtr() */
+X
+X
+/*
+Cephes Math Library Release 2.0:  April, 1987
+Copyright 1984, 1987 by Stephen L. Moshier
+Direct inquiries to 30 Frost Street, Cambridge, MA 02140
+*/
+X
+#include "mconf.h"
+#ifndef ANSIPROT
+double igamc(), igam(), igami();
+#endif
+X
+double chdtrc(df,x)
+double df, x;
+{
+X
+if( (x < 0.0) || (df < 1.0) )
+X       {
+X       mtherr( "chdtrc", DOMAIN );
+X       return(0.0);
+X       }
+return( igamc( df/2.0, x/2.0 ) );
+}
+X
+X
+X
+double chdtr(df,x)
+double df, x;
+{
+X
+if( (x < 0.0) || (df < 1.0) )
+X       {
+X       mtherr( "chdtr", DOMAIN );
+X       return(0.0);
+X       }
+return( igam( df/2.0, x/2.0 ) );
+}
+X
+X
+X
+double chdtri( df, y )
+double df, y;
+{
+double x;
+X
+if( (y < 0.0) || (y > 1.0) || (df < 1.0) )
+X       {
+X       mtherr( "chdtri", DOMAIN );
+X       return(0.0);
+X       }
+X
+x = igami( 0.5 * df, y );
+return( 2.0 * x );
+}
+SHAR_EOF
+chmod 0666 chdtr.c ||
+echo 'restore of chdtr.c failed'
+Wc_c="`wc -c < 'chdtr.c'`"
+test 3405 -eq "$Wc_c" ||
+        echo 'chdtr.c: original size 3405, current size' "$Wc_c"
+fi
+# ============= const.c ==============
+if test -f 'const.c' -a X"$1" != X"-c"; then
+        echo 'x - skipping const.c (File already exists)'
+else
+echo 'x - extracting const.c (Text)'
+sed 's/^X//' << 'SHAR_EOF' > 'const.c' &&
+/*                                                      const.c
+X *
+X *     Globally declared constants
+X *
+X *
+X *
+X * SYNOPSIS:
+X *
+X * extern double nameofconstant;
+X *
+X *
+X *
+X *
+X * DESCRIPTION:
+X *
+X * This file contains a number of mathematical constants and
+X * also some needed size parameters of the computer arithmetic.
+X * The values are supplied as arrays of hexadecimal integers
+X * for IEEE arithmetic; arrays of octal constants for DEC
+X * arithmetic; and in a normal decimal scientific notation for
+X * other machines.  The particular notation used is determined
+X * by a symbol (DEC, IBMPC, or UNK) defined in the include file
+X * mconf.h.
+X *
+X * The default size parameters are as follows.
+X *
+X * For DEC and UNK modes:
+X * MACHEP =  1.38777878078144567553E-17       2**-56
+X * MAXLOG =  8.8029691931113054295988E1       log(2**127)
+X * MINLOG = -8.872283911167299960540E1        log(2**-128)
+X * MAXNUM =  1.701411834604692317316873e38    2**127
+X *
+X * For IEEE arithmetic (IBMPC):
+X * MACHEP =  1.11022302462515654042E-16       2**-53
+X * MAXLOG =  7.09782712893383996843E2         log(2**1024)
+X * MINLOG = -7.08396418532264106224E2         log(2**-1022)
+X * MAXNUM =  1.7976931348623158E308           2**1024
+X *
+X * The global symbols for mathematical constants are
+X * PI     =  3.14159265358979323846           pi
+X * PIO2   =  1.57079632679489661923           pi/2
+X * PIO4   =  7.85398163397448309616E-1        pi/4
+X * SQRT2  =  1.41421356237309504880           sqrt(2)
+X * SQRTH  =  7.07106781186547524401E-1        sqrt(2)/2
+X * LOG2E  =  1.4426950408889634073599         1/log(2)
+X * SQ2OPI =  7.9788456080286535587989E-1      sqrt( 2/pi )
+X * LOGE2  =  6.93147180559945309417E-1        log(2)
+X * LOGSQ2 =  3.46573590279972654709E-1        log(2)/2
+X * THPIO4 =  2.35619449019234492885           3*pi/4
+X * TWOOPI =  6.36619772367581343075535E-1     2/pi
+X *
+X * These lists are subject to change.
+X */
+X
+/*                                                      const.c */
+X
+/*
+Cephes Math Library Release 2.3:  March, 1995
+Copyright 1984, 1995 by Stephen L. Moshier
+*/
+X
+#include "mconf.h"
+X
+#ifdef UNK
+#if 1
+double MACHEP =  1.11022302462515654042E-16;   /* 2**-53 */
+#else
+double MACHEP =  1.38777878078144567553E-17;   /* 2**-56 */
+#endif
+double UFLOWTHRESH =  2.22507385850720138309E-308; /* 2**-1022 */
+#ifdef DENORMAL
+double MAXLOG =  7.09782712893383996732E2;     /* log(MAXNUM) */
+/* double MINLOG = -7.44440071921381262314E2; */     /* log(2**-1074) */
+double MINLOG = -7.451332191019412076235E2;     /* log(2**-1075) */
+#else
+double MAXLOG =  7.08396418532264106224E2;     /* log 2**1022 */
+double MINLOG = -7.08396418532264106224E2;     /* log 2**-1022 */
+#endif
+double MAXNUM =  1.79769313486231570815E308;    /* 2**1024*(1-MACHEP) */
+double PI     =  3.14159265358979323846;       /* pi */
+double PIO2   =  1.57079632679489661923;       /* pi/2 */
+double PIO4   =  7.85398163397448309616E-1;    /* pi/4 */
+double SQRT2  =  1.41421356237309504880;       /* sqrt(2) */
+double SQRTH  =  7.07106781186547524401E-1;    /* sqrt(2)/2 */
+double LOG2E  =  1.4426950408889634073599;     /* 1/log(2) */
+double SQ2OPI =  7.9788456080286535587989E-1;  /* sqrt( 2/pi ) */
+double LOGE2  =  6.93147180559945309417E-1;    /* log(2) */
+double LOGSQ2 =  3.46573590279972654709E-1;    /* log(2)/2 */
+double THPIO4 =  2.35619449019234492885;       /* 3*pi/4 */
+double TWOOPI =  6.36619772367581343075535E-1; /* 2/pi */
+#ifdef INFINITIES
+double INFINITY = 99e999;
+#else
+double INFINITY =  1.79769313486231570815E308;    /* 2**1024*(1-MACHEP) */
+#endif
+#ifdef NANS
+double NAN = 0.0/0.0;
+#else
+double NAN = 0.0;
+#endif
+#ifdef MINUSZERO
+double NEGZERO = -0.0;
+#else
+double NEGZERO = 0.0;
+#endif
+#endif
+X
+#ifdef IBMPC
+X                       /* 2**-53 =  1.11022302462515654042E-16 */
+unsigned short MACHEP[4] = {0x0000,0x0000,0x0000,0x3ca0};
+unsigned short UFLOWTHRESH[4] = {0x0000,0x0000,0x0000,0x0010};
+#ifdef DENORMAL
+X                       /* log(MAXNUM) =  7.09782712893383996732224E2 */
+unsigned short MAXLOG[4] = {0x39ef,0xfefa,0x2e42,0x4086};
+X                       /* log(2**-1074) = - -7.44440071921381262314E2 */
+/*unsigned short MINLOG[4] = {0x71c3,0x446d,0x4385,0xc087};*/
+unsigned short MINLOG[4] = {0x3052,0xd52d,0x4910,0xc087};
+#else
+X                       /* log(2**1022) =   7.08396418532264106224E2 */
+unsigned short MAXLOG[4] = {0xbcd2,0xdd7a,0x232b,0x4086};
+X                       /* log(2**-1022) = - 7.08396418532264106224E2 */
+unsigned short MINLOG[4] = {0xbcd2,0xdd7a,0x232b,0xc086};
+#endif
+X                       /* 2**1024*(1-MACHEP) =  1.7976931348623158E308 */
+unsigned short MAXNUM[4] = {0xffff,0xffff,0xffff,0x7fef};
+unsigned short PI[4]     = {0x2d18,0x5444,0x21fb,0x4009};
+unsigned short PIO2[4]   = {0x2d18,0x5444,0x21fb,0x3ff9};
+unsigned short PIO4[4]   = {0x2d18,0x5444,0x21fb,0x3fe9};
+unsigned short SQRT2[4]  = {0x3bcd,0x667f,0xa09e,0x3ff6};
+unsigned short SQRTH[4]  = {0x3bcd,0x667f,0xa09e,0x3fe6};
+unsigned short LOG2E[4]  = {0x82fe,0x652b,0x1547,0x3ff7};
+unsigned short SQ2OPI[4] = {0x3651,0x33d4,0x8845,0x3fe9};
+unsigned short LOGE2[4]  = {0x39ef,0xfefa,0x2e42,0x3fe6};
+unsigned short LOGSQ2[4] = {0x39ef,0xfefa,0x2e42,0x3fd6};
+unsigned short THPIO4[4] = {0x21d2,0x7f33,0xd97c,0x4002};
+unsigned short TWOOPI[4] = {0xc883,0x6dc9,0x5f30,0x3fe4};
+#ifdef INFINITIES
+unsigned short INFINITY[4] = {0x0000,0x0000,0x0000,0x7ff0};
+#else
+unsigned short INFINITY[4] = {0xffff,0xffff,0xffff,0x7fef};
+#endif
+#ifdef NANS
+unsigned short NAN[4] = {0x0000,0x0000,0x0000,0x7ffc};
+#else
+unsigned short NAN[4] = {0x0000,0x0000,0x0000,0x0000};
+#endif
+#ifdef MINUSZERO
+unsigned short NEGZERO[4] = {0x0000,0x0000,0x0000,0x8000};
+#else
+unsigned short NEGZERO[4] = {0x0000,0x0000,0x0000,0x0000};
+#endif
+#endif
+X
+#ifdef MIEEE
+X                       /* 2**-53 =  1.11022302462515654042E-16 */
+unsigned short MACHEP[4] = {0x3ca0,0x0000,0x0000,0x0000};
+unsigned short UFLOWTHRESH[4] = {0x0010,0x0000,0x0000,0x0000};
+#ifdef DENORMAL
+X                       /* log(2**1024) =   7.09782712893383996843E2 */
+unsigned short MAXLOG[4] = {0x4086,0x2e42,0xfefa,0x39ef};
+X                       /* log(2**-1074) = - -7.44440071921381262314E2 */
+/* unsigned short MINLOG[4] = {0xc087,0x4385,0x446d,0x71c3}; */
+unsigned short MINLOG[4] = {0xc087,0x4910,0xd52d,0x3052};
+#else
+X                       /* log(2**1022) =  7.08396418532264106224E2 */
+unsigned short MAXLOG[4] = {0x4086,0x232b,0xdd7a,0xbcd2};
+X                       /* log(2**-1022) = - 7.08396418532264106224E2 */
+unsigned short MINLOG[4] = {0xc086,0x232b,0xdd7a,0xbcd2};
+#endif
+X                       /* 2**1024*(1-MACHEP) =  1.7976931348623158E308 */
+unsigned short MAXNUM[4] = {0x7fef,0xffff,0xffff,0xffff};
+unsigned short PI[4]     = {0x4009,0x21fb,0x5444,0x2d18};
+unsigned short PIO2[4]   = {0x3ff9,0x21fb,0x5444,0x2d18};
+unsigned short PIO4[4]   = {0x3fe9,0x21fb,0x5444,0x2d18};
+unsigned short SQRT2[4]  = {0x3ff6,0xa09e,0x667f,0x3bcd};
+unsigned short SQRTH[4]  = {0x3fe6,0xa09e,0x667f,0x3bcd};
+unsigned short LOG2E[4]  = {0x3ff7,0x1547,0x652b,0x82fe};
+unsigned short SQ2OPI[4] = {0x3fe9,0x8845,0x33d4,0x3651};
+unsigned short LOGE2[4]  = {0x3fe6,0x2e42,0xfefa,0x39ef};
+unsigned short LOGSQ2[4] = {0x3fd6,0x2e42,0xfefa,0x39ef};
+unsigned short THPIO4[4] = {0x4002,0xd97c,0x7f33,0x21d2};
+unsigned short TWOOPI[4] = {0x3fe4,0x5f30,0x6dc9,0xc883};
+#ifdef INFINITIES
+unsigned short INFINITY[4] = {0x7ff0,0x0000,0x0000,0x0000};
+#else
+unsigned short INFINITY[4] = {0x7fef,0xffff,0xffff,0xffff};
+#endif
+#ifdef NANS
+unsigned short NAN[4] = {0x7ff8,0x0000,0x0000,0x0000};
+#else
+unsigned short NAN[4] = {0x0000,0x0000,0x0000,0x0000};
+#endif
+#ifdef MINUSZERO
+unsigned short NEGZERO[4] = {0x8000,0x0000,0x0000,0x0000};
+#else
+unsigned short NEGZERO[4] = {0x0000,0x0000,0x0000,0x0000};
+#endif
+#endif
+X
+#ifdef DEC
+X                       /* 2**-56 =  1.38777878078144567553E-17 */
+unsigned short MACHEP[4] = {0022200,0000000,0000000,0000000};
+unsigned short UFLOWTHRESH[4] = {0x0080,0x0000,0x0000,0x0000};
+X                       /* log 2**127 = 88.029691931113054295988 */
+unsigned short MAXLOG[4] = {041660,007463,0143742,025733,};
+X                       /* log 2**-128 = -88.72283911167299960540 */
+unsigned short MINLOG[4] = {0141661,071027,0173721,0147572,};
+X                       /* 2**127 = 1.701411834604692317316873e38 */
+unsigned short MAXNUM[4] = {077777,0177777,0177777,0177777,};
+unsigned short PI[4]     = {040511,007732,0121041,064302,};
+unsigned short PIO2[4]   = {040311,007732,0121041,064302,};
+unsigned short PIO4[4]   = {040111,007732,0121041,064302,};
+unsigned short SQRT2[4]  = {040265,002363,031771,0157145,};
+unsigned short SQRTH[4]  = {040065,002363,031771,0157144,};
+unsigned short LOG2E[4]  = {040270,0125073,024534,013761,};
+unsigned short SQ2OPI[4] = {040114,041051,0117241,0131204,};
+unsigned short LOGE2[4]  = {040061,071027,0173721,0147572,};
+unsigned short LOGSQ2[4] = {037661,071027,0173721,0147572,};
+unsigned short THPIO4[4] = {040426,0145743,0174631,007222,};
+unsigned short TWOOPI[4] = {040042,0174603,067116,042025,};
+/* Approximate infinity by MAXNUM.  */
+unsigned short INFINITY[4] = {077777,0177777,0177777,0177777,};
+unsigned short NAN[4] = {0000000,0000000,0000000,0000000};
+#ifdef MINUSZERO
+unsigned short NEGZERO[4] = {0000000,0000000,0000000,0100000};
+#else
+unsigned short NEGZERO[4] = {0000000,0000000,0000000,0000000};
+#endif
+#endif
+X
+#ifndef UNK
+extern unsigned short MACHEP[];
+extern unsigned short UFLOWTHRESH[];
+extern unsigned short MAXLOG[];
+extern unsigned short UNDLOG[];
+extern unsigned short MINLOG[];
+extern unsigned short MAXNUM[];
+extern unsigned short PI[];
+extern unsigned short PIO2[];
+extern unsigned short PIO4[];
+extern unsigned short SQRT2[];
+extern unsigned short SQRTH[];
+extern unsigned short LOG2E[];
+extern unsigned short SQ2OPI[];
+extern unsigned short LOGE2[];
+extern unsigned short LOGSQ2[];
+extern unsigned short THPIO4[];
+extern unsigned short TWOOPI[];
+extern unsigned short INFINITY[];
+extern unsigned short NAN[];
+extern unsigned short NEGZERO[];
+#endif
+SHAR_EOF
+chmod 0666 const.c ||
+echo 'restore of const.c failed'
+Wc_c="`wc -c < 'const.c'`"
+test 9532 -eq "$Wc_c" ||
+        echo 'const.c: original size 9532, current size' "$Wc_c"
+fi
+# ============= cprob.mak ==============
+if test -f 'cprob.mak' -a X"$1" != X"-c"; then
+        echo 'x - skipping cprob.mak (File already exists)'
+else
+echo 'x - extracting cprob.mak (Text)'
+sed 's/^X//' << 'SHAR_EOF' > 'cprob.mak' &&
+# Makefile for probability integrals.
+# Be sure to set the type of computer and endianness in mconf.h.
+X
+CC = gcc
+CFLAGS = -O2 -Wall
+INCS = mconf.h
+X
+OBJS = incbetl.o incbil.o incbi.o qincb.o qincbi.o igami.o fdtrl.o
+OBJS = bdtr.o btdtr.o chdtr.o drand.o fdtr.o gamma.o gdtr.o igam.o \
+igami.o incbet.o incbi.o mtherr.o nbdtr.o ndtr.o ndtri.o pdtr.o \
+stdtr.o unity.o polevl.o const.o
+X
+libprob.a: $(OBJS) $(INCS)
+X       ar rv libprob.a $(OBJS)
+X       ranlib libprob.a
+SHAR_EOF
+chmod 0666 cprob.mak ||
+echo 'restore of cprob.mak failed'
+Wc_c="`wc -c < 'cprob.mak'`"
+test 454 -eq "$Wc_c" ||
+        echo 'cprob.mak: original size 454, current size' "$Wc_c"
+fi
+# ============= drand.c ==============
+if test -f 'drand.c' -a X"$1" != X"-c"; then
+        echo 'x - skipping drand.c (File already exists)'
+else
+echo 'x - extracting drand.c (Text)'
+sed 's/^X//' << 'SHAR_EOF' > 'drand.c' &&
+/*                                                      drand.c
+X *
+X *     Pseudorandom number generator
+X *
+X *
+X *
+X * SYNOPSIS:
+X *
+X * double y, drand();
+X *
+X * drand( &y );
+X *
+X *
+X *
+X * DESCRIPTION:
+X *
+X * Yields a random number 1.0 <= y < 2.0.
+X *
+X * The three-generator congruential algorithm by Brian
+X * Wichmann and David Hill (BYTE magazine, March, 1987,
+X * pp 127-8) is used. The period, given by them, is
+X * 6953607871644.
+X *
+X * Versions invoked by the different arithmetic compile
+X * time options DEC, IBMPC, and MIEEE, produce
+X * approximately the same sequences, differing only in the
+X * least significant bits of the numbers. The UNK option
+X * implements the algorithm as recommended in the BYTE
+X * article.  It may be used on all computers. However,
+X * the low order bits of a double precision number may
+X * not be adequately random, and may vary due to arithmetic
+X * implementation details on different computers.
+X *
+X * The other compile options generate an additional random
+X * integer that overwrites the low order bits of the double
+X * precision number.  This reduces the period by a factor of
+X * two but tends to overcome the problems mentioned.
+X *
+X */
+X
+X
+X
+#include "mconf.h"
+X
+X
+/*  Three-generator random number algorithm
+X * of Brian Wichmann and David Hill
+X * BYTE magazine, March, 1987 pp 127-8
+X *
+X * The period, given by them, is (p-1)(q-1)(r-1)/4 = 6.95e12.
+X */
+X
+static int sx = 1;
+static int sy = 10000;
+static int sz = 3000;
+X
+static union {
+X double d;
+X unsigned short s[4];
+} unkans;
+X
+/* This function implements the three
+X * congruential generators.
+X */
+X
+static int ranwh()
+{
+int r, s;
+X
+/*  sx = sx * 171 mod 30269 */
+r = sx/177;
+s = sx - 177 * r;
+sx = 171 * s - 2 * r;
+if( sx < 0 )
+X       sx += 30269;
+X
+X
+/* sy = sy * 172 mod 30307 */
+r = sy/176;
+s = sy - 176 * r;
+sy = 172 * s - 35 * r;
+if( sy < 0 )
+X       sy += 30307;
+X
+/* sz = 170 * sz mod 30323 */
+r = sz/178;
+s = sz - 178 * r;
+sz = 170 * s - 63 * r;
+if( sz < 0 )
+X       sz += 30323;
+/* The results are in static sx, sy, sz. */
+return 0;
+}
+X
+/*      drand.c
+X *
+X * Random double precision floating point number between 1 and 2.
+X *
+X * C callable:
+X *     drand( &x );
+X */
+X
+int drand( a )
+double *a;
+{
+unsigned short r;
+#ifdef DEC
+unsigned short s, t;
+#endif
+X
+/* This algorithm of Wichmann and Hill computes a floating point
+X * result:
+X */
+ranwh();
+unkans.d = sx/30269.0  +  sy/30307.0  +  sz/30323.0;
+r = unkans.d;
+unkans.d -= r;
+unkans.d += 1.0;
+X
+/* if UNK option, do nothing further.
+X * Otherwise, make a random 16 bit integer
+X * to overwrite the least significant word
+X * of unkans.
+X */
+#ifdef UNK
+/* do nothing */
+#else
+ranwh();
+r = sx * sy + sz;
+#endif
+X
+#ifdef DEC
+/* To make the numbers as similar as possible
+X * in all arithmetics, the random integer has
+X * to be inserted 3 bits higher up in a DEC number.
+X * An alternative would be put it 3 bits lower down
+X * in all the other number types.
+X */
+s = unkans.s[2];
+t = s & 07;     /* save these bits to put in at the bottom */
+s &= 0177770;
+s |= (r >> 13) & 07;
+unkans.s[2] = s;
+t |= r << 3;
+unkans.s[3] = t;
+#endif
+X
+#ifdef IBMPC
+unkans.s[0] = r;
+#endif
+X
+#ifdef MIEEE
+unkans.s[3] = r;
+#endif
+X
+*a = unkans.d;
+return 0;
+}
+SHAR_EOF
+chmod 0666 drand.c ||
+echo 'restore of drand.c failed'
+Wc_c="`wc -c < 'drand.c'`"
+test 3064 -eq "$Wc_c" ||
+        echo 'drand.c: original size 3064, current size' "$Wc_c"
+fi
+# ============= fdtr.c ==============
+if test -f 'fdtr.c' -a X"$1" != X"-c"; then
+        echo 'x - skipping fdtr.c (File already exists)'
+else
+echo 'x - extracting fdtr.c (Text)'
+sed 's/^X//' << 'SHAR_EOF' > 'fdtr.c' &&
+/*                                                      fdtr.c
+X *
+X *     F distribution
+X *
+X *
+X *
+X * SYNOPSIS:
+X *
+X * int df1, df2;
+X * double x, y, fdtr();
+X *
+X * y = fdtr( df1, df2, x );
+X *
+X * DESCRIPTION:
+X *
+X * Returns the area from zero to x under the F density
+X * function (also known as Snedcor's density or the
+X * variance ratio density).  This is the density
+X * of x = (u1/df1)/(u2/df2), where u1 and u2 are random
+X * variables having Chi square distributions with df1
+X * and df2 degrees of freedom, respectively.
+X *
+X * The incomplete beta integral is used, according to the
+X * formula
+X *
+X *     P(x) = incbet( df1/2, df2/2, (df1*x/(df2 + df1*x) ).
+X *
+X *
+X * The arguments a and b are greater than zero, and x is
+X * nonnegative.
+X *
+X * ACCURACY:
+X *
+X * Tested at random points (a,b,x).
+X *
+X *                x     a,b                     Relative error:
+X * arithmetic  domain  domain     # trials      peak         rms
+X *    IEEE      0,1    0,100       100000      9.8e-15     1.7e-15
+X *    IEEE      1,5    0,100       100000      6.5e-15     3.5e-16
+X *    IEEE      0,1    1,10000     100000      2.2e-11     3.3e-12
+X *    IEEE      1,5    1,10000     100000      1.1e-11     1.7e-13
+X * See also incbet.c.
+X *
+X *
+X * ERROR MESSAGES:
+X *
+X *   message         condition      value returned
+X * fdtr domain     a<0, b<0, x<0         0.0
+X *
+X */
+X/*                                                     fdtrc()
+X *
+X *     Complemented F distribution
+X *
+X *
+X *
+X * SYNOPSIS:
+X *
+X * int df1, df2;
+X * double x, y, fdtrc();
+X *
+X * y = fdtrc( df1, df2, x );
+X *
+X * DESCRIPTION:
+X *
+X * Returns the area from x to infinity under the F density
+X * function (also known as Snedcor's density or the
+X * variance ratio density).
+X *
+X *
+X *                      inf.
+X *                       -
+X *              1       | |  a-1      b-1
+X * 1-P(x)  =  ------    |   t    (1-t)    dt
+X *            B(a,b)  | |
+X *                     -
+X *                      x
+X *
+X *
+X * The incomplete beta integral is used, according to the
+X * formula
+X *
+X *     P(x) = incbet( df2/2, df1/2, (df2/(df2 + df1*x) ).
+X *
+X *
+X * ACCURACY:
+X *
+X * Tested at random points (a,b,x) in the indicated intervals.
+X *                x     a,b                     Relative error:
+X * arithmetic  domain  domain     # trials      peak         rms
+X *    IEEE      0,1    1,100       100000      3.7e-14     5.9e-16
+X *    IEEE      1,5    1,100       100000      8.0e-15     1.6e-15
+X *    IEEE      0,1    1,10000     100000      1.8e-11     3.5e-13
+X *    IEEE      1,5    1,10000     100000      2.0e-11     3.0e-12
+X * See also incbet.c.
+X *
+X * ERROR MESSAGES:
+X *
+X *   message         condition      value returned
+X * fdtrc domain    a<0, b<0, x<0         0.0
+X *
+X */
+X/*                                                     fdtri()
+X *
+X *     Inverse of complemented F distribution
+X *
+X *
+X *
+X * SYNOPSIS:
+X *
+X * int df1, df2;
+X * double x, p, fdtri();
+X *
+X * x = fdtri( df1, df2, p );
+X *
+X * DESCRIPTION:
+X *
+X * Finds the F density argument x such that the integral
+X * from x to infinity of the F density is equal to the
+X * given probability p.
+X *
+X * This is accomplished using the inverse beta integral
+X * function and the relations
+X *
+X *      z = incbi( df2/2, df1/2, p )
+X *      x = df2 (1-z) / (df1 z).
+X *
+X * Note: the following relations hold for the inverse of
+X * the uncomplemented F distribution:
+X *
+X *      z = incbi( df1/2, df2/2, p )
+X *      x = df2 z / (df1 (1-z)).
+X *
+X * ACCURACY:
+X *
+X * Tested at random points (a,b,p).
+X *
+X *              a,b                     Relative error:
+X * arithmetic  domain     # trials      peak         rms
+X *  For p between .001 and 1:
+X *    IEEE     1,100       100000      8.3e-15     4.7e-16
+X *    IEEE     1,10000     100000      2.1e-11     1.4e-13
+X *  For p between 10^-6 and 10^-3:
+X *    IEEE     1,100        50000      1.3e-12     8.4e-15
+X *    IEEE     1,10000      50000      3.0e-12     4.8e-14
+X * See also fdtrc.c.
+X *
+X * ERROR MESSAGES:
+X *
+X *   message         condition      value returned
+X * fdtri domain   p <= 0 or p > 1       0.0
+X *                     v < 1
+X *
+X */
+X
+X
+/*
+Cephes Math Library Release 2.3:  March, 1995
+Copyright 1984, 1987, 1995 by Stephen L. Moshier
+*/
+X
+X
+#include "mconf.h"
+#ifndef ANSIPROT
+double incbet(), incbi();
+#endif
+X
+double fdtrc( ia, ib, x )
+int ia, ib;
+double x;
+{
+double a, b, w;
+X
+if( (ia < 1) || (ib < 1) || (x < 0.0) )
+X       {
+X       mtherr( "fdtrc", DOMAIN );
+X       return( 0.0 );
+X       }
+a = ia;
+b = ib;
+w = b / (b + a * x);
+return( incbet( 0.5*b, 0.5*a, w ) );
+}
+X
+X
+X
+double fdtr( ia, ib, x )
+int ia, ib;
+double x;
+{
+double a, b, w;
+X
+if( (ia < 1) || (ib < 1) || (x < 0.0) )
+X       {
+X       mtherr( "fdtr", DOMAIN );
+X       return( 0.0 );
+X       }
+a = ia;
+b = ib;
+w = a * x;
+w = w / (b + w);
+return( incbet(0.5*a, 0.5*b, w) );
+}
+X
+X
+double fdtri( ia, ib, y )
+int ia, ib;
+double y;
+{
+double a, b, w, x;
+X
+if( (ia < 1) || (ib < 1) || (y <= 0.0) || (y > 1.0) )
+X       {
+X       mtherr( "fdtri", DOMAIN );
+X       return( 0.0 );
+X       }
+a = ia;
+b = ib;
+/* Compute probability for x = 0.5.  */
+w = incbet( 0.5*b, 0.5*a, 0.5 );
+/* If that is greater than y, then the solution w < .5.
+X   Otherwise, solve at 1-y to remove cancellation in (b - b*w).  */
+if( w > y || y < 0.001)
+X       {
+X       w = incbi( 0.5*b, 0.5*a, y );
+X       x = (b - b*w)/(a*w);
+X       }
+else
+X       {
+X       w = incbi( 0.5*a, 0.5*b, 1.0-y );
+X       x = b*w/(a*(1.0-w));
+X       }
+return(x);
+}
+SHAR_EOF
+chmod 0666 fdtr.c ||
+echo 'restore of fdtr.c failed'
+Wc_c="`wc -c < 'fdtr.c'`"
+test 5090 -eq "$Wc_c" ||
+        echo 'fdtr.c: original size 5090, current size' "$Wc_c"
+fi
+# ============= gamma.c ==============
+if test -f 'gamma.c' -a X"$1" != X"-c"; then
+        echo 'x - skipping gamma.c (File already exists)'
+else
+echo 'x - extracting gamma.c (Text)'
+sed 's/^X//' << 'SHAR_EOF' > 'gamma.c' &&
+/*                                                      gamma.c
+X *
+X *     Gamma function
+X *
+X *
+X *
+X * SYNOPSIS:
+X *
+X * double x, y, gamma();
+X * extern int sgngam;
+X *
+X * y = gamma( x );
+X *
+X *
+X *
+X * DESCRIPTION:
+X *
+X * Returns gamma function of the argument.  The result is
+X * correctly signed, and the sign (+1 or -1) is also
+X * returned in a global (extern) variable named sgngam.
+X * This variable is also filled in by the logarithmic gamma
+X * function lgam().
+X *
+X * Arguments |x| <= 34 are reduced by recurrence and the function
+X * approximated by a rational function of degree 6/7 in the
+X * interval (2,3).  Large arguments are handled by Stirling's
+X * formula. Large negative arguments are made positive using
+X * a reflection formula.
+X *
+X *
+X * ACCURACY:
+X *
+X *                      Relative error:
+X * arithmetic   domain     # trials      peak         rms
+X *    DEC      -34, 34      10000       1.3e-16     2.5e-17
+X *    IEEE    -170,-33      20000       2.3e-15     3.3e-16
+X *    IEEE     -33,  33     20000       9.4e-16     2.2e-16
+X *    IEEE      33, 171.6   20000       2.3e-15     3.2e-16
+X *
+X * Error for arguments outside the test range will be larger
+X * owing to error amplification by the exponential function.
+X *
+X */
+/*                                                      lgam()
+X *
+X *     Natural logarithm of gamma function
+X *
+X *
+X *
+X * SYNOPSIS:
+X *
+X * double x, y, lgam();
+X * extern int sgngam;
+X *
+X * y = lgam( x );
+X *
+X *
+X *
+X * DESCRIPTION:
+X *
+X * Returns the base e (2.718...) logarithm of the absolute
+X * value of the gamma function of the argument.
+X * The sign (+1 or -1) of the gamma function is returned in a
+X * global (extern) variable named sgngam.
+X *
+X * For arguments greater than 13, the logarithm of the gamma
+X * function is approximated by the logarithmic version of
+X * Stirling's formula using a polynomial approximation of
+X * degree 4. Arguments between -33 and +33 are reduced by
+X * recurrence to the interval [2,3] of a rational approximation.
+X * The cosecant reflection formula is employed for arguments
+X * less than -33.
+X *
+X * Arguments greater than MAXLGM return MAXNUM and an error
+X * message.  MAXLGM = 2.035093e36 for DEC
+X * arithmetic or 2.556348e305 for IEEE arithmetic.
+X *
+X *
+X *
+X * ACCURACY:
+X *
+X *
+X * arithmetic      domain        # trials     peak         rms
+X *    DEC     0, 3                  7000     5.2e-17     1.3e-17
+X *    DEC     2.718, 2.035e36       5000     3.9e-17     9.9e-18
+X *    IEEE    0, 3                 28000     5.4e-16     1.1e-16
+X *    IEEE    2.718, 2.556e305     40000     3.5e-16     8.3e-17
+X * The error criterion was relative when the function magnitude
+X * was greater than one but absolute when it was less than one.
+X *
+X * The following test used the relative error criterion, though
+X * at certain points the relative error could be much higher than
+X * indicated.
+X *    IEEE    -200, -4             10000     4.8e-16     1.3e-16
+X *
+X */
+X
+/*                                                      gamma.c */
+/*      gamma function  */
+X
+/*
+Cephes Math Library Release 2.2:  July, 1992
+Copyright 1984, 1987, 1989, 1992 by Stephen L. Moshier
+Direct inquiries to 30 Frost Street, Cambridge, MA 02140
+*/
+X
+X
+#include "mconf.h"
+X
+#ifdef UNK
+static double P[] = {
+X  1.60119522476751861407E-4,
+X  1.19135147006586384913E-3,
+X  1.04213797561761569935E-2,
+X  4.76367800457137231464E-2,
+X  2.07448227648435975150E-1,
+X  4.94214826801497100753E-1,
+X  9.99999999999999996796E-1
+};
+static double Q[] = {
+-2.31581873324120129819E-5,
+X 5.39605580493303397842E-4,
+-4.45641913851797240494E-3,
+X 1.18139785222060435552E-2,
+X 3.58236398605498653373E-2,
+-2.34591795718243348568E-1,
+X 7.14304917030273074085E-2,
+X 1.00000000000000000320E0
+};
+#define MAXGAM 171.624376956302725
+static double LOGPI = 1.14472988584940017414;
+#endif
+X
+#ifdef DEC
+static unsigned short P[] = {
+0035047,0162701,0146301,0005234,
+0035634,0023437,0032065,0176530,
+0036452,0137157,0047330,0122574,
+0037103,0017310,0143041,0017232,
+0037524,0066516,0162563,0164605,
+0037775,0004671,0146237,0014222,
+0040200,0000000,0000000,0000000
+};
+static unsigned short Q[] = {
+0134302,0041724,0020006,0116565,
+0035415,0072121,0044251,0025634,
+0136222,0003447,0035205,0121114,
+0036501,0107552,0154335,0104271,
+0037022,0135717,0014776,0171471,
+0137560,0034324,0165024,0037021,
+0037222,0045046,0047151,0161213,
+0040200,0000000,0000000,0000000
+};
+#define MAXGAM 34.84425627277176174
+static unsigned short LPI[4] = {
+0040222,0103202,0043475,0006750,
+};
+#define LOGPI *(double *)LPI
+#endif
+X
+#ifdef IBMPC
+static unsigned short P[] = {
+0x2153,0x3998,0xfcb8,0x3f24,
+0xbfab,0xe686,0x84e3,0x3f53,
+0x14b0,0xe9db,0x57cd,0x3f85,
+0x23d3,0x18c4,0x63d9,0x3fa8,
+0x7d31,0xdcae,0x8da9,0x3fca,
+0xe312,0x3993,0xa137,0x3fdf,
+0x0000,0x0000,0x0000,0x3ff0
+};
+static unsigned short Q[] = {
+0xd3af,0x8400,0x487a,0xbef8,
+0x2573,0x2915,0xae8a,0x3f41,
+0xb44a,0xe750,0x40e4,0xbf72,
+0xb117,0x5b1b,0x31ed,0x3f88,
+0xde67,0xe33f,0x5779,0x3fa2,
+0x87c2,0x9d42,0x071a,0xbfce,
+0x3c51,0xc9cd,0x4944,0x3fb2,
+0x0000,0x0000,0x0000,0x3ff0
+};
+#define MAXGAM 171.624376956302725
+static unsigned short LPI[4] = {
+0xa1bd,0x48e7,0x50d0,0x3ff2,
+};
+#define LOGPI *(double *)LPI
+#endif
+X
+#ifdef MIEEE
+static unsigned short P[] = {
+0x3f24,0xfcb8,0x3998,0x2153,
+0x3f53,0x84e3,0xe686,0xbfab,
+0x3f85,0x57cd,0xe9db,0x14b0,
+0x3fa8,0x63d9,0x18c4,0x23d3,
+0x3fca,0x8da9,0xdcae,0x7d31,
+0x3fdf,0xa137,0x3993,0xe312,
+0x3ff0,0x0000,0x0000,0x0000
+};
+static unsigned short Q[] = {
+0xbef8,0x487a,0x8400,0xd3af,
+0x3f41,0xae8a,0x2915,0x2573,
+0xbf72,0x40e4,0xe750,0xb44a,
+0x3f88,0x31ed,0x5b1b,0xb117,
+0x3fa2,0x5779,0xe33f,0xde67,
+0xbfce,0x071a,0x9d42,0x87c2,
+0x3fb2,0x4944,0xc9cd,0x3c51,
+0x3ff0,0x0000,0x0000,0x0000
+};
+#define MAXGAM 171.624376956302725
+static unsigned short LPI[4] = {
+0x3ff2,0x50d0,0x48e7,0xa1bd,
+};
+#define LOGPI *(double *)LPI
+#endif
+X
+/* Stirling's formula for the gamma function */
+#if UNK
+static double STIR[5] = {
+X 7.87311395793093628397E-4,
+-2.29549961613378126380E-4,
+-2.68132617805781232825E-3,
+X 3.47222221605458667310E-3,
+X 8.33333333333482257126E-2,
+};
+#define MAXSTIR 143.01608
+static double SQTPI = 2.50662827463100050242E0;
+#endif
+#if DEC
+static unsigned short STIR[20] = {
+0035516,0061622,0144553,0112224,
+0135160,0131531,0037460,0165740,
+0136057,0134460,0037242,0077270,
+0036143,0107070,0156306,0027751,
+0037252,0125252,0125252,0146064,
+};
+#define MAXSTIR 26.77
+static unsigned short SQT[4] = {
+0040440,0066230,0177661,0034055,
+};
+#define SQTPI *(double *)SQT
+#endif
+#if IBMPC
+static unsigned short STIR[20] = {
+0x7293,0x592d,0xcc72,0x3f49,
+0x1d7c,0x27e6,0x166b,0xbf2e,
+0x4fd7,0x07d4,0xf726,0xbf65,
+0xc5fd,0x1b98,0x71c7,0x3f6c,
+0x5986,0x5555,0x5555,0x3fb5,
+};
+#define MAXSTIR 143.01608
+static unsigned short SQT[4] = {
+0x2706,0x1ff6,0x0d93,0x4004,
+};
+#define SQTPI *(double *)SQT
+#endif
+#if MIEEE
+static unsigned short STIR[20] = {
+0x3f49,0xcc72,0x592d,0x7293,
+0xbf2e,0x166b,0x27e6,0x1d7c,
+0xbf65,0xf726,0x07d4,0x4fd7,
+0x3f6c,0x71c7,0x1b98,0xc5fd,
+0x3fb5,0x5555,0x5555,0x5986,
+};
+#define MAXSTIR 143.01608
+static unsigned short SQT[4] = {
+0x4004,0x0d93,0x1ff6,0x2706,
+};
+#define SQTPI *(double *)SQT
+#endif
+X
+int sgngam = 0;
+extern int sgngam;
+extern double MAXLOG, MAXNUM, PI;
+#ifndef ANSIPROT
+double pow(), log(), exp(), sin(), polevl(), p1evl(), floor(), fabs();
+#endif
+X
+/* Gamma function computed by Stirling's formula.
+X * The polynomial STIR is valid for 33 <= x <= 172.
+X */
+static double stirf(x)
+double x;
+{
+double y, w, v;
+X
+w = 1.0/x;
+w = 1.0 + w * polevl( w, STIR, 4 );
+y = exp(x);
+if( x > MAXSTIR )
+X       { /* Avoid overflow in pow() */
+X       v = pow( x, 0.5 * x - 0.25 );
+X       y = v * (v / y);
+X       }
+else
+X       {
+X       y = pow( x, x - 0.5 ) / y;
+X       }
+y = SQTPI * y * w;
+return( y );
+}
+X
+X
+X
+double gamma(x)
+double x;
+{
+double p, q, z;
+int i;
+X
+sgngam = 1;
+q = fabs(x);
+X
+if( q > 33.0 )
+X       {
+X       if( x < 0.0 )
+X               {
+X               p = floor(q);
+X               if( p == q )
+X                       goto goverf;
+X               i = p;
+X               if( (i & 1) == 0 )
+X                       sgngam = -1;
+X               z = q - p;
+X               if( z > 0.5 )
+X                       {
+X                       p += 1.0;
+X                       z = q - p;
+X                       }
+X               z = q * sin( PI * z );
+X               if( z == 0.0 )
+X                       {
+goverf:
+X                       mtherr( "gamma", OVERFLOW );
+X                       return( sgngam * MAXNUM);
+X                       }
+X               z = fabs(z);
+X               z = PI/(z * stirf(q) );
+X               }
+X       else
+X               {
+X               z = stirf(x);
+X               }
+X       return( sgngam * z );
+X       }
+X
+z = 1.0;
+while( x >= 3.0 )
+X       {
+X       x -= 1.0;
+X       z *= x;
+X       }
+X
+while( x < 0.0 )
+X       {
+X       if( x > -1.E-9 )
+X               goto small;
+X       z /= x;
+X       x += 1.0;
+X       }
+X
+while( x < 2.0 )
+X       {
+X       if( x < 1.e-9 )
+X               goto small;
+X       z /= x;
+X       x += 1.0;
+X       }
+X
+if( (x == 2.0) || (x == 3.0) )
+X       return(z);
+X
+x -= 2.0;
+p = polevl( x, P, 6 );
+q = polevl( x, Q, 7 );
+return( z * p / q );
+X
+small:
+if( x == 0.0 )
+X       {
+X       mtherr( "gamma", SING );
+X       return( MAXNUM );
+X       }
+else
+X       return( z/((1.0 + 0.5772156649015329 * x) * x) );
+}
+X
+X
+X
+/* A[]: Stirling's formula expansion of log gamma
+X * B[], C[]: log gamma function between 2 and 3
+X */
+#ifdef UNK
+static double A[] = {
+X 8.11614167470508450300E-4,
+-5.95061904284301438324E-4,
+X 7.93650340457716943945E-4,
+-2.77777777730099687205E-3,
+X 8.33333333333331927722E-2
+};
+static double B[] = {
+-1.37825152569120859100E3,
+-3.88016315134637840924E4,
+-3.31612992738871184744E5,
+-1.16237097492762307383E6,
+-1.72173700820839662146E6,
+-8.53555664245765465627E5
+};
+static double C[] = {
+/* 1.00000000000000000000E0, */
+-3.51815701436523470549E2,
+-1.70642106651881159223E4,
+-2.20528590553854454839E5,
+-1.13933444367982507207E6,
+-2.53252307177582951285E6,
+-2.01889141433532773231E6
+};
+/* log( sqrt( 2*pi ) ) */
+static double LS2PI  =  0.91893853320467274178;
+#define MAXLGM 2.556348e305
+#endif
+X
+#ifdef DEC
+static unsigned short A[] = {
+0035524,0141201,0034633,0031405,
+0135433,0176755,0126007,0045030,
+0035520,0006371,0003342,0172730,
+0136066,0005540,0132605,0026407,
+0037252,0125252,0125252,0125132
+};
+static unsigned short B[] = {
+0142654,0044014,0077633,0035410,
+0144027,0110641,0125335,0144760,
+0144641,0165637,0142204,0047447,
+0145215,0162027,0146246,0155211,
+0145322,0026110,0010317,0110130,
+0145120,0061472,0120300,0025363
+};
+static unsigned short C[] = {
+/*0040200,0000000,0000000,0000000*/
+0142257,0164150,0163630,0112622,
+0143605,0050153,0156116,0135272,
+0144527,0056045,0145642,0062332,
+0145213,0012063,0106250,0001025,
+0145432,0111254,0044577,0115142,
+0145366,0071133,0050217,0005122
+};
+/* log( sqrt( 2*pi ) ) */
+static unsigned short LS2P[] = {040153,037616,041445,0172645,};
+#define LS2PI *(double *)LS2P
+#define MAXLGM 2.035093e36
+#endif
+X
+#ifdef IBMPC
+static unsigned short A[] = {
+0x6661,0x2733,0x9850,0x3f4a,
+0xe943,0xb580,0x7fbd,0xbf43,
+0x5ebb,0x20dc,0x019f,0x3f4a,
+0xa5a1,0x16b0,0xc16c,0xbf66,
+0x554b,0x5555,0x5555,0x3fb5
+};
+static unsigned short B[] = {
+0x6761,0x8ff3,0x8901,0xc095,
+0xb93e,0x355b,0xf234,0xc0e2,
+0x89e5,0xf890,0x3d73,0xc114,
+0xdb51,0xf994,0xbc82,0xc131,
+0xf20b,0x0219,0x4589,0xc13a,
+0x055e,0x5418,0x0c67,0xc12a
+};
+static unsigned short C[] = {
+/*0x0000,0x0000,0x0000,0x3ff0,*/
+0x12b2,0x1cf3,0xfd0d,0xc075,
+0xd757,0x7b89,0xaa0d,0xc0d0,
+0x4c9b,0xb974,0xeb84,0xc10a,
+0x0043,0x7195,0x6286,0xc131,
+0xf34c,0x892f,0x5255,0xc143,
+0xe14a,0x6a11,0xce4b,0xc13e
+};
+/* log( sqrt( 2*pi ) ) */
+static unsigned short LS2P[] = {
+0xbeb5,0xc864,0x67f1,0x3fed
+};
+#define LS2PI *(double *)LS2P
+#define MAXLGM 2.556348e305
+#endif
+X
+#ifdef MIEEE
+static unsigned short A[] = {
+0x3f4a,0x9850,0x2733,0x6661,
+0xbf43,0x7fbd,0xb580,0xe943,
+0x3f4a,0x019f,0x20dc,0x5ebb,
+0xbf66,0xc16c,0x16b0,0xa5a1,
+0x3fb5,0x5555,0x5555,0x554b
+};
+static unsigned short B[] = {
+0xc095,0x8901,0x8ff3,0x6761,
+0xc0e2,0xf234,0x355b,0xb93e,
+0xc114,0x3d73,0xf890,0x89e5,
+0xc131,0xbc82,0xf994,0xdb51,
+0xc13a,0x4589,0x0219,0xf20b,
+0xc12a,0x0c67,0x5418,0x055e
+};
+static unsigned short C[] = {
+0xc075,0xfd0d,0x1cf3,0x12b2,
+0xc0d0,0xaa0d,0x7b89,0xd757,
+0xc10a,0xeb84,0xb974,0x4c9b,
+0xc131,0x6286,0x7195,0x0043,
+0xc143,0x5255,0x892f,0xf34c,
+0xc13e,0xce4b,0x6a11,0xe14a
+};
+/* log( sqrt( 2*pi ) ) */
+static unsigned short LS2P[] = {
+0x3fed,0x67f1,0xc864,0xbeb5
+};
+#define LS2PI *(double *)LS2P
+#define MAXLGM 2.556348e305
+#endif
+X
+X
+/* Logarithm of gamma function */
+X
+X
+double lgam(x)
+double x;
+{
+double p, q, w, z;
+int i;
+X
+sgngam = 1;
+X
+if( x < -34.0 )
+X       {
+X       q = -x;
+X       w = lgam(q); /* note this modifies sgngam! */
+X       p = floor(q);
+X       if( p == q )
+X               goto loverf;
+X       i = p;
+X       if( (i & 1) == 0 )
+X               sgngam = -1;
+X       else
+X               sgngam = 1;
+X       z = q - p;
+X       if( z > 0.5 )
+X               {
+X               p += 1.0;
+X               z = p - q;
+X               }
+X       z = q * sin( PI * z );
+X       if( z == 0.0 )
+X               goto loverf;
+/*      z = log(PI) - log( z ) - w;*/
+X       z = LOGPI - log( z ) - w;
+X       return( z );
+X       }
+X
+if( x < 13.0 )
+X       {
+X       z = 1.0;
+X       while( x >= 3.0 )
+X               {
+X               x -= 1.0;
+X               z *= x;
+X               }
+X       while( x < 2.0 )
+X               {
+X               if( x == 0.0 )
+X                       goto loverf;
+X               z /= x;
+X               x += 1.0;
+X               }
+X       if( z < 0.0 )
+X               {
+X               sgngam = -1;
+X               z = -z;
+X               }
+X       else
+X               sgngam = 1;
+X       if( x == 2.0 )
+X               return( log(z) );
+X       x -= 2.0;
+X       p = x * polevl( x, B, 5 ) / p1evl( x, C, 6);
+X       return( log(z) + p );
+X       }
+X
+if( x > MAXLGM )
+X       {
+loverf:
+X       mtherr( "lgam", OVERFLOW );
+X       return( sgngam * MAXNUM );
+X       }
+X
+q = ( x - 0.5 ) * log(x) - x + LS2PI;
+if( x > 1.0e8 )
+X       return( q );
+X
+p = 1.0/(x*x);
+if( x >= 1000.0 )
+X       q += ((   7.9365079365079365079365e-4 * p
+X               - 2.7777777777777777777778e-3) *p
+X               + 0.0833333333333333333333) / x;
+else
+X       q += polevl( p, A, 4 ) / x;
+return( q );
+}
+SHAR_EOF
+chmod 0666 gamma.c ||
+echo 'restore of gamma.c failed'
+Wc_c="`wc -c < 'gamma.c'`"
+test 12801 -eq "$Wc_c" ||
+        echo 'gamma.c: original size 12801, current size' "$Wc_c"
+fi
+# ============= gdtr.c ==============
+if test -f 'gdtr.c' -a X"$1" != X"-c"; then
+        echo 'x - skipping gdtr.c (File already exists)'
+else
+echo 'x - extracting gdtr.c (Text)'
+sed 's/^X//' << 'SHAR_EOF' > 'gdtr.c' &&
+/*                                                      gdtr.c
+X *
+X *     Gamma distribution function
+X *
+X *
+X *
+X * SYNOPSIS:
+X *
+X * double a, b, x, y, gdtr();
+X *
+X * y = gdtr( a, b, x );
+X *
+X *
+X *
+X * DESCRIPTION:
+X *
+X * Returns the integral from zero to x of the gamma probability
+X * density function:
+X *
+X *
+X *                x
+X *        b       -
+X *       a       | |   b-1  -at
+X * y =  -----    |    t    e    dt
+X *       -     | |
+X *      | (b)   -
+X *               0
+X *
+X *  The incomplete gamma integral is used, according to the
+X * relation
+X *
+X * y = igam( b, ax ).
+X *
+X *
+X * ACCURACY:
+X *
+X * See igam().
+X *
+X * ERROR MESSAGES:
+X *
+X *   message         condition      value returned
+X * gdtr domain         x < 0            0.0
+X *
+X */
+X/*                                                     gdtrc.c
+X *
+X *     Complemented gamma distribution function
+X *
+X *
+X *
+X * SYNOPSIS:
+X *
+X * double a, b, x, y, gdtrc();
+X *
+X * y = gdtrc( a, b, x );
+X *
+X *
+X *
+X * DESCRIPTION:
+X *
+X * Returns the integral from x to infinity of the gamma
+X * probability density function:
+X *
+X *
+X *               inf.
+X *        b       -
+X *       a       | |   b-1  -at
+X * y =  -----    |    t    e    dt
+X *       -     | |
+X *      | (b)   -
+X *               x
+X *
+X *  The incomplete gamma integral is used, according to the
+X * relation
+X *
+X * y = igamc( b, ax ).
+X *
+X *
+X * ACCURACY:
+X *
+X * See igamc().
+X *
+X * ERROR MESSAGES:
+X *
+X *   message         condition      value returned
+X * gdtrc domain         x < 0            0.0
+X *
+X */
+X
+/*                                                      gdtr()  */
+X
+X
+/*
+Cephes Math Library Release 2.3:  March,1995
+Copyright 1984, 1987, 1995 by Stephen L. Moshier
+*/
+X
+#include "mconf.h"
+#ifndef ANSIPROT
+double igam(), igamc();
+#endif
+X
+double gdtr( a, b, x )
+double a, b, x;
+{
+X
+if( x < 0.0 )
+X       {
+X       mtherr( "gdtr", DOMAIN );
+X       return( 0.0 );
+X       }
+return(  igam( b, a * x )  );
+}
+X
+X
+X
+double gdtrc( a, b, x )
+double a, b, x;
+{
+X
+if( x < 0.0 )
+X       {
+X       mtherr( "gdtrc", DOMAIN );
+X       return( 0.0 );
+X       }
+return(  igamc( b, a * x )  );
+}
+SHAR_EOF
+chmod 0666 gdtr.c ||
+echo 'restore of gdtr.c failed'
+Wc_c="`wc -c < 'gdtr.c'`"
+test 1855 -eq "$Wc_c" ||
+        echo 'gdtr.c: original size 1855, current size' "$Wc_c"
+fi
+# ============= igam.c ==============
+if test -f 'igam.c' -a X"$1" != X"-c"; then
+        echo 'x - skipping igam.c (File already exists)'
+else
+echo 'x - extracting igam.c (Text)'
+sed 's/^X//' << 'SHAR_EOF' > 'igam.c' &&
+/*                                                      igam.c
+X *
+X *     Incomplete gamma integral
+X *
+X *
+X *
+X * SYNOPSIS:
+X *
+X * double a, x, y, igam();
+X *
+X * y = igam( a, x );
+X *
+X * DESCRIPTION:
+X *
+X * The function is defined by
+X *
+X *                           x
+X *                            -
+X *                   1       | |  -t  a-1
+X *  igam(a,x)  =   -----     |   e   t   dt.
+X *                  -      | |
+X *                 | (a)    -
+X *                           0
+X *
+X *
+X * In this implementation both arguments must be positive.
+X * The integral is evaluated by either a power series or
+X * continued fraction expansion, depending on the relative
+X * values of a and x.
+X *
+X * ACCURACY:
+X *
+X *                      Relative error:
+X * arithmetic   domain     # trials      peak         rms
+X *    IEEE      0,30       200000       3.6e-14     2.9e-15
+X *    IEEE      0,100      300000       9.9e-14     1.5e-14
+X */
+X/*                                                     igamc()
+X *
+X *     Complemented incomplete gamma integral
+X *
+X *
+X *
+X * SYNOPSIS:
+X *
+X * double a, x, y, igamc();
+X *
+X * y = igamc( a, x );
+X *
+X * DESCRIPTION:
+X *
+X * The function is defined by
+X *
+X *
+X *  igamc(a,x)   =   1 - igam(a,x)
+X *
+X *                            inf.
+X *                              -
+X *                     1       | |  -t  a-1
+X *               =   -----     |   e   t   dt.
+X *                    -      | |
+X *                   | (a)    -
+X *                             x
+X *
+X *
+X * In this implementation both arguments must be positive.
+X * The integral is evaluated by either a power series or
+X * continued fraction expansion, depending on the relative
+X * values of a and x.
+X *
+X * ACCURACY:
+X *
+X * Tested at random a, x.
+X *                a         x                      Relative error:
+X * arithmetic   domain   domain     # trials      peak         rms
+X *    IEEE     0.5,100   0,100      200000       1.9e-14     1.7e-15
+X *    IEEE     0.01,0.5  0,100      200000       1.4e-13     1.6e-15
+X */
+X
+/*
+Cephes Math Library Release 2.0:  April, 1987
+Copyright 1985, 1987 by Stephen L. Moshier
+Direct inquiries to 30 Frost Street, Cambridge, MA 02140
+*/
+X
+#include "mconf.h"
+#ifndef ANSIPROT
+double lgam(), exp(), log(), fabs(), igam(), igamc();
+#endif
+X
+extern double MACHEP, MAXLOG;
+static double big = 4.503599627370496e15;
+static double biginv =  2.22044604925031308085e-16;
+X
+double igamc( a, x )
+double a, x;
+{
+double ans, ax, c, yc, r, t, y, z;
+double pk, pkm1, pkm2, qk, qkm1, qkm2;
+X
+if( (x <= 0) || ( a <= 0) )
+X       return( 1.0 );
+X
+if( (x < 1.0) || (x < a) )
+X       return( 1.0 - igam(a,x) );
+X
+ax = a * log(x) - x - lgam(a);
+if( ax < -MAXLOG )
+X       {
+X       mtherr( "igamc", UNDERFLOW );
+X       return( 0.0 );
+X       }
+ax = exp(ax);
+X
+/* continued fraction */
+y = 1.0 - a;
+z = x + y + 1.0;
+c = 0.0;
+pkm2 = 1.0;
+qkm2 = x;
+pkm1 = x + 1.0;
+qkm1 = z * x;
+ans = pkm1/qkm1;
+X
+do
+X       {
+X       c += 1.0;
+X       y += 1.0;
+X       z += 2.0;
+X       yc = y * c;
+X       pk = pkm1 * z  -  pkm2 * yc;
+X       qk = qkm1 * z  -  qkm2 * yc;
+X       if( qk != 0 )
+X               {
+X               r = pk/qk;
+X               t = fabs( (ans - r)/r );
+X               ans = r;
+X               }
+X       else
+X               t = 1.0;
+X       pkm2 = pkm1;
+X       pkm1 = pk;
+X       qkm2 = qkm1;
+X       qkm1 = qk;
+X       if( fabs(pk) > big )
+X               {
+X               pkm2 *= biginv;
+X               pkm1 *= biginv;
+X               qkm2 *= biginv;
+X               qkm1 *= biginv;
+X               }
+X       }
+while( t > MACHEP );
+X
+return( ans * ax );
+}
+X
+X
+X
+/* left tail of incomplete gamma function:
+X *
+X *          inf.      k
+X *   a  -x   -       x
+X *  x  e     >   ----------
+X *           -     -
+X *          k=0   | (a+k+1)
+X *
+X */
+X
+double igam( a, x )
+double a, x;
+{
+double ans, ax, c, r;
+X
+if( (x <= 0) || ( a <= 0) )
+X       return( 0.0 );
+X
+if( (x > 1.0) && (x > a ) )
+X       return( 1.0 - igamc(a,x) );
+X
+/* Compute  x**a * exp(-x) / gamma(a)  */
+ax = a * log(x) - x - lgam(a);
+if( ax < -MAXLOG )
+X       {
+X       mtherr( "igam", UNDERFLOW );
+X       return( 0.0 );
+X       }
+ax = exp(ax);
+X
+/* power series */
+r = a;
+c = 1.0;
+ans = 1.0;
+X
+do
+X       {
+X       r += 1.0;
+X       c *= x/r;
+X       ans += c;
+X       }
+while( c/ans > MACHEP );
+X
+return( ans * ax/a );
+}
+SHAR_EOF
+chmod 0666 igam.c ||
+echo 'restore of igam.c failed'
+Wc_c="`wc -c < 'igam.c'`"
+test 3770 -eq "$Wc_c" ||
+        echo 'igam.c: original size 3770, current size' "$Wc_c"
+fi
+# ============= igami.c ==============
+if test -f 'igami.c' -a X"$1" != X"-c"; then
+        echo 'x - skipping igami.c (File already exists)'
+else
+echo 'x - extracting igami.c (Text)'
+sed 's/^X//' << 'SHAR_EOF' > 'igami.c' &&
+/*                                                      igami()
+X *
+X *      Inverse of complemented imcomplete gamma integral
+X *
+X *
+X *
+X * SYNOPSIS:
+X *
+X * double a, x, p, igami();
+X *
+X * x = igami( a, p );
+X *
+X * DESCRIPTION:
+X *
+X * Given p, the function finds x such that
+X *
+X *  igamc( a, x ) = p.
+X *
+X * Starting with the approximate value
+X *
+X *         3
+X *  x = a t
+X *
+X *  where
+X *
+X *  t = 1 - d - ndtri(p) sqrt(d)
+X *
+X * and
+X *
+X *  d = 1/9a,
+X *
+X * the routine performs up to 10 Newton iterations to find the
+X * root of igamc(a,x) - p = 0.
+X *
+X * ACCURACY:
+X *
+X * Tested at random a, p in the intervals indicated.
+X *
+X *                a        p                      Relative error:
+X * arithmetic   domain   domain     # trials      peak         rms
+X *    IEEE     0.5,100   0,0.5       100000       1.0e-14     1.7e-15
+X *    IEEE     0.01,0.5  0,0.5       100000       9.0e-14     3.4e-15
+X *    IEEE    0.5,10000  0,0.5        20000       2.3e-13     3.8e-14
+X */
+X
+/*
+Cephes Math Library Release 2.3:  March, 1995
+Copyright 1984, 1987, 1995 by Stephen L. Moshier
+*/
+X
+#include "mconf.h"
+X
+extern double MACHEP, MAXNUM, MAXLOG, MINLOG;
+#ifndef ANSIPROT
+double igamc(), ndtri(), exp(), fabs(), log(), sqrt(), lgam();
+#endif
+X
+double igami( a, y0 )
+double a, y0;
+{
+double x0, x1, x, yl, yh, y, d, lgm, dithresh;
+int i, dir;
+X
+/* bound the solution */
+x0 = MAXNUM;
+yl = 0;
+x1 = 0;
+yh = 1.0;
+dithresh = 5.0 * MACHEP;
+X
+/* approximation to inverse function */
+d = 1.0/(9.0*a);
+y = ( 1.0 - d - ndtri(y0) * sqrt(d) );
+x = a * y * y * y;
+X
+lgm = lgam(a);
+X
+for( i=0; i<10; i++ )
+X       {
+X       if( x > x0 || x < x1 )
+X               goto ihalve;
+X       y = igamc(a,x);
+X       if( y < yl || y > yh )
+X               goto ihalve;
+X       if( y < y0 )
+X               {
+X               x0 = x;
+X               yl = y;
+X               }
+X       else
+X               {
+X               x1 = x;
+X               yh = y;
+X               }
+/* compute the derivative of the function at this point */
+X       d = (a - 1.0) * log(x) - x - lgm;
+X       if( d < -MAXLOG )
+X               goto ihalve;
+X       d = -exp(d);
+/* compute the step to the next approximation of x */
+X       d = (y - y0)/d;
+X       if( fabs(d/x) < MACHEP )
+X               goto done;
+X       x = x - d;
+X       }
+X
+/* Resort to interval halving if Newton iteration did not converge. */
+ihalve:
+X
+d = 0.0625;
+if( x0 == MAXNUM )
+X       {
+X       if( x <= 0.0 )
+X               x = 1.0;
+X       while( x0 == MAXNUM )
+X               {
+X               x = (1.0 + d) * x;
+X               y = igamc( a, x );
+X               if( y < y0 )
+X                       {
+X                       x0 = x;
+X                       yl = y;
+X                       break;
+X                       }
+X               d = d + d;
+X               }
+X       }
+d = 0.5;
+dir = 0;
+X
+for( i=0; i<400; i++ )
+X       {
+X       x = x1  +  d * (x0 - x1);
+X       y = igamc( a, x );
+X       lgm = (x0 - x1)/(x1 + x0);
+X       if( fabs(lgm) < dithresh )
+X               break;
+X       lgm = (y - y0)/y0;
+X       if( fabs(lgm) < dithresh )
+X               break;
+X       if( x <= 0.0 )
+X               break;
+X       if( y >= y0 )
+X               {
+X               x1 = x;
+X               yh = y;
+X               if( dir < 0 )
+X                       {
+X                       dir = 0;
+X                       d = 0.5;
+X                       }
+X               else if( dir > 1 )
+X                       d = 0.5 * d + 0.5;
+X               else
+X                       d = (y0 - yl)/(yh - yl);
+X               dir += 1;
+X               }
+X       else
+X               {
+X               x0 = x;
+X               yl = y;
+X               if( dir > 0 )
+X                       {
+X                       dir = 0;
+X                       d = 0.5;
+X                       }
+X               else if( dir < -1 )
+X                       d = 0.5 * d;
+X               else
+X                       d = (y0 - yl)/(yh - yl);
+X               dir -= 1;
+X               }
+X       }
+if( x == 0.0 )
+X       mtherr( "igami", UNDERFLOW );
+X
+done:
+return( x );
+}
+SHAR_EOF
+chmod 0666 igami.c ||
+echo 'restore of igami.c failed'
+Wc_c="`wc -c < 'igami.c'`"
+test 2905 -eq "$Wc_c" ||
+        echo 'igami.c: original size 2905, current size' "$Wc_c"
+fi
+# ============= incbet.c ==============
+if test -f 'incbet.c' -a X"$1" != X"-c"; then
+        echo 'x - skipping incbet.c (File already exists)'
+else
+echo 'x - extracting incbet.c (Text)'
+sed 's/^X//' << 'SHAR_EOF' > 'incbet.c' &&
+/*                                                      incbet.c
+X *
+X *     Incomplete beta integral
+X *
+X *
+X * SYNOPSIS:
+X *
+X * double a, b, x, y, incbet();
+X *
+X * y = incbet( a, b, x );
+X *
+X *
+X * DESCRIPTION:
+X *
+X * Returns incomplete beta integral of the arguments, evaluated
+X * from zero to x.  The function is defined as
+X *
+X *                  x
+X *     -            -
+X *    | (a+b)      | |  a-1     b-1
+X *  -----------    |   t   (1-t)   dt.
+X *   -     -     | |
+X *  | (a) | (b)   -
+X *                 0
+X *
+X * The domain of definition is 0 <= x <= 1.  In this
+X * implementation a and b are restricted to positive values.
+X * The integral from x to 1 may be obtained by the symmetry
+X * relation
+X *
+X *    1 - incbet( a, b, x )  =  incbet( b, a, 1-x ).
+X *
+X * The integral is evaluated by a continued fraction expansion
+X * or, when b*x is small, by a power series.
+X *
+X * ACCURACY:
+X *
+X * Tested at uniformly distributed random points (a,b,x) with a and b
+X * in "domain" and x between 0 and 1.
+X *                                        Relative error
+X * arithmetic   domain     # trials      peak         rms
+X *    IEEE      0,5         10000       6.9e-15     4.5e-16
+X *    IEEE      0,85       250000       2.2e-13     1.7e-14
+X *    IEEE      0,1000      30000       5.3e-12     6.3e-13
+X *    IEEE      0,10000    250000       9.3e-11     7.1e-12
+X *    IEEE      0,100000    10000       8.7e-10     4.8e-11
+X * Outputs smaller than the IEEE gradual underflow threshold
+X * were excluded from these statistics.
+X *
+X * ERROR MESSAGES:
+X *   message         condition      value returned
+X * incbet domain      x<0, x>1          0.0
+X * incbet underflow                     0.0
+X */
+X
+X
+/*
+Cephes Math Library, Release 2.3:  March, 1995
+Copyright 1984, 1995 by Stephen L. Moshier
+*/
+X
+#include "mconf.h"
+X
+#ifdef DEC
+#define MAXGAM 34.84425627277176174
+#else
+#define MAXGAM 171.624376956302725
+#endif
+X
+extern double MACHEP, MINLOG, MAXLOG;
+#ifndef ANSIPROT
+double gamma(), lgam(), exp(), log(), pow(), fabs();
+#endif
+X
+static double incbcf(), incbd(), pseries();
+X
+static double big = 4.503599627370496e15;
+static double biginv =  2.22044604925031308085e-16;
+X
+X
+double incbet( aa, bb, xx )
+double aa, bb, xx;
+{
+double a, b, t, x, xc, w, y;
+int flag;
+X
+if( aa <= 0.0 || bb <= 0.0 )
+X       goto domerr;
+X
+if( (xx <= 0.0) || ( xx >= 1.0) )
+X       {
+X       if( xx == 0.0 )
+X               return(0.0);
+X       if( xx == 1.0 )
+X               return( 1.0 );
+domerr:
+X       mtherr( "incbet", DOMAIN );
+X       return( 0.0 );
+X       }
+X
+flag = 0;
+if( (bb * xx) <= 1.0 && xx <= 0.95)
+X       {
+X       t = pseries(aa, bb, xx);
+X               goto done;
+X       }
+X
+w = 1.0 - xx;
+X
+/* Reverse a and b if x is greater than the mean. */
+if( xx > (aa/(aa+bb)) )
+X       {
+X       flag = 1;
+X       a = bb;
+X       b = aa;
+X       xc = xx;
+X       x = w;
+X       }
+else
+X       {
+X       a = aa;
+X       b = bb;
+X       xc = w;
+X       x = xx;
+X       }
+X
+if( flag == 1 && (b * x) <= 1.0 && x <= 0.95)
+X       {
+X       t = pseries(a, b, x);
+X       goto done;
+X       }
+X
+/* Choose expansion for better convergence. */
+y = x * (a+b-2.0) - (a-1.0);
+if( y < 0.0 )
+X       w = incbcf( a, b, x );
+else
+X       w = incbd( a, b, x ) / xc;
+X
+/* Multiply w by the factor
+X     a      b   _             _     _
+X    x  (1-x)   | (a+b) / ( a | (a) | (b) ) .   */
+X
+y = a * log(x);
+t = b * log(xc);
+if( (a+b) < MAXGAM && fabs(y) < MAXLOG && fabs(t) < MAXLOG )
+X       {
+X       t = pow(xc,b);
+X       t *= pow(x,a);
+X       t /= a;
+X       t *= w;
+X       t *= gamma(a+b) / (gamma(a) * gamma(b));
+X       goto done;
+X       }
+/* Resort to logarithms.  */
+y += t + lgam(a+b) - lgam(a) - lgam(b);
+y += log(w/a);
+if( y < MINLOG )
+X       t = 0.0;
+else
+X       t = exp(y);
+X
+done:
+X
+if( flag == 1 )
+X       {
+X       if( t <= MACHEP )
+X               t = 1.0 - MACHEP;
+X       else
+X               t = 1.0 - t;
+X       }
+return( t );
+}
+X
+/* Continued fraction expansion #1
+X * for incomplete beta integral
+X */
+X
+static double incbcf( a, b, x )
+double a, b, x;
+{
+double xk, pk, pkm1, pkm2, qk, qkm1, qkm2;
+double k1, k2, k3, k4, k5, k6, k7, k8;
+double r, t, ans, thresh;
+int n;
+X
+k1 = a;
+k2 = a + b;
+k3 = a;
+k4 = a + 1.0;
+k5 = 1.0;
+k6 = b - 1.0;
+k7 = k4;
+k8 = a + 2.0;
+X
+pkm2 = 0.0;
+qkm2 = 1.0;
+pkm1 = 1.0;
+qkm1 = 1.0;
+ans = 1.0;
+r = 1.0;
+n = 0;
+thresh = 3.0 * MACHEP;
+do
+X       {
+X
+X       xk = -( x * k1 * k2 )/( k3 * k4 );
+X       pk = pkm1 +  pkm2 * xk;
+X       qk = qkm1 +  qkm2 * xk;
+X       pkm2 = pkm1;
+X       pkm1 = pk;
+X       qkm2 = qkm1;
+X       qkm1 = qk;
+X
+X       xk = ( x * k5 * k6 )/( k7 * k8 );
+X       pk = pkm1 +  pkm2 * xk;
+X       qk = qkm1 +  qkm2 * xk;
+X       pkm2 = pkm1;
+X       pkm1 = pk;
+X       qkm2 = qkm1;
+X       qkm1 = qk;
+X
+X       if( qk != 0 )
+X               r = pk/qk;
+X       if( r != 0 )
+X               {
+X               t = fabs( (ans - r)/r );
+X               ans = r;
+X               }
+X       else
+X               t = 1.0;
+X
+X       if( t < thresh )
+X               goto cdone;
+X
+X       k1 += 1.0;
+X       k2 += 1.0;
+X       k3 += 2.0;
+X       k4 += 2.0;
+X       k5 += 1.0;
+X       k6 -= 1.0;
+X       k7 += 2.0;
+X       k8 += 2.0;
+X
+X       if( (fabs(qk) + fabs(pk)) > big )
+X               {
+X               pkm2 *= biginv;
+X               pkm1 *= biginv;
+X               qkm2 *= biginv;
+X               qkm1 *= biginv;
+X               }
+X       if( (fabs(qk) < biginv) || (fabs(pk) < biginv) )
+X               {
+X               pkm2 *= big;
+X               pkm1 *= big;
+X               qkm2 *= big;
+X               qkm1 *= big;
+X               }
+X       }
+while( ++n < 300 );
+X
+cdone:
+return(ans);
+}
+X
+X
+/* Continued fraction expansion #2
+X * for incomplete beta integral
+X */
+X
+static double incbd( a, b, x )
+double a, b, x;
+{
+double xk, pk, pkm1, pkm2, qk, qkm1, qkm2;
+double k1, k2, k3, k4, k5, k6, k7, k8;
+double r, t, ans, z, thresh;
+int n;
+X
+k1 = a;
+k2 = b - 1.0;
+k3 = a;
+k4 = a + 1.0;
+k5 = 1.0;
+k6 = a + b;
+k7 = a + 1.0;;
+k8 = a + 2.0;
+X
+pkm2 = 0.0;
+qkm2 = 1.0;
+pkm1 = 1.0;
+qkm1 = 1.0;
+z = x / (1.0-x);
+ans = 1.0;
+r = 1.0;
+n = 0;
+thresh = 3.0 * MACHEP;
+do
+X       {
+X
+X       xk = -( z * k1 * k2 )/( k3 * k4 );
+X       pk = pkm1 +  pkm2 * xk;
+X       qk = qkm1 +  qkm2 * xk;
+X       pkm2 = pkm1;
+X       pkm1 = pk;
+X       qkm2 = qkm1;
+X       qkm1 = qk;
+X
+X       xk = ( z * k5 * k6 )/( k7 * k8 );
+X       pk = pkm1 +  pkm2 * xk;
+X       qk = qkm1 +  qkm2 * xk;
+X       pkm2 = pkm1;
+X       pkm1 = pk;
+X       qkm2 = qkm1;
+X       qkm1 = qk;
+X
+X       if( qk != 0 )
+X               r = pk/qk;
+X       if( r != 0 )
+X               {
+X               t = fabs( (ans - r)/r );
+X               ans = r;
+X               }
+X       else
+X               t = 1.0;
+X
+X       if( t < thresh )
+X               goto cdone;
+X
+X       k1 += 1.0;
+X       k2 -= 1.0;
+X       k3 += 2.0;
+X       k4 += 2.0;
+X       k5 += 1.0;
+X       k6 += 1.0;
+X       k7 += 2.0;
+X       k8 += 2.0;
+X
+X       if( (fabs(qk) + fabs(pk)) > big )
+X               {
+X               pkm2 *= biginv;
+X               pkm1 *= biginv;
+X               qkm2 *= biginv;
+X               qkm1 *= biginv;
+X               }
+X       if( (fabs(qk) < biginv) || (fabs(pk) < biginv) )
+X               {
+X               pkm2 *= big;
+X               pkm1 *= big;
+X               qkm2 *= big;
+X               qkm1 *= big;
+X               }
+X       }
+while( ++n < 300 );
+cdone:
+return(ans);
+}
+X
+/* Power series for incomplete beta integral.
+X   Use when b*x is small and x not too close to 1.  */
+X
+static double pseries( a, b, x )
+double a, b, x;
+{
+double s, t, u, v, n, t1, z, ai;
+X
+ai = 1.0 / a;
+u = (1.0 - b) * x;
+v = u / (a + 1.0);
+t1 = v;
+t = u;
+n = 2.0;
+s = 0.0;
+z = MACHEP * ai;
+while( fabs(v) > z )
+X       {
+X       u = (n - b) * x / n;
+X       t *= u;
+X       v = t / (a + n);
+X       s += v;
+X       n += 1.0;
+X       }
+s += t1;
+s += ai;
+X
+u = a * log(x);
+if( (a+b) < MAXGAM && fabs(u) < MAXLOG )
+X       {
+X       t = gamma(a+b)/(gamma(a)*gamma(b));
+X       s = s * t * pow(x,a);
+X       }
+else
+X       {
+X       t = lgam(a+b) - lgam(a) - lgam(b) + u + log(s);
+X       if( t < MINLOG )
+X               s = 0.0;
+X       else
+X       s = exp(t);
+X       }
+return(s);
+}
+SHAR_EOF
+chmod 0666 incbet.c ||
+echo 'restore of incbet.c failed'
+Wc_c="`wc -c < 'incbet.c'`"
+test 6590 -eq "$Wc_c" ||
+        echo 'incbet.c: original size 6590, current size' "$Wc_c"
+fi
+# ============= incbi.c ==============
+if test -f 'incbi.c' -a X"$1" != X"-c"; then
+        echo 'x - skipping incbi.c (File already exists)'
+else
+echo 'x - extracting incbi.c (Text)'
+sed 's/^X//' << 'SHAR_EOF' > 'incbi.c' &&
+/*                                                      incbi()
+X *
+X *      Inverse of imcomplete beta integral
+X *
+X *
+X *
+X * SYNOPSIS:
+X *
+X * double a, b, x, y, incbi();
+X *
+X * x = incbi( a, b, y );
+X *
+X *
+X *
+X * DESCRIPTION:
+X *
+X * Given y, the function finds x such that
+X *
+X *  incbet( a, b, x ) = y .
+X *
+X * The routine performs interval halving or Newton iterations to find the
+X * root of incbet(a,b,x) - y = 0.
+X *
+X *
+X * ACCURACY:
+X *
+X *                      Relative error:
+X *                x     a,b
+X * arithmetic   domain  domain  # trials    peak       rms
+X *    IEEE      0,1    .5,10000   50000    5.8e-12   1.3e-13
+X *    IEEE      0,1   .25,100    100000    1.8e-13   3.9e-15
+X *    IEEE      0,1     0,5       50000    1.1e-12   5.5e-15
+X *    VAX       0,1    .5,100     25000    3.5e-14   1.1e-15
+X * With a and b constrained to half-integer or integer values:
+X *    IEEE      0,1    .5,10000   50000    5.8e-12   1.1e-13
+X *    IEEE      0,1    .5,100    100000    1.7e-14   7.9e-16
+X * With a = .5, b constrained to half-integer or integer values:
+X *    IEEE      0,1    .5,10000   10000    8.3e-11   1.0e-11
+X */
+X
+X
+/*
+Cephes Math Library Release 2.4:  March,1996
+Copyright 1984, 1996 by Stephen L. Moshier
+*/
+X
+#include "mconf.h"
+X
+extern double MACHEP, MAXNUM, MAXLOG, MINLOG;
+#ifndef ANSIPROT
+double ndtri(), exp(), fabs(), log(), sqrt(), lgam(), incbet();
+#endif
+X
+double incbi( aa, bb, yy0 )
+double aa, bb, yy0;
+{
+double a, b, y0, d, y, x, x0, x1, lgm, yp, di, dithresh, yl, yh, xt;
+int i, rflg, dir, nflg;
+X
+X
+i = 0;
+if( yy0 <= 0 )
+X       return(0.0);
+if( yy0 >= 1.0 )
+X       return(1.0);
+x0 = 0.0;
+yl = 0.0;
+x1 = 1.0;
+yh = 1.0;
+nflg = 0;
+X
+if( aa <= 1.0 || bb <= 1.0 )
+X       {
+X       dithresh = 1.0e-6;
+X       rflg = 0;
+X       a = aa;
+X       b = bb;
+X       y0 = yy0;
+X       x = a/(a+b);
+X       y = incbet( a, b, x );
+X       goto ihalve;
+X       }
+else
+X       {
+X       dithresh = 1.0e-4;
+X       }
+/* approximation to inverse function */
+X
+yp = -ndtri(yy0);
+X
+if( yy0 > 0.5 )
+X       {
+X       rflg = 1;
+X       a = bb;
+X       b = aa;
+X       y0 = 1.0 - yy0;
+X       yp = -yp;
+X       }
+else
+X       {
+X       rflg = 0;
+X       a = aa;
+X       b = bb;
+X       y0 = yy0;
+X       }
+X
+lgm = (yp * yp - 3.0)/6.0;
+x = 2.0/( 1.0/(2.0*a-1.0)  +  1.0/(2.0*b-1.0) );
+d = yp * sqrt( x + lgm ) / x
+X       - ( 1.0/(2.0*b-1.0) - 1.0/(2.0*a-1.0) )
+X       * (lgm + 5.0/6.0 - 2.0/(3.0*x));
+d = 2.0 * d;
+if( d < MINLOG )
+X       {
+X       x = 1.0;
+X       goto under;
+X       }
+x = a/( a + b * exp(d) );
+y = incbet( a, b, x );
+yp = (y - y0)/y0;
+if( fabs(yp) < 0.2 )
+X       goto newt;
+X
+/* Resort to interval halving if not close enough. */
+ihalve:
+X
+dir = 0;
+di = 0.5;
+for( i=0; i<100; i++ )
+X       {
+X       if( i != 0 )
+X               {
+X               x = x0  +  di * (x1 - x0);
+X               if( x == 1.0 )
+X                       x = 1.0 - MACHEP;
+X               if( x == 0.0 )
+X                       {
+X                       di = 0.5;
+X                       x = x0  +  di * (x1 - x0);
+X                       if( x == 0.0 )
+X                               goto under;
+X                       }
+X               y = incbet( a, b, x );
+X               yp = (x1 - x0)/(x1 + x0);
+X               if( fabs(yp) < dithresh )
+X                       goto newt;
+X               yp = (y-y0)/y0;
+X               if( fabs(yp) < dithresh )
+X                       goto newt;
+X               }
+X       if( y < y0 )
+X               {
+X               x0 = x;
+X               yl = y;
+X               if( dir < 0 )
+X                       {
+X                       dir = 0;
+X                       di = 0.5;
+X                       }
+X               else if( dir > 3 )
+X                       di = 1.0 - (1.0 - di) * (1.0 - di);
+X               else if( dir > 1 )
+X                       di = 0.5 * di + 0.5;
+X               else
+X                       di = (y0 - y)/(yh - yl);
+X               dir += 1;
+X               if( x0 > 0.75 )
+X                       {
+X                       if( rflg == 1 )
+X                               {
+X                               rflg = 0;
+X                               a = aa;
+X                               b = bb;
+X                               y0 = yy0;
+X                               }
+X                       else
+X                               {
+X                               rflg = 1;
+X                               a = bb;
+X                               b = aa;
+X                               y0 = 1.0 - yy0;
+X                               }
+X                       x = 1.0 - x;
+X                       y = incbet( a, b, x );
+X                       x0 = 0.0;
+X                       yl = 0.0;
+X                       x1 = 1.0;
+X                       yh = 1.0;
+X                       goto ihalve;
+X                       }
+X               }
+X       else
+X               {
+X               x1 = x;
+X               if( rflg == 1 && x1 < MACHEP )
+X                       {
+X                       x = 0.0;
+X                       goto done;
+X                       }
+X               yh = y;
+X               if( dir > 0 )
+X                       {
+X                       dir = 0;
+X                       di = 0.5;
+X                       }
+X               else if( dir < -3 )
+X                       di = di * di;
+X               else if( dir < -1 )
+X                       di = 0.5 * di;
+X               else
+X                       di = (y - y0)/(yh - yl);
+X               dir -= 1;
+X               }
+X       }
+mtherr( "incbi", PLOSS );
+if( x0 >= 1.0 )
+X       {
+X       x = 1.0 - MACHEP;
+X       goto done;
+X       }
+if( x <= 0.0 )
+X       {
+under:
+X       mtherr( "incbi", UNDERFLOW );
+X       x = 0.0;
+X       goto done;
+X       }
+X
+newt:
+X
+if( nflg )
+X       goto done;
+nflg = 1;
+lgm = lgam(a+b) - lgam(a) - lgam(b);
+X
+for( i=0; i<8; i++ )
+X       {
+X       /* Compute the function at this point. */
+X       if( i != 0 )
+X               y = incbet(a,b,x);
+X       if( y < yl )
+X               {
+X               x = x0;
+X               y = yl;
+X               }
+X       else if( y > yh )
+X               {
+X               x = x1;
+X               y = yh;
+X               }
+X       else if( y < y0 )
+X               {
+X               x0 = x;
+X               yl = y;
+X               }
+X       else
+X               {
+X               x1 = x;
+X               yh = y;
+X               }
+X       if( x == 1.0 || x == 0.0 )
+X               break;
+X       /* Compute the derivative of the function at this point. */
+X       d = (a - 1.0) * log(x) + (b - 1.0) * log(1.0-x) + lgm;
+X       if( d < MINLOG )
+X               goto done;
+X       if( d > MAXLOG )
+X               break;
+X       d = exp(d);
+X       /* Compute the step to the next approximation of x. */
+X       d = (y - y0)/d;
+X       xt = x - d;
+X       if( xt <= x0 )
+X               {
+X               y = (x - x0) / (x1 - x0);
+X               xt = x0 + 0.5 * y * (x - x0);
+X               if( xt <= 0.0 )
+X                       break;
+X               }
+X       if( xt >= x1 )
+X               {
+X               y = (x1 - x) / (x1 - x0);
+X               xt = x1 - 0.5 * y * (x1 - x);
+X               if( xt >= 1.0 )
+X                       break;
+X               }
+X       x = xt;
+X       if( fabs(d/x) < 128.0 * MACHEP )
+X               goto done;
+X       }
+/* Did not converge.  */
+dithresh = 256.0 * MACHEP;
+goto ihalve;
+X
+done:
+X
+if( rflg )
+X       {
+X       if( x <= MACHEP )
+X               x = 1.0 - MACHEP;
+X       else
+X               x = 1.0 - x;
+X       }
+return( x );
+}
+SHAR_EOF
+chmod 0644 incbi.c ||
+echo 'restore of incbi.c failed'
+Wc_c="`wc -c < 'incbi.c'`"
+test 4848 -eq "$Wc_c" ||
+        echo 'incbi.c: original size 4848, current size' "$Wc_c"
+fi
+# ============= mconf.h ==============
+if test -f 'mconf.h' -a X"$1" != X"-c"; then
+        echo 'x - skipping mconf.h (File already exists)'
+else
+echo 'x - extracting mconf.h (Text)'
+sed 's/^X//' << 'SHAR_EOF' > 'mconf.h' &&
+/*                                                      mconf.h
+X *
+X *     Common include file for math routines
+X *
+X *
+X *
+X * SYNOPSIS:
+X *
+X * #include "mconf.h"
+X *
+X *
+X *
+X * DESCRIPTION:
+X *
+X * This file contains definitions for error codes that are
+X * passed to the common error handling routine mtherr()
+X * (which see).
+X *
+X * The file also includes a conditional assembly definition
+X * for the type of computer arithmetic (IEEE, DEC, Motorola
+X * IEEE, or UNKnown).
+X *
+X * For Digital Equipment PDP-11 and VAX computers, certain
+X * IBM systems, and others that use numbers with a 56-bit
+X * significand, the symbol DEC should be defined.  In this
+X * mode, most floating point constants are given as arrays
+X * of octal integers to eliminate decimal to binary conversion
+X * errors that might be introduced by the compiler.
+X *
+X * For computers, such as IBM PC, that follow the IEEE
+X * Standard for Binary Floating Point Arithmetic (ANSI/IEEE
+X * Std 754-1985), the symbol IBMPC should be defined.  These
+X * numbers have 53-bit significands.  In this mode, constants
+X * are provided as arrays of hexadecimal 16 bit integers.
+X *
+X * To accommodate other types of computer arithmetic, all
+X * constants are also provided in a normal decimal radix
+X * which one can hope are correctly converted to a suitable
+X * format by the available C language compiler.  To invoke
+X * this mode, the symbol UNK is defined.
+X *
+X * An important difference among these modes is a predefined
+X * set of machine arithmetic constants for each.  The numbers
+X * MACHEP (the machine roundoff error), MAXNUM (largest number
+X * represented), and several other parameters are preset by
+X * the configuration symbol.  Check the file const.c to
+X * ensure that these values are correct for your computer.
+X *
+X */
+X
+/*
+Cephes Math Library Release 2.3:  March, 1995
+Copyright 1984, 1987, 1989, 1995 by Stephen L. Moshier
+*/
+X
+X
+/* Constant definitions for math error conditions
+X */
+X
+#define DOMAIN          1       /* argument domain error */
+#define SING            2       /* argument singularity */
+#define OVERFLOW        3       /* overflow range error */
+#define UNDERFLOW       4       /* underflow range error */
+#define TLOSS           5       /* total loss of precision */
+#define PLOSS           6       /* partial loss of precision */
+X
+#define EDOM            33
+#define ERANGE          34
+X
+/* Complex numeral.  */
+typedef struct
+X       {
+X       double r;
+X       double i;
+X       }cmplx;
+X
+/* Long double complex numeral.  */
+typedef struct
+X       {
+X       double r;
+X       double i;
+X       }cmplxl;
+X
+/* Type of computer arithmetic */
+X
+/* PDP-11, Pro350, VAX:
+X */
+/*define DEC 1*/
+X
+/* Intel IEEE, low order words come first:
+X */
+#define IBMPC 1
+X
+/* Motorola IEEE, high order words come first
+X * (Sun 680x0 workstation):
+X */
+/*#define MIEEE 1*/
+X
+/* UNKnown arithmetic, invokes coefficients given in
+X * normal decimal format.  Beware of range boundary
+X * problems (MACHEP, MAXLOG, etc. in const.c) and
+X * roundoff problems in pow.c:
+X * (Sun SPARCstation)
+X */
+/*define UNK 1*/
+X
+/* If you define UNK, then be sure to set BIGENDIAN properly. */
+#define BIGENDIAN 0
+X
+/* Define this `volatile' if your compiler thinks
+X * that floating point arithmetic obeys the associative
+X * and distributive laws.  It will defeat some optimizations
+X * (but probably not enough of them).
+X *
+X * #define VOLATILE volatile
+X */
+#define VOLATILE
+X
+/* For 12-byte long doubles on an i386, pad a 16-bit short 0
+X * to the end of real constants initialized by integer arrays.
+X *
+X * #define XPD 0,
+X *
+X * Otherwise, the type is 10 bytes long and XPD should be
+X * defined blank (e.g., Microsoft C).
+X *
+X * #define XPD
+X */
+#define XPD 0,
+X
+X
+/* Define to ask for infinity support, else undefine. */
+/* #define INFINITIES 1 */
+X
+/* Define to ask for support of numbers that are Not-a-Number,
+X   else undefine.  This may automatically define INFINITY in some files. */
+/* #define NANS 1 */
+X
+/* Define to support tiny denormal numbers, else undefine. */
+#define DENORMAL 1
+X
+/* Define to distinguish between -0.0 and +0.0.  */
+/* #define MINUSZERO 1 */
+X
+/* Define 1 for ANSI C atan2() function
+X   See atan.c and clog.c. */
+#define ANSIC 1
+X
+/* Get ANSI function prototypes, if you want them. */
+#ifdef __STDC__
+#define ANSIPROT
+#include "protos.h"
+#else
+int mtherr();
+#endif
+X
+/* Variable for error reporting.  See mtherr.c.  */
+extern int merror;
+SHAR_EOF
+chmod 0666 mconf.h ||
+echo 'restore of mconf.h failed'
+Wc_c="`wc -c < 'mconf.h'`"
+test 4160 -eq "$Wc_c" ||
+        echo 'mconf.h: original size 4160, current size' "$Wc_c"
+fi
+# ============= msc.mak ==============
+if test -f 'msc.mak' -a X"$1" != X"-c"; then
+        echo 'x - skipping msc.mak (File already exists)'
+else
+echo 'x - extracting msc.mak (Text)'
+sed 's/^X//' << 'SHAR_EOF' > 'msc.mak' &&
+# MSDOS Microsoft C makefile for probability integrals.
+# Be sure to disable the XPD pad for long double constants
+# and set the type of computer to IBMPC in mconf.h.
+#
+CC = cl
+X
+CFLAGS = /c
+# For large memory model:
+#CFLAGS=/c /AL
+X
+INCS = mconf.h
+X
+OBJS = bdtr.obj btdtr.obj chdtr.obj const.obj drand.obj fdtr.obj \
+gamma.obj gdtr.obj igam.obj igami.obj incbet.obj incbi.obj \
+mtherr.obj nbdtr.obj ndtr.obj ndtri.obj pdtr.obj polevl.obj \
+stdtr.obj unity.obj
+X
+bdtr.obj: bdtr.c $(INCS)
+X       $(CC) $(CFLAGS) bdtr.c
+X
+btdtr.obj: btdtr.c $(INCS)
+X       $(CC) $(CFLAGS) btdtr.c
+X
+chdtr.obj: chdtr.c $(INCS)
+X       $(CC) $(CFLAGS) chdtr.c
+X
+const.obj: const.c $(INCS)
+X       $(CC) $(CFLAGS) const.c
+X
+drand.obj: drand.c $(INCS)
+X       $(CC) $(CFLAGS) drand.c
+X
+fdtr.obj: fdtr.c $(INCS)
+X       $(CC) $(CFLAGS) fdtr.c
+X
+gamma.obj: gamma.c $(INCS)
+X       $(CC) $(CFLAGS) gamma.c
+X
+gdtr.obj: gdtr.c $(INCS)
+X       $(CC) $(CFLAGS) gdtr.c
+X
+igam.obj: igam.c $(INCS)
+X       $(CC) $(CFLAGS) igam.c
+X
+igami.obj: igami.c $(INCS)
+X       $(CC) $(CFLAGS) igami.c
+X
+incbet.obj: incbet.c $(INCS)
+X       $(CC) $(CFLAGS) incbet.c
+X
+incbi.obj: incbi.c $(INCS)
+X       $(CC) $(CFLAGS) incbi.c
+X
+mtherr.obj: mtherr.c $(INCS)
+X       $(CC) $(CFLAGS) mtherr.c
+X
+nbdtr.obj: nbdtr.c $(INCS)
+X       $(CC) $(CFLAGS) nbdtr.c
+X
+ndtr.obj: ndtr.c $(INCS)
+X       $(CC) $(CFLAGS) ndtr.c
+X
+ndtri.obj: ndtri.c $(INCS)
+X       $(CC) $(CFLAGS) ndtri.c
+X
+pdtr.obj: pdtr.c $(INCS)
+X       $(CC) $(CFLAGS) pdtr.c
+X
+polevl.obj: polevl.c $(INCS)
+X       $(CC) $(CFLAGS) polevl.c
+X
+stdtr.obj: stdtr.c $(INCS)
+X       $(CC) $(CFLAGS) stdtr.c
+X
+unity.obj: unity.c $(INCS)
+X       $(CC) $(CFLAGS) unity.c
+X
+# Delete the library file before attempting to rebuild it.
+prob.lib: $(OBJS)
+X       lib @msc.rsp
+SHAR_EOF
+chmod 0666 msc.mak ||
+echo 'restore of msc.mak failed'
+Wc_c="`wc -c < 'msc.mak'`"
+test 1601 -eq "$Wc_c" ||
+        echo 'msc.mak: original size 1601, current size' "$Wc_c"
+fi
+# ============= msc.rsp ==============
+if test -f 'msc.rsp' -a X"$1" != X"-c"; then
+        echo 'x - skipping msc.rsp (File already exists)'
+else
+echo 'x - extracting msc.rsp (Text)'
+sed 's/^X//' << 'SHAR_EOF' > 'msc.rsp' &&
+prob
+y
+bdtr btdtr chdtr drand fdtr gamma gdtr igam igami incbet &
+incbi mtherr nbdtr ndtr ndtri pdtr stdtr unity polevl const
+prob.lst
+prob
+SHAR_EOF
+chmod 0666 msc.rsp ||
+echo 'restore of msc.rsp failed'
+Wc_c="`wc -c < 'msc.rsp'`"
+test 140 -eq "$Wc_c" ||
+        echo 'msc.rsp: original size 140, current size' "$Wc_c"
+fi
+# ============= mtherr.c ==============
+if test -f 'mtherr.c' -a X"$1" != X"-c"; then
+        echo 'x - skipping mtherr.c (File already exists)'
+else
+echo 'x - extracting mtherr.c (Text)'
+sed 's/^X//' << 'SHAR_EOF' > 'mtherr.c' &&
+/*                                                      mtherr.c
+X *
+X *     Library common error handling routine
+X *
+X *
+X *
+X * SYNOPSIS:
+X *
+X * char *fctnam;
+X * int code;
+X * int mtherr();
+X *
+X * mtherr( fctnam, code );
+X *
+X *
+X *
+X * DESCRIPTION:
+X *
+X * This routine may be called to report one of the following
+X * error conditions (in the include file mconf.h).
+X *
+X *   Mnemonic        Value          Significance
+X *
+X *    DOMAIN            1       argument domain error
+X *    SING              2       function singularity
+X *    OVERFLOW          3       overflow range error
+X *    UNDERFLOW         4       underflow range error
+X *    TLOSS             5       total loss of precision
+X *    PLOSS             6       partial loss of precision
+X *    EDOM             33       Unix domain error code
+X *    ERANGE           34       Unix range error code
+X *
+X * The default version of the file prints the function name,
+X * passed to it by the pointer fctnam, followed by the
+X * error condition.  The display is directed to the standard
+X * output device.  The routine then returns to the calling
+X * program.  Users may wish to modify the program to abort by
+X * calling exit() under severe error conditions such as domain
+X * errors.
+X *
+X * Since all error conditions pass control to this function,
+X * the display may be easily changed, eliminated, or directed
+X * to an error logging device.
+X *
+X * SEE ALSO:
+X *
+X * mconf.h
+X *
+X */
+X
+/*
+Cephes Math Library Release 2.0:  April, 1987
+Copyright 1984, 1987 by Stephen L. Moshier
+Direct inquiries to 30 Frost Street, Cambridge, MA 02140
+*/
+X
+#include <stdio.h>
+#include "mconf.h"
+X
+int merror = 0;
+X
+/* Notice: the order of appearance of the following
+X * messages is bound to the error codes defined
+X * in mconf.h.
+X */
+static char *ermsg[7] = {
+"unknown",      /* error code 0 */
+"domain",       /* error code 1 */
+"singularity",  /* et seq.      */
+"overflow",
+"underflow",
+"total loss of precision",
+"partial loss of precision"
+};
+X
+X
+int mtherr( name, code )
+char *name;
+int code;
+{
+X
+/* Display string passed by calling program,
+X * which is supposed to be the name of the
+X * function in which the error occurred:
+X */
+printf( "\n%s ", name );
+X
+/* Set global error message word */
+merror = code;
+X
+/* Display error message defined
+X * by the code argument.
+X */
+if( (code <= 0) || (code >= 7) )
+X       code = 0;
+printf( "%s error\n", ermsg[code] );
+X
+/* Return to calling
+X * program
+X */
+return( 0 );
+}
+SHAR_EOF
+chmod 0666 mtherr.c ||
+echo 'restore of mtherr.c failed'
+Wc_c="`wc -c < 'mtherr.c'`"
+test 2369 -eq "$Wc_c" ||
+        echo 'mtherr.c: original size 2369, current size' "$Wc_c"
+fi
+# ============= nbdtr.c ==============
+if test -f 'nbdtr.c' -a X"$1" != X"-c"; then
+        echo 'x - skipping nbdtr.c (File already exists)'
+else
+echo 'x - extracting nbdtr.c (Text)'
+sed 's/^X//' << 'SHAR_EOF' > 'nbdtr.c' &&
+/*                                                      nbdtr.c
+X *
+X *     Negative binomial distribution
+X *
+X *
+X *
+X * SYNOPSIS:
+X *
+X * int k, n;
+X * double p, y, nbdtr();
+X *
+X * y = nbdtr( k, n, p );
+X *
+X * DESCRIPTION:
+X *
+X * Returns the sum of the terms 0 through k of the negative
+X * binomial distribution:
+X *
+X *   k
+X *   --  ( n+j-1 )   n      j
+X *   >   (       )  p  (1-p)
+X *   --  (   j   )
+X *  j=0
+X *
+X * In a sequence of Bernoulli trials, this is the probability
+X * that k or fewer failures precede the nth success.
+X *
+X * The terms are not computed individually; instead the incomplete
+X * beta integral is employed, according to the formula
+X *
+X * y = nbdtr( k, n, p ) = incbet( n, k+1, p ).
+X *
+X * The arguments must be positive, with p ranging from 0 to 1.
+X *
+X * ACCURACY:
+X *
+X * Tested at random points (a,b,p), with p between 0 and 1.
+X *
+X *               a,b                     Relative error:
+X * arithmetic  domain     # trials      peak         rms
+X *    IEEE     0,100       100000      1.7e-13     8.8e-15
+X * See also incbet.c.
+X *
+X */
+X/*                                                     nbdtrc.c
+X *
+X *     Complemented negative binomial distribution
+X *
+X *
+X *
+X * SYNOPSIS:
+X *
+X * int k, n;
+X * double p, y, nbdtrc();
+X *
+X * y = nbdtrc( k, n, p );
+X *
+X * DESCRIPTION:
+X *
+X * Returns the sum of the terms k+1 to infinity of the negative
+X * binomial distribution:
+X *
+X *   inf
+X *   --  ( n+j-1 )   n      j
+X *   >   (       )  p  (1-p)
+X *   --  (   j   )
+X *  j=k+1
+X *
+X * The terms are not computed individually; instead the incomplete
+X * beta integral is employed, according to the formula
+X *
+X * y = nbdtrc( k, n, p ) = incbet( k+1, n, 1-p ).
+X *
+X * The arguments must be positive, with p ranging from 0 to 1.
+X *
+X * ACCURACY:
+X *
+X * Tested at random points (a,b,p), with p between 0 and 1.
+X *
+X *               a,b                     Relative error:
+X * arithmetic  domain     # trials      peak         rms
+X *    IEEE     0,100       100000      1.7e-13     8.8e-15
+X * See also incbet.c.
+X */
+X
+/*                                                      nbdtrc
+X *
+X *     Complemented negative binomial distribution
+X *
+X *
+X *
+X * SYNOPSIS:
+X *
+X * int k, n;
+X * double p, y, nbdtrc();
+X *
+X * y = nbdtrc( k, n, p );
+X *
+X * DESCRIPTION:
+X *
+X * Returns the sum of the terms k+1 to infinity of the negative
+X * binomial distribution:
+X *
+X *   inf
+X *   --  ( n+j-1 )   n      j
+X *   >   (       )  p  (1-p)
+X *   --  (   j   )
+X *  j=k+1
+X *
+X * The terms are not computed individually; instead the incomplete
+X * beta integral is employed, according to the formula
+X *
+X * y = nbdtrc( k, n, p ) = incbet( k+1, n, 1-p ).
+X *
+X * The arguments must be positive, with p ranging from 0 to 1.
+X *
+X * ACCURACY:
+X *
+X * See incbet.c.
+X */
+X/*                                                     nbdtri
+X *
+X *     Functional inverse of negative binomial distribution
+X *
+X *
+X *
+X * SYNOPSIS:
+X *
+X * int k, n;
+X * double p, y, nbdtri();
+X *
+X * p = nbdtri( k, n, y );
+X *
+X * DESCRIPTION:
+X *
+X * Finds the argument p such that nbdtr(k,n,p) is equal to y.
+X *
+X * ACCURACY:
+X *
+X * Tested at random points (a,b,y), with y between 0 and 1.
+X *
+X *               a,b                     Relative error:
+X * arithmetic  domain     # trials      peak         rms
+X *    IEEE     0,100       100000      1.5e-14     8.5e-16
+X * See also incbi.c.
+X */
+X
+/*
+Cephes Math Library Release 2.3:  March, 1995
+Copyright 1984, 1987, 1995 by Stephen L. Moshier
+*/
+X
+#include "mconf.h"
+#ifndef ANSIPROT
+double incbet(), incbi();
+#endif
+X
+double nbdtrc( k, n, p )
+int k, n;
+double p;
+{
+double dk, dn;
+X
+if( (p < 0.0) || (p > 1.0) )
+X       goto domerr;
+if( k < 0 )
+X       {
+domerr:
+X       mtherr( "nbdtr", DOMAIN );
+X       return( 0.0 );
+X       }
+X
+dk = k+1;
+dn = n;
+return( incbet( dk, dn, 1.0 - p ) );
+}
+X
+X
+X
+double nbdtr( k, n, p )
+int k, n;
+double p;
+{
+double dk, dn;
+X
+if( (p < 0.0) || (p > 1.0) )
+X       goto domerr;
+if( k < 0 )
+X       {
+domerr:
+X       mtherr( "nbdtr", DOMAIN );
+X       return( 0.0 );
+X       }
+dk = k+1;
+dn = n;
+return( incbet( dn, dk, p ) );
+}
+X
+X
+X
+double nbdtri( k, n, p )
+int k, n;
+double p;
+{
+double dk, dn, w;
+X
+if( (p < 0.0) || (p > 1.0) )
+X       goto domerr;
+if( k < 0 )
+X       {
+domerr:
+X       mtherr( "nbdtri", DOMAIN );
+X       return( 0.0 );
+X       }
+dk = k+1;
+dn = n;
+w = incbi( dn, dk, p );
+return( w );
+}
+SHAR_EOF
+chmod 0666 nbdtr.c ||
+echo 'restore of nbdtr.c failed'
+Wc_c="`wc -c < 'nbdtr.c'`"
+test 3958 -eq "$Wc_c" ||
+        echo 'nbdtr.c: original size 3958, current size' "$Wc_c"
+fi
+# ============= ndtr.c ==============
+if test -f 'ndtr.c' -a X"$1" != X"-c"; then
+        echo 'x - skipping ndtr.c (File already exists)'
+else
+echo 'x - extracting ndtr.c (Text)'
+sed 's/^X//' << 'SHAR_EOF' > 'ndtr.c' &&
+/*                                                      ndtr.c
+X *
+X *     Normal distribution function
+X *
+X *
+X *
+X * SYNOPSIS:
+X *
+X * double x, y, ndtr();
+X *
+X * y = ndtr( x );
+X *
+X *
+X *
+X * DESCRIPTION:
+X *
+X * Returns the area under the Gaussian probability density
+X * function, integrated from minus infinity to x:
+X *
+X *                            x
+X *                             -
+X *                   1        | |          2
+X *    ndtr(x)  = ---------    |    exp( - t /2 ) dt
+X *               sqrt(2pi)  | |
+X *                           -
+X *                          -inf.
+X *
+X *             =  ( 1 + erf(z) ) / 2
+X *             =  erfc(z) / 2
+X *
+X * where z = x/sqrt(2). Computation is via the functions
+X * erf and erfc.
+X *
+X *
+X * ACCURACY:
+X *
+X *                      Relative error:
+X * arithmetic   domain     # trials      peak         rms
+X *    DEC      -13,0         8000       2.1e-15     4.8e-16
+X *    IEEE     -13,0        30000       3.4e-14     6.7e-15
+X *
+X *
+X * ERROR MESSAGES:
+X *
+X *   message         condition         value returned
+X * erfc underflow    x > 37.519379347       0.0
+X *
+X */
+X/*                                                     erf.c
+X *
+X *     Error function
+X *
+X *
+X *
+X * SYNOPSIS:
+X *
+X * double x, y, erf();
+X *
+X * y = erf( x );
+X *
+X *
+X *
+X * DESCRIPTION:
+X *
+X * The integral is
+X *
+X *                           x
+X *                            -
+X *                 2         | |          2
+X *   erf(x)  =  --------     |    exp( - t  ) dt.
+X *              sqrt(pi)   | |
+X *                          -
+X *                           0
+X *
+X * The magnitude of x is limited to 9.231948545 for DEC
+X * arithmetic; 1 or -1 is returned outside this range.
+X *
+X * For 0 <= |x| < 1, erf(x) = x * P4(x**2)/Q5(x**2); otherwise
+X * erf(x) = 1 - erfc(x).
+X *
+X *
+X *
+X * ACCURACY:
+X *
+X *                      Relative error:
+X * arithmetic   domain     # trials      peak         rms
+X *    DEC       0,1         14000       4.7e-17     1.5e-17
+X *    IEEE      0,1         30000       3.7e-16     1.0e-16
+X *
+X */
+X/*                                                     erfc.c
+X *
+X *     Complementary error function
+X *
+X *
+X *
+X * SYNOPSIS:
+X *
+X * double x, y, erfc();
+X *
+X * y = erfc( x );
+X *
+X *
+X *
+X * DESCRIPTION:
+X *
+X *
+X *  1 - erf(x) =
+X *
+X *                           inf.
+X *                             -
+X *                  2         | |          2
+X *   erfc(x)  =  --------     |    exp( - t  ) dt
+X *               sqrt(pi)   | |
+X *                           -
+X *                            x
+X *
+X *
+X * For small x, erfc(x) = 1 - erf(x); otherwise rational
+X * approximations are computed.
+X *
+X *
+X *
+X * ACCURACY:
+X *
+X *                      Relative error:
+X * arithmetic   domain     # trials      peak         rms
+X *    DEC       0, 9.2319   12000       5.1e-16     1.2e-16
+X *    IEEE      0,26.6417   30000       5.7e-14     1.5e-14
+X *
+X *
+X * ERROR MESSAGES:
+X *
+X *   message         condition              value returned
+X * erfc underflow    x > 9.231948545 (DEC)       0.0
+X *
+X *
+X */
+X
+X
+/*
+Cephes Math Library Release 2.2:  June, 1992
+Copyright 1984, 1987, 1988, 1992 by Stephen L. Moshier
+Direct inquiries to 30 Frost Street, Cambridge, MA 02140
+*/
+X
+X
+#include "mconf.h"
+X
+extern double SQRTH;
+extern double MAXLOG;
+X
+X
+#ifdef UNK
+static double P[] = {
+X 2.46196981473530512524E-10,
+X 5.64189564831068821977E-1,
+X 7.46321056442269912687E0,
+X 4.86371970985681366614E1,
+X 1.96520832956077098242E2,
+X 5.26445194995477358631E2,
+X 9.34528527171957607540E2,
+X 1.02755188689515710272E3,
+X 5.57535335369399327526E2
+};
+static double Q[] = {
+/* 1.00000000000000000000E0,*/
+X 1.32281951154744992508E1,
+X 8.67072140885989742329E1,
+X 3.54937778887819891062E2,
+X 9.75708501743205489753E2,
+X 1.82390916687909736289E3,
+X 2.24633760818710981792E3,
+X 1.65666309194161350182E3,
+X 5.57535340817727675546E2
+};
+static double R[] = {
+X 5.64189583547755073984E-1,
+X 1.27536670759978104416E0,
+X 5.01905042251180477414E0,
+X 6.16021097993053585195E0,
+X 7.40974269950448939160E0,
+X 2.97886665372100240670E0
+};
+static double S[] = {
+/* 1.00000000000000000000E0,*/
+X 2.26052863220117276590E0,
+X 9.39603524938001434673E0,
+X 1.20489539808096656605E1,
+X 1.70814450747565897222E1,
+X 9.60896809063285878198E0,
+X 3.36907645100081516050E0
+};
+static double T[] = {
+X 9.60497373987051638749E0,
+X 9.00260197203842689217E1,
+X 2.23200534594684319226E3,
+X 7.00332514112805075473E3,
+X 5.55923013010394962768E4
+};
+static double U[] = {
+/* 1.00000000000000000000E0,*/
+X 3.35617141647503099647E1,
+X 5.21357949780152679795E2,
+X 4.59432382970980127987E3,
+X 2.26290000613890934246E4,
+X 4.92673942608635921086E4
+};
+X
+#define UTHRESH 37.519379347
+#endif
+X
+#ifdef DEC
+static unsigned short P[] = {
+0030207,0054445,0011173,0021706,
+0040020,0067272,0030661,0122075,
+0040756,0151236,0173053,0067042,
+0041502,0106175,0062555,0151457,
+0042104,0102525,0047401,0003667,
+0042403,0116176,0011446,0075303,
+0042551,0120723,0061641,0123275,
+0042600,0070651,0007264,0134516,
+0042413,0061102,0167507,0176625
+};
+static unsigned short Q[] = {
+/*0040200,0000000,0000000,0000000,*/
+0041123,0123257,0165741,0017142,
+0041655,0065027,0173413,0115450,
+0042261,0074011,0021573,0004150,
+0042563,0166530,0013662,0007200,
+0042743,0176427,0162443,0105214,
+0043014,0062546,0153727,0123772,
+0042717,0012470,0006227,0067424,
+0042413,0061103,0003042,0013254
+};
+static unsigned short R[] = {
+0040020,0067272,0101024,0155421,
+0040243,0037467,0056706,0026462,
+0040640,0116017,0120665,0034315,
+0040705,0020162,0143350,0060137,
+0040755,0016234,0134304,0130157,
+0040476,0122700,0051070,0015473
+};
+static unsigned short S[] = {
+/*0040200,0000000,0000000,0000000,*/
+0040420,0126200,0044276,0070413,
+0041026,0053051,0007302,0063746,
+0041100,0144203,0174051,0061151,
+0041210,0123314,0126343,0177646,
+0041031,0137125,0051431,0033011,
+0040527,0117362,0152661,0066201
+};
+static unsigned short T[] = {
+0041031,0126770,0170672,0166101,
+0041664,0006522,0072360,0031770,
+0043013,0100025,0162641,0126671,
+0043332,0155231,0161627,0076200,
+0044131,0024115,0021020,0117343
+};
+static unsigned short U[] = {
+/*0040200,0000000,0000000,0000000,*/
+0041406,0037461,0177575,0032714,
+0042402,0053350,0123061,0153557,
+0043217,0111227,0032007,0164217,
+0043660,0145000,0004013,0160114,
+0044100,0071544,0167107,0125471
+};
+#define UTHRESH 14.0
+#endif
+X
+#ifdef IBMPC
+static unsigned short P[] = {
+0x6479,0xa24f,0xeb24,0x3df0,
+0x3488,0x4636,0x0dd7,0x3fe2,
+0x6dc4,0xdec5,0xda53,0x401d,
+0xba66,0xacad,0x518f,0x4048,
+0x20f7,0xa9e0,0x90aa,0x4068,
+0xcf58,0xc264,0x738f,0x4080,
+0x34d8,0x6c74,0x343a,0x408d,
+0x972a,0x21d6,0x0e35,0x4090,
+0xffb3,0x5de8,0x6c48,0x4081
+};
+static unsigned short Q[] = {
+/*0x0000,0x0000,0x0000,0x3ff0,*/
+0x23cc,0xfd7c,0x74d5,0x402a,
+0x7365,0xfee1,0xad42,0x4055,
+0x610d,0x246f,0x2f01,0x4076,
+0x41d0,0x02f6,0x7dab,0x408e,
+0x7151,0xfca4,0x7fa2,0x409c,
+0xf4ff,0xdafa,0x8cac,0x40a1,
+0xede2,0x0192,0xe2a7,0x4099,
+0x42d6,0x60c4,0x6c48,0x4081
+};
+static unsigned short R[] = {
+0x9b62,0x5042,0x0dd7,0x3fe2,
+0xc5a6,0xebb8,0x67e6,0x3ff4,
+0xa71a,0xf436,0x1381,0x4014,
+0x0c0c,0x58dd,0xa40e,0x4018,
+0x960e,0x9718,0xa393,0x401d,
+0x0367,0x0a47,0xd4b8,0x4007
+};
+static unsigned short S[] = {
+/*0x0000,0x0000,0x0000,0x3ff0,*/
+0xce21,0x0917,0x1590,0x4002,
+0x4cfd,0x21d8,0xcac5,0x4022,
+0x2c4d,0x7f05,0x1910,0x4028,
+0x7ff5,0x959c,0x14d9,0x4031,
+0x26c1,0xaa63,0x37ca,0x4023,
+0x2d90,0x5ab6,0xf3de,0x400a
+};
+static unsigned short T[] = {
+0x5d88,0x1e37,0x35bf,0x4023,
+0x067f,0x4e9e,0x81aa,0x4056,
+0x35b7,0xbcb4,0x7002,0x40a1,
+0xef90,0x3c72,0x5b53,0x40bb,
+0x13dc,0xa442,0x2509,0x40eb
+};
+static unsigned short U[] = {
+/*0x0000,0x0000,0x0000,0x3ff0,*/
+0xa6ba,0x3fef,0xc7e6,0x4040,
+0x3aee,0x14c6,0x4add,0x4080,
+0xfd12,0xe680,0xf252,0x40b1,
+0x7c0a,0x0101,0x1940,0x40d6,
+0xf567,0x9dc8,0x0e6c,0x40e8
+};
+#define UTHRESH 37.519379347
+#endif
+X
+#ifdef MIEEE
+static unsigned short P[] = {
+0x3df0,0xeb24,0xa24f,0x6479,
+0x3fe2,0x0dd7,0x4636,0x3488,
+0x401d,0xda53,0xdec5,0x6dc4,
+0x4048,0x518f,0xacad,0xba66,
+0x4068,0x90aa,0xa9e0,0x20f7,
+0x4080,0x738f,0xc264,0xcf58,
+0x408d,0x343a,0x6c74,0x34d8,
+0x4090,0x0e35,0x21d6,0x972a,
+0x4081,0x6c48,0x5de8,0xffb3
+};
+static unsigned short Q[] = {
+0x402a,0x74d5,0xfd7c,0x23cc,
+0x4055,0xad42,0xfee1,0x7365,
+0x4076,0x2f01,0x246f,0x610d,
+0x408e,0x7dab,0x02f6,0x41d0,
+0x409c,0x7fa2,0xfca4,0x7151,
+0x40a1,0x8cac,0xdafa,0xf4ff,
+0x4099,0xe2a7,0x0192,0xede2,
+0x4081,0x6c48,0x60c4,0x42d6
+};
+static unsigned short R[] = {
+0x3fe2,0x0dd7,0x5042,0x9b62,
+0x3ff4,0x67e6,0xebb8,0xc5a6,
+0x4014,0x1381,0xf436,0xa71a,
+0x4018,0xa40e,0x58dd,0x0c0c,
+0x401d,0xa393,0x9718,0x960e,
+0x4007,0xd4b8,0x0a47,0x0367
+};
+static unsigned short S[] = {
+0x4002,0x1590,0x0917,0xce21,
+0x4022,0xcac5,0x21d8,0x4cfd,
+0x4028,0x1910,0x7f05,0x2c4d,
+0x4031,0x14d9,0x959c,0x7ff5,
+0x4023,0x37ca,0xaa63,0x26c1,
+0x400a,0xf3de,0x5ab6,0x2d90
+};
+static unsigned short T[] = {
+0x4023,0x35bf,0x1e37,0x5d88,
+0x4056,0x81aa,0x4e9e,0x067f,
+0x40a1,0x7002,0xbcb4,0x35b7,
+0x40bb,0x5b53,0x3c72,0xef90,
+0x40eb,0x2509,0xa442,0x13dc
+};
+static unsigned short U[] = {
+0x4040,0xc7e6,0x3fef,0xa6ba,
+0x4080,0x4add,0x14c6,0x3aee,
+0x40b1,0xf252,0xe680,0xfd12,
+0x40d6,0x1940,0x0101,0x7c0a,
+0x40e8,0x0e6c,0x9dc8,0xf567
+};
+#define UTHRESH 37.519379347
+#endif
+X
+#ifndef ANSIPROT
+double polevl(), p1evl(), exp(), log(), fabs();
+double erf(), erfc();
+#endif
+X
+double ndtr(a)
+double a;
+{
+double x, y, z;
+X
+x = a * SQRTH;
+z = fabs(x);
+X
+if( z < SQRTH )
+X       y = 0.5 + 0.5 * erf(x);
+X
+else
+X       {
+X       y = 0.5 * erfc(z);
+X
+X       if( x > 0 )
+X               y = 1.0 - y;
+X       }
+X
+return(y);
+}
+X
+X
+double erfc(a)
+double a;
+{
+double p,q,x,y,z;
+X
+X
+if( a < 0.0 )
+X       x = -a;
+else
+X       x = a;
+X
+if( x < 1.0 )
+X       return( 1.0 - erf(a) );
+X
+z = -a * a;
+X
+if( z < -MAXLOG )
+X       {
+under:
+X       mtherr( "erfc", UNDERFLOW );
+X       if( a < 0 )
+X               return( 2.0 );
+X       else
+X               return( 0.0 );
+X       }
+X
+z = exp(z);
+X
+if( x < 8.0 )
+X       {
+X       p = polevl( x, P, 8 );
+X       q = p1evl( x, Q, 8 );
+X       }
+else
+X       {
+X       p = polevl( x, R, 5 );
+X       q = p1evl( x, S, 6 );
+X       }
+y = (z * p)/q;
+X
+if( a < 0 )
+X       y = 2.0 - y;
+X
+if( y == 0.0 )
+X       goto under;
+X
+return(y);
+}
+X
+X
+X
+double erf(x)
+double x;
+{
+double y, z;
+X
+if( fabs(x) > 1.0 )
+X       return( 1.0 - erfc(x) );
+z = x * x;
+y = x * polevl( z, T, 4 ) / p1evl( z, U, 5 );
+return( y );
+X
+}
+SHAR_EOF
+chmod 0666 ndtr.c ||
+echo 'restore of ndtr.c failed'
+Wc_c="`wc -c < 'ndtr.c'`"
+test 9797 -eq "$Wc_c" ||
+        echo 'ndtr.c: original size 9797, current size' "$Wc_c"
+fi
+# ============= ndtri.c ==============
+if test -f 'ndtri.c' -a X"$1" != X"-c"; then
+        echo 'x - skipping ndtri.c (File already exists)'
+else
+echo 'x - extracting ndtri.c (Text)'
+sed 's/^X//' << 'SHAR_EOF' > 'ndtri.c' &&
+/*                                                      ndtri.c
+X *
+X *     Inverse of Normal distribution function
+X *
+X *
+X *
+X * SYNOPSIS:
+X *
+X * double x, y, ndtri();
+X *
+X * x = ndtri( y );
+X *
+X *
+X *
+X * DESCRIPTION:
+X *
+X * Returns the argument, x, for which the area under the
+X * Gaussian probability density function (integrated from
+X * minus infinity to x) is equal to y.
+X *
+X *
+X * For small arguments 0 < y < exp(-2), the program computes
+X * z = sqrt( -2.0 * log(y) );  then the approximation is
+X * x = z - log(z)/z  - (1/z) P(1/z) / Q(1/z).
+X * There are two rational functions P/Q, one for 0 < y < exp(-32)
+X * and the other for y up to exp(-2).  For larger arguments,
+X * w = y - 0.5, and  x/sqrt(2pi) = w + w**3 R(w**2)/S(w**2)).
+X *
+X *
+X * ACCURACY:
+X *
+X *                      Relative error:
+X * arithmetic   domain        # trials      peak         rms
+X *    DEC      0.125, 1         5500       9.5e-17     2.1e-17
+X *    DEC      6e-39, 0.135     3500       5.7e-17     1.3e-17
+X *    IEEE     0.125, 1        20000       7.2e-16     1.3e-16
+X *    IEEE     3e-308, 0.135   50000       4.6e-16     9.8e-17
+X *
+X *
+X * ERROR MESSAGES:
+X *
+X *   message         condition    value returned
+X * ndtri domain       x <= 0        -MAXNUM
+X * ndtri domain       x >= 1         MAXNUM
+X *
+X */
+X
+X
+/*
+Cephes Math Library Release 2.1:  January, 1989
+Copyright 1984, 1987, 1989 by Stephen L. Moshier
+Direct inquiries to 30 Frost Street, Cambridge, MA 02140
+*/
+X
+#include "mconf.h"
+extern double MAXNUM;
+X
+#ifdef UNK
+/* sqrt(2pi) */
+static double s2pi = 2.50662827463100050242E0;
+#endif
+X
+#ifdef DEC
+static unsigned short s2p[] = {0040440,0066230,0177661,0034055};
+#define s2pi *(double *)s2p
+#endif
+X
+#ifdef IBMPC
+static unsigned short s2p[] = {0x2706,0x1ff6,0x0d93,0x4004};
+#define s2pi *(double *)s2p
+#endif
+X
+#ifdef MIEEE
+static unsigned short s2p[] = {
+0x4004,0x0d93,0x1ff6,0x2706
+};
+#define s2pi *(double *)s2p
+#endif
+X
+/* approximation for 0 <= |y - 0.5| <= 3/8 */
+#ifdef UNK
+static double P0[5] = {
+-5.99633501014107895267E1,
+X 9.80010754185999661536E1,
+-5.66762857469070293439E1,
+X 1.39312609387279679503E1,
+-1.23916583867381258016E0,
+};
+static double Q0[8] = {
+/* 1.00000000000000000000E0,*/
+X 1.95448858338141759834E0,
+X 4.67627912898881538453E0,
+X 8.63602421390890590575E1,
+-2.25462687854119370527E2,
+X 2.00260212380060660359E2,
+-8.20372256168333339912E1,
+X 1.59056225126211695515E1,
+-1.18331621121330003142E0,
+};
+#endif
+#ifdef DEC
+static unsigned short P0[20] = {
+0141557,0155170,0071360,0120550,
+0041704,0000214,0172417,0067307,
+0141542,0132204,0040066,0156723,
+0041136,0163161,0157276,0007747,
+0140236,0116374,0073666,0051764,
+};
+static unsigned short Q0[32] = {
+/*0040200,0000000,0000000,0000000,*/
+0040372,0026256,0110403,0123707,
+0040625,0122024,0020277,0026661,
+0041654,0134161,0124134,0007244,
+0142141,0073162,0133021,0131371,
+0042110,0041235,0043516,0057767,
+0141644,0011417,0036155,0137305,
+0041176,0076556,0004043,0125430,
+0140227,0073347,0152776,0067251,
+};
+#endif
+#ifdef IBMPC
+static unsigned short P0[20] = {
+0x142d,0x0e5e,0xfb4f,0xc04d,
+0xedd9,0x9ea1,0x8011,0x4058,
+0xdbba,0x8806,0x5690,0xc04c,
+0xc1fd,0x3bd7,0xdcce,0x402b,
+0xca7e,0x8ef6,0xd39f,0xbff3,
+};
+static unsigned short Q0[36] = {
+/*0x0000,0x0000,0x0000,0x3ff0,*/
+0x74f9,0xd220,0x4595,0x3fff,
+0xe5b6,0x8417,0xb482,0x4012,
+0x81d4,0x350b,0x970e,0x4055,
+0x365f,0x56c2,0x2ece,0xc06c,
+0xcbff,0xa8e9,0x0853,0x4069,
+0xb7d9,0xe78d,0x8261,0xc054,
+0x7563,0xc104,0xcfad,0x402f,
+0xcdd5,0xfabf,0xeedc,0xbff2,
+};
+#endif
+#ifdef MIEEE
+static unsigned short P0[20] = {
+0xc04d,0xfb4f,0x0e5e,0x142d,
+0x4058,0x8011,0x9ea1,0xedd9,
+0xc04c,0x5690,0x8806,0xdbba,
+0x402b,0xdcce,0x3bd7,0xc1fd,
+0xbff3,0xd39f,0x8ef6,0xca7e,
+};
+static unsigned short Q0[32] = {
+/*0x3ff0,0x0000,0x0000,0x0000,*/
+0x3fff,0x4595,0xd220,0x74f9,
+0x4012,0xb482,0x8417,0xe5b6,
+0x4055,0x970e,0x350b,0x81d4,
+0xc06c,0x2ece,0x56c2,0x365f,
+0x4069,0x0853,0xa8e9,0xcbff,
+0xc054,0x8261,0xe78d,0xb7d9,
+0x402f,0xcfad,0xc104,0x7563,
+0xbff2,0xeedc,0xfabf,0xcdd5,
+};
+#endif
+X
+X
+/* Approximation for interval z = sqrt(-2 log y ) between 2 and 8
+X * i.e., y between exp(-2) = .135 and exp(-32) = 1.27e-14.
+X */
+#ifdef UNK
+static double P1[9] = {
+X 4.05544892305962419923E0,
+X 3.15251094599893866154E1,
+X 5.71628192246421288162E1,
+X 4.40805073893200834700E1,
+X 1.46849561928858024014E1,
+X 2.18663306850790267539E0,
+-1.40256079171354495875E-1,
+-3.50424626827848203418E-2,
+-8.57456785154685413611E-4,
+};
+static double Q1[8] = {
+/*  1.00000000000000000000E0,*/
+X 1.57799883256466749731E1,
+X 4.53907635128879210584E1,
+X 4.13172038254672030440E1,
+X 1.50425385692907503408E1,
+X 2.50464946208309415979E0,
+-1.42182922854787788574E-1,
+-3.80806407691578277194E-2,
+-9.33259480895457427372E-4,
+};
+#endif
+#ifdef DEC
+static unsigned short P1[36] = {
+0040601,0143074,0150744,0073326,
+0041374,0031554,0113253,0146016,
+0041544,0123272,0012463,0176771,
+0041460,0051160,0103560,0156511,
+0041152,0172624,0117772,0030755,
+0040413,0170713,0151545,0176413,
+0137417,0117512,0022154,0131671,
+0137017,0104257,0071432,0007072,
+0135540,0143363,0063137,0036166,
+};
+static unsigned short Q1[32] = {
+/*0040200,0000000,0000000,0000000,*/
+0041174,0075325,0004736,0120326,
+0041465,0110044,0047561,0045567,
+0041445,0042321,0012142,0030340,
+0041160,0127074,0166076,0141051,
+0040440,0046055,0040745,0150400,
+0137421,0114146,0067330,0010621,
+0137033,0175162,0025555,0114351,
+0135564,0122773,0145750,0030357,
+};
+#endif
+#ifdef IBMPC
+static unsigned short P1[36] = {
+0x8edb,0x9a3c,0x38c7,0x4010,
+0x7982,0x92d5,0x866d,0x403f,
+0x7fbf,0x42a6,0x94d7,0x404c,
+0x1ba9,0x10ee,0x0a4e,0x4046,
+0x463e,0x93ff,0x5eb2,0x402d,
+0xbfa1,0x7a6c,0x7e39,0x4001,
+0x9677,0x448d,0xf3e9,0xbfc1,
+0x41c7,0xee63,0xf115,0xbfa1,
+0xe78f,0x6ccb,0x18de,0xbf4c,
+};
+static unsigned short Q1[32] = {
+/*0x0000,0x0000,0x0000,0x3ff0,*/
+0xd41b,0xa13b,0x8f5a,0x402f,
+0x296f,0x89ee,0xb204,0x4046,
+0x461c,0x228c,0xa89a,0x4044,
+0xd845,0x9d87,0x15c7,0x402e,
+0xba20,0xa83c,0x0985,0x4004,
+0x0232,0xcddb,0x330c,0xbfc2,
+0xb31d,0x456d,0x7f4e,0xbfa3,
+0x061e,0x797d,0x94bf,0xbf4e,
+};
+#endif
+#ifdef MIEEE
+static unsigned short P1[36] = {
+0x4010,0x38c7,0x9a3c,0x8edb,
+0x403f,0x866d,0x92d5,0x7982,
+0x404c,0x94d7,0x42a6,0x7fbf,
+0x4046,0x0a4e,0x10ee,0x1ba9,
+0x402d,0x5eb2,0x93ff,0x463e,
+0x4001,0x7e39,0x7a6c,0xbfa1,
+0xbfc1,0xf3e9,0x448d,0x9677,
+0xbfa1,0xf115,0xee63,0x41c7,
+0xbf4c,0x18de,0x6ccb,0xe78f,
+};
+static unsigned short Q1[32] = {
+/*0x3ff0,0x0000,0x0000,0x0000,*/
+0x402f,0x8f5a,0xa13b,0xd41b,
+0x4046,0xb204,0x89ee,0x296f,
+0x4044,0xa89a,0x228c,0x461c,
+0x402e,0x15c7,0x9d87,0xd845,
+0x4004,0x0985,0xa83c,0xba20,
+0xbfc2,0x330c,0xcddb,0x0232,
+0xbfa3,0x7f4e,0x456d,0xb31d,
+0xbf4e,0x94bf,0x797d,0x061e,
+};
+#endif
+X
+/* Approximation for interval z = sqrt(-2 log y ) between 8 and 64
+X * i.e., y between exp(-32) = 1.27e-14 and exp(-2048) = 3.67e-890.
+X */
+X
+#ifdef UNK
+static double P2[9] = {
+X  3.23774891776946035970E0,
+X  6.91522889068984211695E0,
+X  3.93881025292474443415E0,
+X  1.33303460815807542389E0,
+X  2.01485389549179081538E-1,
+X  1.23716634817820021358E-2,
+X  3.01581553508235416007E-4,
+X  2.65806974686737550832E-6,
+X  6.23974539184983293730E-9,
+};
+static double Q2[8] = {
+/*  1.00000000000000000000E0,*/
+X  6.02427039364742014255E0,
+X  3.67983563856160859403E0,
+X  1.37702099489081330271E0,
+X  2.16236993594496635890E-1,
+X  1.34204006088543189037E-2,
+X  3.28014464682127739104E-4,
+X  2.89247864745380683936E-6,
+X  6.79019408009981274425E-9,
+};
+#endif
+#ifdef DEC
+static unsigned short P2[36] = {
+0040517,0033507,0036236,0125641,
+0040735,0044616,0014473,0140133,
+0040574,0012567,0114535,0102541,
+0040252,0120340,0143474,0150135,
+0037516,0051057,0115361,0031211,
+0036512,0131204,0101511,0125144,
+0035236,0016627,0043160,0140216,
+0033462,0060512,0060141,0010641,
+0031326,0062541,0101304,0077706,
+};
+static unsigned short Q2[32] = {
+/*0040200,0000000,0000000,0000000,*/
+0040700,0143322,0132137,0040501,
+0040553,0101155,0053221,0140257,
+0040260,0041071,0052573,0010004,
+0037535,0066472,0177261,0162330,
+0036533,0160475,0066666,0036132,
+0035253,0174533,0027771,0044027,
+0033502,0016147,0117666,0063671,
+0031351,0047455,0141663,0054751,
+};
+#endif
+#ifdef IBMPC
+static unsigned short P2[36] = {
+0xd574,0xe793,0xe6e8,0x4009,
+0x780b,0xc327,0xa931,0x401b,
+0xb0ac,0xf32b,0x82ae,0x400f,
+0x9a0c,0x18e7,0x541c,0x3ff5,
+0x2651,0xf35e,0xca45,0x3fc9,
+0x354d,0x9069,0x5650,0x3f89,
+0x1812,0xe8ce,0xc3b2,0x3f33,
+0x2234,0x4c0c,0x4c29,0x3ec6,
+0x8ff9,0x3058,0xccac,0x3e3a,
+};
+static unsigned short Q2[32] = {
+/*0x0000,0x0000,0x0000,0x3ff0,*/
+0xe828,0x568b,0x18da,0x4018,
+0x3816,0xaad2,0x704d,0x400d,
+0x6200,0x2aaf,0x0847,0x3ff6,
+0x3c9b,0x5fd6,0xada7,0x3fcb,
+0xc78b,0xadb6,0x7c27,0x3f8b,
+0x2903,0x65ff,0x7f2b,0x3f35,
+0xccf7,0xf3f6,0x438c,0x3ec8,
+0x6b3d,0xb876,0x29e5,0x3e3d,
+};
+#endif
+#ifdef MIEEE
+static unsigned short P2[36] = {
+0x4009,0xe6e8,0xe793,0xd574,
+0x401b,0xa931,0xc327,0x780b,
+0x400f,0x82ae,0xf32b,0xb0ac,
+0x3ff5,0x541c,0x18e7,0x9a0c,
+0x3fc9,0xca45,0xf35e,0x2651,
+0x3f89,0x5650,0x9069,0x354d,
+0x3f33,0xc3b2,0xe8ce,0x1812,
+0x3ec6,0x4c29,0x4c0c,0x2234,
+0x3e3a,0xccac,0x3058,0x8ff9,
+};
+static unsigned short Q2[32] = {
+/*0x3ff0,0x0000,0x0000,0x0000,*/
+0x4018,0x18da,0x568b,0xe828,
+0x400d,0x704d,0xaad2,0x3816,
+0x3ff6,0x0847,0x2aaf,0x6200,
+0x3fcb,0xada7,0x5fd6,0x3c9b,
+0x3f8b,0x7c27,0xadb6,0xc78b,
+0x3f35,0x7f2b,0x65ff,0x2903,
+0x3ec8,0x438c,0xf3f6,0xccf7,
+0x3e3d,0x29e5,0xb876,0x6b3d,
+};
+#endif
+X
+#ifndef ANSIPROT
+double polevl(), p1evl(), log(), sqrt();
+#endif
+X
+double ndtri(y0)
+double y0;
+{
+double x, y, z, y2, x0, x1;
+int code;
+X
+if( y0 <= 0.0 )
+X       {
+X       mtherr( "ndtri", DOMAIN );
+X       return( -MAXNUM );
+X       }
+if( y0 >= 1.0 )
+X       {
+X       mtherr( "ndtri", DOMAIN );
+X       return( MAXNUM );
+X       }
+code = 1;
+y = y0;
+if( y > (1.0 - 0.13533528323661269189) ) /* 0.135... = exp(-2) */
+X       {
+X       y = 1.0 - y;
+X       code = 0;
+X       }
+X
+if( y > 0.13533528323661269189 )
+X       {
+X       y = y - 0.5;
+X       y2 = y * y;
+X       x = y + y * (y2 * polevl( y2, P0, 4)/p1evl( y2, Q0, 8 ));
+X       x = x * s2pi;
+X       return(x);
+X       }
+X
+x = sqrt( -2.0 * log(y) );
+x0 = x - log(x)/x;
+X
+z = 1.0/x;
+if( x < 8.0 ) /* y > exp(-32) = 1.2664165549e-14 */
+X       x1 = z * polevl( z, P1, 8 )/p1evl( z, Q1, 8 );
+else
+X       x1 = z * polevl( z, P2, 8 )/p1evl( z, Q2, 8 );
+x = x0 - x1;
+if( code != 0 )
+X       x = -x;
+return( x );
+}
+SHAR_EOF
+chmod 0644 ndtri.c ||
+echo 'restore of ndtri.c failed'
+Wc_c="`wc -c < 'ndtri.c'`"
+test 9992 -eq "$Wc_c" ||
+        echo 'ndtri.c: original size 9992, current size' "$Wc_c"
+fi
+# ============= pdtr.c ==============
+if test -f 'pdtr.c' -a X"$1" != X"-c"; then
+        echo 'x - skipping pdtr.c (File already exists)'
+else
+echo 'x - extracting pdtr.c (Text)'
+sed 's/^X//' << 'SHAR_EOF' > 'pdtr.c' &&
+/*                                                      pdtr.c
+X *
+X *     Poisson distribution
+X *
+X *
+X *
+X * SYNOPSIS:
+X *
+X * int k;
+X * double m, y, pdtr();
+X *
+X * y = pdtr( k, m );
+X *
+X *
+X *
+X * DESCRIPTION:
+X *
+X * Returns the sum of the first k terms of the Poisson
+X * distribution:
+X *
+X *   k         j
+X *   --   -m  m
+X *   >   e    --
+X *   --       j!
+X *  j=0
+X *
+X * The terms are not summed directly; instead the incomplete
+X * gamma integral is employed, according to the relation
+X *
+X * y = pdtr( k, m ) = igamc( k+1, m ).
+X *
+X * The arguments must both be positive.
+X *
+X *
+X *
+X * ACCURACY:
+X *
+X * See igamc().
+X *
+X */
+X/*                                                     pdtrc()
+X *
+X *     Complemented poisson distribution
+X *
+X *
+X *
+X * SYNOPSIS:
+X *
+X * int k;
+X * double m, y, pdtrc();
+X *
+X * y = pdtrc( k, m );
+X *
+X *
+X *
+X * DESCRIPTION:
+X *
+X * Returns the sum of the terms k+1 to infinity of the Poisson
+X * distribution:
+X *
+X *  inf.       j
+X *   --   -m  m
+X *   >   e    --
+X *   --       j!
+X *  j=k+1
+X *
+X * The terms are not summed directly; instead the incomplete
+X * gamma integral is employed, according to the formula
+X *
+X * y = pdtrc( k, m ) = igam( k+1, m ).
+X *
+X * The arguments must both be positive.
+X *
+X *
+X *
+X * ACCURACY:
+X *
+X * See igam.c.
+X *
+X */
+X/*                                                     pdtri()
+X *
+X *     Inverse Poisson distribution
+X *
+X *
+X *
+X * SYNOPSIS:
+X *
+X * int k;
+X * double m, y, pdtr();
+X *
+X * m = pdtri( k, y );
+X *
+X *
+X *
+X *
+X * DESCRIPTION:
+X *
+X * Finds the Poisson variable x such that the integral
+X * from 0 to x of the Poisson density is equal to the
+X * given probability y.
+X *
+X * This is accomplished using the inverse gamma integral
+X * function and the relation
+X *
+X *    m = igami( k+1, y ).
+X *
+X *
+X *
+X *
+X * ACCURACY:
+X *
+X * See igami.c.
+X *
+X * ERROR MESSAGES:
+X *
+X *   message         condition      value returned
+X * pdtri domain    y < 0 or y >= 1       0.0
+X *                     k < 0
+X *
+X */
+X
+/*
+Cephes Math Library Release 2.3:  March, 1995
+Copyright 1984, 1987, 1995 by Stephen L. Moshier
+*/
+X
+#include "mconf.h"
+#ifndef ANSIPROT
+double igam(), igamc(), igami();
+#endif
+X
+double pdtrc( k, m )
+int k;
+double m;
+{
+double v;
+X
+if( (k < 0) || (m <= 0.0) )
+X       {
+X       mtherr( "pdtrc", DOMAIN );
+X       return( 0.0 );
+X       }
+v = k+1;
+return( igam( v, m ) );
+}
+X
+X
+X
+double pdtr( k, m )
+int k;
+double m;
+{
+double v;
+X
+if( (k < 0) || (m <= 0.0) )
+X       {
+X       mtherr( "pdtr", DOMAIN );
+X       return( 0.0 );
+X       }
+v = k+1;
+return( igamc( v, m ) );
+}
+X
+X
+double pdtri( k, y )
+int k;
+double y;
+{
+double v;
+X
+if( (k < 0) || (y < 0.0) || (y >= 1.0) )
+X       {
+X       mtherr( "pdtri", DOMAIN );
+X       return( 0.0 );
+X       }
+v = k+1;
+v = igami( v, y );
+return( v );
+}
+SHAR_EOF
+chmod 0666 pdtr.c ||
+echo 'restore of pdtr.c failed'
+Wc_c="`wc -c < 'pdtr.c'`"
+test 2460 -eq "$Wc_c" ||
+        echo 'pdtr.c: original size 2460, current size' "$Wc_c"
+fi
+# ============= polevl.c ==============
+if test -f 'polevl.c' -a X"$1" != X"-c"; then
+        echo 'x - skipping polevl.c (File already exists)'
+else
+echo 'x - extracting polevl.c (Text)'
+sed 's/^X//' << 'SHAR_EOF' > 'polevl.c' &&
+/*                                                      polevl.c
+X *                                                     p1evl.c
+X *
+X *     Evaluate polynomial
+X *
+X *
+X *
+X * SYNOPSIS:
+X *
+X * int N;
+X * double x, y, coef[N+1], polevl[];
+X *
+X * y = polevl( x, coef, N );
+X *
+X *
+X *
+X * DESCRIPTION:
+X *
+X * Evaluates polynomial of degree N:
+X *
+X *                     2          N
+X * y  =  C  + C x + C x  +...+ C x
+X *        0    1     2          N
+X *
+X * Coefficients are stored in reverse order:
+X *
+X * coef[0] = C  , ..., coef[N] = C  .
+X *            N                   0
+X *
+X *  The function p1evl() assumes that coef[N] = 1.0 and is
+X * omitted from the array.  Its calling arguments are
+X * otherwise the same as polevl().
+X *
+X *
+X * SPEED:
+X *
+X * In the interest of speed, there are no checks for out
+X * of bounds arithmetic.  This routine is used by most of
+X * the functions in the library.  Depending on available
+X * equipment features, the user may wish to rewrite the
+X * program in microcode or assembly language.
+X *
+X */
+X
+X
+/*
+Cephes Math Library Release 2.1:  December, 1988
+Copyright 1984, 1987, 1988 by Stephen L. Moshier
+Direct inquiries to 30 Frost Street, Cambridge, MA 02140
+*/
+X
+X
+double polevl( x, coef, N )
+double x;
+double coef[];
+int N;
+{
+double ans;
+int i;
+double *p;
+X
+p = coef;
+ans = *p++;
+i = N;
+X
+do
+X       ans = ans * x  +  *p++;
+while( --i );
+X
+return( ans );
+}
+X
+/*                                                      p1evl() */
+/*                                          N
+X * Evaluate polynomial when coefficient of x  is 1.0.
+X * Otherwise same as polevl.
+X */
+X
+double p1evl( x, coef, N )
+double x;
+double coef[];
+int N;
+{
+double ans;
+double *p;
+int i;
+X
+p = coef;
+ans = x + *p++;
+i = N-1;
+X
+do
+X       ans = ans * x  + *p++;
+while( --i );
+X
+return( ans );
+}
+SHAR_EOF
+chmod 0666 polevl.c ||
+echo 'restore of polevl.c failed'
+Wc_c="`wc -c < 'polevl.c'`"
+test 1605 -eq "$Wc_c" ||
+        echo 'polevl.c: original size 1605, current size' "$Wc_c"
+fi
+# ============= protos.h ==============
+if test -f 'protos.h' -a X"$1" != X"-c"; then
+        echo 'x - skipping protos.h (File already exists)'
+else
+echo 'x - extracting protos.h (Text)'
+sed 's/^X//' << 'SHAR_EOF' > 'protos.h' &&
+/*
+X *   This file was automatically generated by version 1.7 of cextract.
+X *   Manual editing not recommended.
+X *
+X *   Created: Wed Mar 29 17:50:31 1995
+X */
+extern double bdtrc ( int k, int n, double p );
+extern double bdtr ( int k, int n, double p );
+extern double bdtri ( int k, int n, double y );
+extern double btdtr ( double a, double b, double x );
+extern double chdtrc ( double df, double x );
+extern double chdtr ( double df, double x );
+extern double chdtri ( double df, double y );
+extern int drand ( double *a );
+extern double fdtrc ( int ia, int ib, double x );
+extern double fdtr ( int ia, int ib, double x );
+extern double fdtri ( int ia, int ib, double y );
+extern double gamma ( double x );
+extern double lgam ( double x );
+extern double gdtr ( double a, double b, double x );
+extern double gdtrc ( double a, double b, double x );
+extern double igamc ( double a, double x );
+extern double igam ( double a, double x );
+extern double igami ( double a, double y0 );
+extern double incbet ( double aa, double bb, double xx );
+extern double incbi ( double aa, double bb, double yy0 );
+extern int mtherr ( char *name, int code );
+extern double nbdtrc ( int k, int n, double p );
+extern double nbdtr ( int k, int n, double p );
+extern double nbdtri ( int k, int n, double p );
+extern double ndtr ( double a );
+extern double erfc ( double a );
+extern double erf ( double x );
+extern double ndtri ( double y0 );
+extern double pdtrc ( int k, double m );
+extern double pdtr ( int k, double m );
+extern double pdtri ( int k, double y );
+extern double stdtr ( int k, double t );
+extern double stdtri ( int k, double p );
+extern double log1p ( double x );
+extern double expm1 ( double x );
+extern double cos1m ( double x );
+extern double polevl ( double x, void *P, int n );
+extern double p1evl ( double x, void *P, int n );
+/* These are presumed elsewhere. */
+extern double atan ( double x );
+extern double exp ( double x );
+extern double fabs ( double x );
+extern double floor ( double x );
+extern double log ( double x );
+extern double powi ( double x, int n );
+extern double pow ( double x, double y );
+extern double sinhl ( double x );
+extern double sin ( double x );
+extern double cos ( double x );
+extern double sqrt ( double x );
+SHAR_EOF
+chmod 0666 protos.h ||
+echo 'restore of protos.h failed'
+Wc_c="`wc -c < 'protos.h'`"
+test 2238 -eq "$Wc_c" ||
+        echo 'protos.h: original size 2238, current size' "$Wc_c"
+fi
+# ============= stdtr.c ==============
+if test -f 'stdtr.c' -a X"$1" != X"-c"; then
+        echo 'x - skipping stdtr.c (File already exists)'
+else
+echo 'x - extracting stdtr.c (Text)'
+sed 's/^X//' << 'SHAR_EOF' > 'stdtr.c' &&
+/*                                                      stdtr.c
+X *
+X *     Student's t distribution
+X *
+X *
+X *
+X * SYNOPSIS:
+X *
+X * double t, stdtr();
+X * short k;
+X *
+X * y = stdtr( k, t );
+X *
+X *
+X * DESCRIPTION:
+X *
+X * Computes the integral from minus infinity to t of the Student
+X * t distribution with integer k > 0 degrees of freedom:
+X *
+X *                                      t
+X *                                      -
+X *                                     | |
+X *              -                      |         2   -(k+1)/2
+X *             | ( (k+1)/2 )           |  (     x   )
+X *       ----------------------        |  ( 1 + --- )        dx
+X *                     -               |  (      k  )
+X *       sqrt( k pi ) | ( k/2 )        |
+X *                                   | |
+X *                                    -
+X *                                   -inf.
+X *
+X * Relation to incomplete beta integral:
+X *
+X *        1 - stdtr(k,t) = 0.5 * incbet( k/2, 1/2, z )
+X * where
+X *        z = k/(k + t**2).
+X *
+X * For t < -2, this is the method of computation.  For higher t,
+X * a direct method is derived from integration by parts.
+X * Since the function is symmetric about t=0, the area under the
+X * right tail of the density is found by calling the function
+X * with -t instead of t.
+X *
+X * ACCURACY:
+X *
+X * Tested at random 1 <= k <= 25.  The "domain" refers to t.
+X *                      Relative error:
+X * arithmetic   domain     # trials      peak         rms
+X *    IEEE     -100,-2      50000       5.9e-15     1.4e-15
+X *    IEEE     -2,100      500000       2.7e-15     4.9e-17
+X */
+X
+/*                                                      stdtri.c
+X *
+X *     Functional inverse of Student's t distribution
+X *
+X *
+X *
+X * SYNOPSIS:
+X *
+X * double p, t, stdtri();
+X * int k;
+X *
+X * t = stdtri( k, p );
+X *
+X *
+X * DESCRIPTION:
+X *
+X * Given probability p, finds the argument t such that stdtr(k,t)
+X * is equal to p.
+X *
+X * ACCURACY:
+X *
+X * Tested at random 1 <= k <= 100.  The "domain" refers to p:
+X *                      Relative error:
+X * arithmetic   domain     # trials      peak         rms
+X *    IEEE    .001,.999     25000       5.7e-15     8.0e-16
+X *    IEEE    10^-6,.001    25000       2.0e-12     2.9e-14
+X */
+X
+X
+/*
+Cephes Math Library Release 2.3:  March, 1995
+Copyright 1984, 1987, 1995 by Stephen L. Moshier
+*/
+X
+#include "mconf.h"
+X
+extern double PI, MACHEP, MAXNUM;
+#ifndef ANSIPROT
+double sqrt(), atan(), incbet(), incbi(), fabs();
+#endif
+X
+double stdtr( k, t )
+int k;
+double t;
+{
+double x, rk, z, f, tz, p, xsqk;
+int j;
+X
+if( k <= 0 )
+X       {
+X       mtherr( "stdtr", DOMAIN );
+X       return(0.0);
+X       }
+X
+if( t == 0 )
+X       return( 0.5 );
+X
+if( t < -2.0 )
+X       {
+X       rk = k;
+X       z = rk / (rk + t * t);
+X       p = 0.5 * incbet( 0.5*rk, 0.5, z );
+X       return( p );
+X       }
+X
+/*      compute integral from -t to + t */
+X
+if( t < 0 )
+X       x = -t;
+else
+X       x = t;
+X
+rk = k; /* degrees of freedom */
+z = 1.0 + ( x * x )/rk;
+X
+/* test if k is odd or even */
+if( (k & 1) != 0)
+X       {
+X
+X       /*      computation for odd k   */
+X
+X       xsqk = x/sqrt(rk);
+X       p = atan( xsqk );
+X       if( k > 1 )
+X               {
+X               f = 1.0;
+X               tz = 1.0;
+X               j = 3;
+X               while(  (j<=(k-2)) && ( (tz/f) > MACHEP )  )
+X                       {
+X                       tz *= (j-1)/( z * j );
+X                       f += tz;
+X                       j += 2;
+X                       }
+X               p += f * xsqk/z;
+X               }
+X       p *= 2.0/PI;
+X       }
+X
+X
+else
+X       {
+X
+X       /*      computation for even k  */
+X
+X       f = 1.0;
+X       tz = 1.0;
+X       j = 2;
+X
+X       while(  ( j <= (k-2) ) && ( (tz/f) > MACHEP )  )
+X               {
+X               tz *= (j - 1)/( z * j );
+X               f += tz;
+X               j += 2;
+X               }
+X       p = f * x/sqrt(z*rk);
+X       }
+X
+/*      common exit     */
+X
+X
+if( t < 0 )
+X       p = -p; /* note destruction of relative accuracy */
+X
+X       p = 0.5 + 0.5 * p;
+return(p);
+}
+X
+double stdtri( k, p )
+int k;
+double p;
+{
+double t, rk, z;
+int rflg;
+X
+if( k <= 0 || p <= 0.0 || p >= 1.0 )
+X       {
+X       mtherr( "stdtri", DOMAIN );
+X       return(0.0);
+X       }
+X
+rk = k;
+X
+if( p > 0.25 && p < 0.75 )
+X       {
+X       if( p == 0.5 )
+X               return( 0.0 );
+X       z = 1.0 - 2.0 * p;
+X       z = incbi( 0.5, 0.5*rk, fabs(z) );
+X       t = sqrt( rk*z/(1.0-z) );
+X       if( p < 0.5 )
+X               t = -t;
+X       return( t );
+X       }
+rflg = -1;
+if( p >= 0.5)
+X       {
+X       p = 1.0 - p;
+X       rflg = 1;
+X       }
+z = incbi( 0.5*rk, 0.5, 2.0*p );
+X
+if( MAXNUM * z < rk )
+X       return(rflg* MAXNUM);
+t = sqrt( rk/z - rk );
+return( rflg * t );
+}
+SHAR_EOF
+chmod 0666 stdtr.c ||
+echo 'restore of stdtr.c failed'
+Wc_c="`wc -c < 'stdtr.c'`"
+test 3921 -eq "$Wc_c" ||
+        echo 'stdtr.c: original size 3921, current size' "$Wc_c"
+fi
+# ============= unity.c ==============
+if test -f 'unity.c' -a X"$1" != X"-c"; then
+        echo 'x - skipping unity.c (File already exists)'
+else
+echo 'x - extracting unity.c (Text)'
+sed 's/^X//' << 'SHAR_EOF' > 'unity.c' &&
+/*                                                      unity.c
+X *
+X * Relative error approximations for function arguments near
+X * unity.
+X *
+X *    log1p(x) = log(1+x)
+X *    expm1(x) = exp(x) - 1
+X *    cosm1(x) = cos(x) - 1
+X *
+X */
+X
+X
+/* log1p(x) = log(1 + x)  */
+X
+/* Coefficients for log(1+x) = x - x**2/2 + x**3 P(x)/Q(x)
+X * 1/sqrt(2) <= x < sqrt(2)
+X * Theoretical peak relative error = 2.32e-20
+X */
+static double LP[] = {
+X 4.5270000862445199635215E-5,
+X 4.9854102823193375972212E-1,
+X 6.5787325942061044846969E0,
+X 2.9911919328553073277375E1,
+X 6.0949667980987787057556E1,
+X 5.7112963590585538103336E1,
+X 2.0039553499201281259648E1,
+};
+static double LQ[] = {
+/* 1.0000000000000000000000E0,*/
+X 1.5062909083469192043167E1,
+X 8.3047565967967209469434E1,
+X 2.2176239823732856465394E2,
+X 3.0909872225312059774938E2,
+X 2.1642788614495947685003E2,
+X 6.0118660497603843919306E1,
+};
+X
+#define SQRTH 0.70710678118654752440
+#define SQRT2 1.41421356237309504880
+#ifndef ANSIPROT
+double log(), polevl(), p1evl(), exp(), cos();
+#endif
+X
+double log1p(x)
+double x;
+{
+double z;
+X
+z = 1.0 + x;
+if( (z < SQRTH) || (z > SQRT2) )
+X       return( log(z) );
+z = x*x;
+z = -0.5 * z + x * ( z * polevl( x, LP, 6 ) / p1evl( x, LQ, 6 ) );
+return (x + z);
+}
+X
+X
+X
+/* expm1(x) = exp(x) - 1  */
+X
+/*  e^x =  1 + 2x P(x^2)/( Q(x^2) - P(x^2) )
+X * -0.5 <= x <= 0.5
+X */
+X
+static double EP[3] = {
+X 1.2617719307481059087798E-4,
+X 3.0299440770744196129956E-2,
+X 9.9999999999999999991025E-1,
+};
+static double EQ[4] = {
+X 3.0019850513866445504159E-6,
+X 2.5244834034968410419224E-3,
+X 2.2726554820815502876593E-1,
+X 2.0000000000000000000897E0,
+};
+X
+double expm1(x)
+double x;
+{
+double r, xx;
+X
+if( (x < -0.5) || (x > 0.5) )
+X       return( exp(x) - 1.0 );
+xx = x * x;
+r = x * polevl( xx, EP, 2 );
+r = r/( polevl( xx, EQ, 3 ) - r );
+return (r + r);
+}
+X
+X
+X
+/* cosm1(x) = cos(x) - 1  */
+X
+static double coscof[7] = {
+X 4.7377507964246204691685E-14,
+-1.1470284843425359765671E-11,
+X 2.0876754287081521758361E-9,
+-2.7557319214999787979814E-7,
+X 2.4801587301570552304991E-5,
+-1.3888888888888872993737E-3,
+X 4.1666666666666666609054E-2,
+};
+X
+extern double PIO4;
+X
+double cosm1(x)
+double x;
+{
+double xx;
+X
+if( (x < -PIO4) || (x > PIO4) )
+X       return( cos(x) - 1.0 );
+xx = x * x;
+xx = -0.5*xx + xx * xx * polevl( xx, coscof, 6 );
+return xx;
+}
+SHAR_EOF
+chmod 0666 unity.c ||
+echo 'restore of unity.c failed'
+Wc_c="`wc -c < 'unity.c'`"
+test 2190 -eq "$Wc_c" ||
+        echo 'unity.c: original size 2190, current size' "$Wc_c"
+fi
+exit 0

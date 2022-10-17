@@ -1,0 +1,70 @@
+<HTML>
+<HEAD><TITLE>Newmat10 - cleanup after an exception</TITLE></HEAD>
+<BODY bgcolor="#FFFFFF">
+<H2><font color="#FF0000">Cleanup after an exception</H2></font>
+<A HREF="nonlin.htm">  next</A> - 
+<A HREF="nonlin.htm">  skip</A> - 
+<A HREF="refer.htm">  up</A> - 
+<A HREF="index.htm">  start</A><P>
+
+This section is about the simulated exceptions used in newmat. It is irrelevant
+if you are using the exceptions built into a compiler or have set the
+disable-exceptions option.
+<P>
+The simulated exception mechanisms in newmat are based on the C functions setjmp
+and longjmp. These functions do not call destructors so can lead to
+garbage being left on the heap. (I refer to memory allocated by <I>new</I> as
+heap memory). For example, when you call
+<PRE>
+   Matrix A(20,30);
+</PRE>
+a small amount of space is used on the stack containing the row and
+column dimensions of the matrix and 600 doubles are allocated on the
+heap for the actual values of the matrix. At the end of the block in
+which A is declared, the destructor for A is called and the 600
+doubles are freed. The locations on the stack are freed as part of the
+normal operations of the stack. If you leave the block using a longjmp
+command those 600 doubles will not be freed and will occupy space until
+the program terminates.
+<P>
+To overcome this problem newmat keeps a list of all the currently
+declared matrices and its exception mechanism will return heap memory
+when you do a Throw and Catch.
+<P>
+However it will not return heap memory from objects from other packages.
+<P>
+If you want the mechanism to work with another class you will have to do
+four things:
+<OL>
+<LI>derive your class from class Janitor defined in except.h;
+
+<LI>define a function <TT>void CleanUp()</TT> in that class to return all heap
+memory;
+
+<LI>include the following lines in the class definition
+<PRE>
+      public:
+         void* operator new(size_t size)
+         { do_not_link=true; void* t = ::operator new(size); return t; }
+         void operator delete(void* t) { ::operator delete(t); }
+</PRE>
+<LI>be sure to include a copy constructor in you class definition, that
+is, something like
+<PRE>
+      X(const X&);
+</PRE>
+</OL>
+Note that the function <TT>CleanUp()</TT> does somewhat the same duties as
+the destructor. However <TT>CleanUp()</TT> has to do the <I>cleaning</I>
+for the class you
+are working with and also the classes it is derived from. So it will
+often be wrong to use exactly the same code for both <TT>CleanUp()</TT> and
+the destructor or to define your destructor as a call to <TT>CleanUp()</TT>.
+<P>
+<A HREF="nonlin.htm">  next</A> - 
+<A HREF="nonlin.htm">  skip</A> - 
+<A HREF="refer.htm">  up</A> - 
+<A HREF="index.htm">  start</A><P>
+</BODY>
+</HTML>
+

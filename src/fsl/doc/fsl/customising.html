@@ -1,0 +1,32 @@
+<HTML><HEAD><TITLE>Customising FSL</TITLE></HEAD><BODY BACKGROUND="../images/fsl-bg.jpg" BGCOLOR="white">
+
+<H2>Customising FSL</H2>
+
+FSL can be customised for different output datatypes and other features.
+There are several environment variables which FSL uses to determine
+certain user preferences, such as the output file format (NIFTI,
+Analyze, etc). The defaults for these are set when you source the
+setup file as shown above (i.e., ${FSLDIR}/etc/fslconf/fsl.sh or
+${FSLDIR}/etc/fslconf/fsl.csh). If you wish to change these defaults
+then you need to:<pre>
+cd
+mkdir .fslconf
+cd .fslconf</pre>
+
+and in this directory create a file called fsl.sh or fsl.csh,
+depending on the shell that you use, setting any or all of the
+variables that appear in the central ${FSLDIR}/etc/fslconf/fsl.sh or
+${FSLDIR}/etc/fslconf/fsl.csh files. 
+<p>
+<b>
+DO NOT copy the central files into <kbd>~/.fslconf/</kbd> as it
+will cause a loop that will stop your login from working.
+</b>
+<p>
+It is recommended that the files <kbd>~/.fslconf/fsl.sh</kbd> or
+<kbd>~/.fslconf/fsl.csh</kbd> only include a few variable definitions
+and nothing more.  Note that whoever installs FSL can also edit the
+central files in <kbd>$FSLDIR/etc/fslconf</kbd> to change the
+preferences for all users.
+
+</BODY></HTML>

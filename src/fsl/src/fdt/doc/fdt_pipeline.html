@@ -1,0 +1,30 @@
+<HTML><TITLE>FDT - FMRIB's Diffusion Toolbox - User Guide</TITLE><BODY BACKGROUND="fdt_images/fsl-bg.jpg">
+
+<h3>Processing pipeline</h3>
+<p>To call the FDT GUI, either run <b>Fdt</b>, or run <b>fsl</b> and press the <b>FDT</b> button.
+
+<p>A typical processing pipeline (and approximate time required for each
+stage, based on an Intel 2.4GHz processor, and a 60-direction whole brain
+dataset of dimensions 128x128x64, at 2.5 mm isotropic resolution)
+would consist of:
+<ol>
+<li>Any study or scanner-specific pre-processing (e.g., averaging of multiple
+acquisitions, removal of images affected by large artifacts).  This would be
+done manually by the user.</li>
+<li><a href="fdt_eddy.html">Eddy current correction</a> using FDT (around 3 minutes per volume).</li>
+<li><a href="fdt_dtifit.html">DTIFit</a> - Fitting of diffusion tensors on corrected data using dtifit within FDT to check data quality (1 minute)
+<li><a href="fdt_bedpost.html">Bedpost</a> - Fitting of the probabilistic diffusion model on corrected data 
+(20 hours, or less if parallelised)</li>
+<li><a href="fdt_reg.html">Registration</a> -  (3-6 minutes) </li>
+<li><a href="fdt_probtrack.html">ProbTrack</a> - Probabilistic tractography run on the outputs of bedpost (endless.. - depends very much on what the
+user wishes to do.  Generating a connectivity distribution from a single voxel
+of interest takes about 10 seconds)</li>
+<li>Further post-processing of ProbTrack outputs can be carried out if
+required using the command-line utilities <a
+href="fdt_thresh.html">proj_thresh</a> or <a
+href="fdt_biggest.html">find_the_biggest</a></li>
+</ul>
+
+
+
+

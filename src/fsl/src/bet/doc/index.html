@@ -1,0 +1,122 @@
+<HTML><HEAD>
+<TITLE>BET - Brain Extraction Tool</TITLE>
+</HEAD><BODY BACKGROUND="../images/fsl-bg.jpg">
+<hr><TABLE BORDER=0 WIDTH="100%"><TR>
+<TD ALIGN=CENTER><H1>BET - Brain Extraction Tool - User Guide</H1>BET Version 1.2
+<TD ALIGN=RIGHT><a href="../index.html"><IMG BORDER=0 SRC="../images/fsl-logo.jpg"></a>
+</TR></TABLE>
+
+<HR><H2>INTRODUCTION</H2>
+ 
+<P>BET (Brain Extraction Tool) deletes non-brain tissue from an
+image of the whole head. It can also estimate the external skull
+surface.
+
+<P>For more detail on BET and an updated journal reference, see the <A
+HREF="http://www.fmrib.ox.ac.uk/analysis/research/bet/">BET research
+web page</A>. If you use BET in your research, please quote the
+journal reference listed there.
+
+<p>The different BET programs are:
+<UL>
+<LI><a href="#Bet">Bet</a> - BET GUI<br>
+<LI><a href="#bet">bet</a> - command-line BET program<br>
+<LI><a href="#betfunc">betfunc</a> - command-line script using bet to
+process 4D FMRI data
+<LI><a href="#betpremask">betpremask</a> - command-line script to
+carry out brain masking using FLIRT registration and a standard-space
+mask, instead of BET
+</UL>
+
+<A NAME="Bet"></A><hr><H2>Bet GUI</H2>
+
+<H3>MAIN OPTIONS</H3>
+ 
+<P>By default the only output from BET is an image with all non-brain
+matter removed - this is the <B>Generate image with non-brain matter
+removed</B> option.
+
+<p>The other main optional output from BET is controlled by the
+<B>Generate image with estimated brain surface overlaid on
+original</B> option; this output does not remove any of the original
+image, but instead draws the outline of the brain's surface onto the
+original image.
+
+<H3>ADVANCED OPTIONS</H3>
+ 
+<H3>Other optional outputs</H3>
+  
+<P>The <B>Generate binary brain mask image</B> option tells BET to
+output a binary brain mask (0 outside of the brain and 1 inside). This
+can then be used in later processing, to mask other images derived
+from the original.
+
+<P>The <B>Apply thresholding to segmented brain image (and mask if
+required)</B> option causes BET to apply thresholding to the segmented
+brain image (and also the brain mask if selected). Thus, inside the
+estimated brain, some voxels can be "zeroed" after segmentation, if
+their intensity falls below an automatically estimated threshold.
+
+<P>The <B>Generate exterior skull surface image</B> option tells BET
+to produce an image which is an estimate of the exterior surface of
+the skull. All non-skull-surface points are 0 in this image, and
+skull-surface points are 100.
+
+<H3>User-settable thresholds</H3>
+ 
+<P>Changing <B>Fractional intensity threshold</B> from its default
+value of 0.5 will cause the overall segmented brain to become larger
+(<0.5) or smaller (>0.5). This threshold must lie between 0 and 1.
+
+<P>Changing <B>Threshold gradient</B> from its default value of 0
+causes a gradient to be apply to the previous threshold. Thus setting
+a positive value here causes the primary threshold to be reduced at
+the bottom of the brain, giving a larger brain estimate there, and a
+smaller estimate of the brain towards the top of the image. This value
+must lie between -1 and 1. It is even less likely that you will need
+to change this threshold than the previous one.
+
+<A NAME="bet"></A><HR><H2>bet COMMAND-LINE PROGRAM</H2>
+
+<p>Type <b>bet</b> to get usage.
+  
+<A NAME="betfunc"></A><HR><H2>betfunc COMMAND-LINE SCRIPT</H2>
+
+<p>Type <b>betfunc</b> to get usage; the input and output filenames
+must be the filename roots (i.e. without any filename extension). This
+script uses <b>bet</b> to determine a brain mask on the basis of the
+first volume in a 4D data set, and applies this to the whole data
+set. This is principally intended for use on FMRI data, for example to
+remove eyeballs. Because it is normally important (in this
+application) that masking be liberal (ie that there be little risk of
+cutting out valid brain voxels) the -f threshold is reduced to 0.3,
+and also the brain mask is "dilated" slightly before being used.
+
+<p>Note that if you just use <b>bet</b> on 4D data, this will work;
+the brain mask is derived from the first time point, and then applied
+to all time points.
+
+<A NAME="betpremask"></A><HR><H2>betpremask COMMAND-LINE SCRIPT</H2>
+
+<p>Type <b>betpremask</b> to get usage; the input and output filenames
+must be the filename roots. This script uses <b>flirt</b> to register the input
+image to a standard space whole-head image; the resulting transform is
+then inverted and a standard-space brain mask is transformed into the
+space of the input image, and then applied to this to create the
+output.
+
+<p><b>betpremask</b> can be useful if BET cannot be made to work
+well.
+
+
+<p><HR><FONT SIZE=1>Copyright &copy; 2000, University of
+Oxford. Written by <A
+HREF="http://www.fmrib.ox.ac.uk/~steve/index.html">S. Smith</A>.</FONT>
+
+<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+
+</BODY></HTML>
+

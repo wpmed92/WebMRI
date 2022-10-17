@@ -1,0 +1,45 @@
+<HTML>
+<HEAD><TITLE>Newmat10 - HP-UX</TITLE></HEAD>
+<BODY bgcolor="#FFFFFF">
+<H2><font color="#FF0000">HP-UX</H2></font>
+<A HREF="microso.htm">  next</A> - 
+<A HREF="microso.htm">  skip</A> - 
+<A HREF="compiler.htm">  up</A> - 
+<A HREF="index.htm">  start</A><P>
+
+HP 9000 series HP-UX. I no longer have access to this compiler. Newmat09
+worked without problems with the simulated exceptions; haven't tried the
+built-in exceptions.
+<P> With recent versions of the compiler you may get warning messages like
+<TT>Unsafe cast between pointers/references to incomplete classes</TT>. At
+present, I think these can be ignored.
+<P>
+Here are comments I made two years ago.
+<P>
+I have tried the library on two versions of HP-UX.
+(I don't know the version numbers, the older is a clone of AT&T 3, the
+newer is HP's version with exceptions).
+Both worked after the modifications described in this section.
+<P> 
+With the older version of the compiler I needed to edit the math.h
+library file to remove a duplicate definition of abs.
+<P>
+With the
+newer version you can set the +eh option to enable exceptions and activate
+the UseExceptions option in include.h. If you are using my make file,
+you will need to replace CC with CC +eh where ever CC occurs. I recommend
+that you do not do this and either disable exceptions or use my simulated
+exceptions. I get core dumps when I use the built-in exceptions and suspect
+they are not sufficiently debugged as yet.
+<P>
+If you are using my simulated exceptions you may get a mass of error messages
+from the linker about __EH_JMPBUF_TEMP. In this case get file setjmp.h
+(in directory /usr/include/CC ?) and put extern in front of the line
+<PRE>
+   jmp_buf * __EH_JMPBUF_TEMP;
+</PRE>
+The file setjmp.h is accessed in my file myexcept.h. You may want to change
+the #include statement to access your edited copy of setjmp.h.
+</BODY>
+</HTML>
+

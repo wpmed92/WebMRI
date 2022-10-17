@@ -1,0 +1,95 @@
+<HTML><HEAD><TITLE>FSL</TITLE></HEAD><BODY BACKGROUND="../images/fsl-bg.jpg" BGCOLOR="white">
+
+<H3>Compiling Source Distribution</H3> 
+
+<P> If you have not taken a precompiled version, you will require:
+
+<UL>
+
+<LI><A HREF="http://ftp.gnu.org/pub/gnu/make/" target="_top">GNU make</A>
+(this should be named gmake to make sure that FSL uses this rather
+than any other "make" in your path)
+
+<LI><A HREF="http://ftp.gnu.org/pub/gnu/fileutils/" target="_top">GNU
+install</A> (this should be named ginstall to make sure that FSL
+uses this rather than any other "install" in your path)
+
+<LI><A HREF="http://ftp.gnu.org/pub/gnu/gcc/" target="_top">GCC C/C++
+compiler</A> (versions from gcc-2.95.2 to gcc-3.4 seem to work fine in
+general, though gcc-3.3 upwards on Cygwin doesn't work - we used
+gcc-3.2 for our current Cygwin release).
+
+</UL>
+
+<P>
+In addition, the following are required (Note: sometimes these binaries can be
+taken from one of the other FSL binary distributions if the operating system
+and machines are similar - e.g. certain varieties of linux on PC machines):
+<UL>
+
+<LI><B>convert</B> and <B>display</B> from the <A
+HREF="http://imagemagick.sourceforge.net/" target="_top">ImageMagick</A> package <B>with
+added TIFF support</B> (place convert and display in fsl/bin)
+
+<LI><A HREF="http://www.gnuplot.info/" target="_top">gnuplot</A> (place
+gnuplot in fsl/bin)
+
+<LI><A HREF="http://dev.scriptics.com/" target="_top">Tcl and Tk</A>
+version 8.4.7.0 and
+<A HREF="http://tix.sourceforge.net/" target="_top">Tix</A> version
+8.1.4 (configure all three
+with <B>configure --prefix=$FSLDIR</B> before making and installing).
+
+</UL>
+
+Note that if you are building these yourself, you will want to delete
+the word "freeware" from the build script in the top level FSL
+directory. Otherwise the build may overwrite your newly created
+binaries for these 3 packages.
+
+
+<p>Then do the following check (this if for the bash shell; if you are
+using tcsh amend appropriately):
+<OL>
+<LI> Set the main FSL environment variable:
+<pre>export FSLDIR=&lt;??wherever fsl is unpacked??&gt;
+<i>e.g. export FSLDIR=/usr/local/fsl </i>
+</pre>
+
+<LI> Then source the FSL environment setup script:
+  <pre>. ${FSLDIR}/etc/fslconf/fsl.sh</pre>
+
+<LI> Then check if your machine/compiler is supported by default:
+<pre>ls $FSLDIR/config/$FSLMACHTYPE
+</pre>
+</OL>
+
+If the above directory does not exist (the <code>ls</code> returns an error):
+<UL>
+<LI>
+Select the closest match from the directories in 
+<code>$FSLDIR/config</code> and do the following:
+<pre>
+cp -r $FSLDIR/config/<i>closestmatch</i> $FSLDIR/config/$FSLMACHTYPE
+</pre>
+
+<LI>
+Depending on how different your machine and compiler are from the
+closest match, you may need to edit the files inside the
+<code>$FSLDIR/config/$FSLMACHTYPE</code> directory which set the
+local paths and variables for things like install commands, compiler
+flags, etc.
+</UL>
+
+Once this test is done then the sources can be built simply by doing:
+<pre>
+cd $FSLDIR
+./build
+</pre>
+
+<p>If you want to re-make a particular package in $FSLDIR/src
+(e.g. flirt) then first set the FSLDEVDIR environment variable to the
+same as FSLDIR and then just type <code>make install</code> inside
+the relevant directory.
+
+</BODY></HTML>

@@ -1,0 +1,187 @@
+<HTML>
+<HEAD><TITLE>Newmat10 - design questions</TITLE></HEAD>
+<BODY bgcolor="#FFFFFF">
+<H2><font color="#FF0000">Design questions</H2></font>
+<A HREF="stor.htm">  next</A> -
+<A HREF="stor.htm">  skip</A> -
+<A HREF="design.htm">  up</A> -
+<A HREF="index.htm">  start</A>
+
+<P>Even within the bounds set by the requirements of a matrix
+library
+there is a substantial opportunity for variation between what
+different matrix packages might provide. It is not possible to
+build a matrix package that will meet everyone's requirements. In
+many cases if you put in one facility, you impose overheads on
+everyone using the package. This both in storage required for the
+program and in efficiency. Likewise a package that is optimised
+towards handling large matrices is likely to become less
+efficient for very small matrices where the administration time
+for the matrix may become significant compared with the time to
+carry out the operations. It is better to provide a variety of packages
+(hopefully compatible) so that most users can find one that meets
+their requirements. This package is intended to be one of these
+packages; but not all of them.
+
+<P>Since my background is in statistical methods, this package is
+oriented towards the kinds things you need for statistical
+analyses.
+<P>
+Now looking at some specific questions.
+<P>
+<H3><font color="#FF0000">What size of matrices?</H3></font>
+
+A matrix library may target small matrices (say 3 x 3), or
+medium sized matrices, or very large matrices.
+<P>
+A library targeting very small matrices will seek to minimise administration.
+A library for medium sized or very large matrices can spend more
+time on administration in order to conserve space or optimise the
+evaluation of expressions. A library for very large matrices will
+need to pay special attention to storage and numerical
+properties. This library is designed for medium sized matrices. This
+means it is worth introducing some optimisations, but I don't
+have to worry about setting up some form of virtual memory.
+<P>
+<H3><font color="#FF0000">Which matrix types?</H3></font>
+
+<P>As well as the usual rectangular matrices, matrices occuring
+repeatedly in numerical calculations are upper and lower
+triangular matrices, symmetric matrices and diagonal matrices.
+This is particularly the case in calculations involving least
+squares and eigenvalue calculations. So as a first stage these were
+the types I decided to include.
+
+<P>It is also necessary to have types row vector and column
+vector. In a <I>matrix</I> package, in contrast to an <I>array</I>
+package, it is necessary to have both these types since they
+behave differently in matrix expressions. The vector types can be
+derived for the rectangular matrix type, so having them does not greatly
+increase the complexity of the package.
+
+<P>The problem with having several matrix types is the number of
+versions of the binary operators one needs. If one has 5 distinct
+matrix types then a simple library will need 25 versions of each
+of the binary operators. In fact, we can evade this problem, but at
+the cost of some complexity. 
+<P>
+<H3><font color="#FF0000">What element types?</H3></font>
+
+<P>Ideally we would allow element types double, float, complex
+and int, at least. It might be reasonably easy, using templates
+or equivalent, to provide a library which could handle a variety
+of element types. However, as soon as one starts implementing the
+binary operators between matrices with different element types,
+again one gets an explosion in the number of operations one needs
+to consider. At the present time the compilers I deal with are not
+up to handling this problem with templates. (Of course, when I started
+writing <I>newmat</I> there were no templates). But even when the
+compilers do meet the specifications of the draft standard, writing
+a matrix package that allows for a variety of element types using
+the template mechanism is going to be very difficult. I am inclined
+to use templates in an <I>array</I> library but not in a <I>matrix</I>
+library.
+
+<P>Hence I decided to implement only one element type. But the
+user can decide whether this is float or double. The package
+assumes elements are of type Real. The user typedefs Real to
+float or double.
+
+<P>It might also be worth including symmetric and triangular
+matrices with extra precision elements (double or long double) to
+be used for storage only and with a minimum of operations
+defined. These would be used for accumulating the results of sums
+of squares and product matrices or multistage QR triangularisations. 
+<P>
+<H3><font color="#FF0000">Allow matrix expressions</H3></font>
+
+<P>I want to be able to write matrix expressions the way I would
+on paper. So if I want to multiply two matrices and then add the
+transpose of a third one I can write something like
+<TT>X = A * B + C.t();</TT>.
+I want this expression to be evaluated with close to the
+same efficiency as a hand-coded version. This is not so much of a
+problem with expressions including a multiply since the multiply
+will dominate the time. However, it is not so easy to achieve
+with expressions with just <TT>+</TT> and <TT>-</TT>.
+
+<P>A second requirement is that temporary matrices generated
+during the evaluation of an expression are destroyed as quickly
+as possible.
+
+<P>A desirable feature is that a certain amount of
+<I>intelligence</I> be displayed in the evaluation of an expression.
+For example, in the expression <TT>X = A.i() * B;</TT> where <TT>i()</TT> denotes
+inverse, it would be desirable if the inverse wasn't explicitly
+calculated.
+<P>
+<H3><font color="#FF0000">Naming convention</H3></font>
+
+How are classes and public member functions to be named? As a
+general rule I have spelt identifiers out in full with individual
+words being capitalised. For example
+<I>UpperTriangularMatrix</I>. If you don't like this you can
+#define or typedef shorter names. This convention means you can select
+an abbreviation scheme that makes sense to you.
+<P>
+Exceptions to the general rule are the functions for transpose
+and inverse. To make matrix expressions more like the
+corresponding mathematical formulae, I have used the single
+letter abbreviations, <TT>t()</TT> and <TT>i()</TT>. 
+<P>
+<H3><font color="#FF0000">Row and column index ranges</H3></font>
+
+In mathematical work matrix subscripts usually start at one.
+In C, array subscripts start at zero. In Fortran, they start at
+one. Possibilities for this package were to make them start at 0
+or 1 or be arbitrary.
+
+<P>Alternatively one could specify an <I>index set</I> for
+indexing the rows and columns of a matrix. One would be able to
+add or multiply matrices only if the appropriate row and column
+index sets were identical.
+
+<P>In fact, I adopted the simpler convention of making the rows
+and columns of a matrix be indexed by an integer starting at one,
+following the traditional convention. In an earlier version of
+the package I had them starting at zero, but even I was getting
+mixed up when trying to use this earlier package. So I reverted
+to the more usual notation and started at 1. 
+<P>
+<H3><font color="#FF0000">Element access - method and checking</H3></font>
+
+We want to be able to use the notation <TT>A(i,j)</TT> to specify the
+<TT>(i,j)</TT>-th element of a matrix. This is the way mathematicians
+expect to address the elements of matrices. I consider the
+notation <TT>A[i][j]</TT> totally alien. However I include this as an
+option to help people converting from C.
+
+<P>There are two ways of working out the address of <TT>A(i,j)</TT>. One
+is using a <I>dope</I> vector which contains the first
+address of each row. Alternatively you can calculate the address
+using the formula appropriate for the structure of <TT>A</TT>. I use this
+second approach. It is probably slower, but saves worrying about
+an extra bit of storage.
+
+<P>The other question is whether to check for <TT>i</TT> and <TT>j</TT>
+being in range.
+I do carry out this check following years of experience with both
+systems that do and systems that don't do this check. I would
+hope that the routines I supply with this package will reduce
+your need to access elements of matrices so speed of access is
+not a high priority. 
+<P>
+<H3><font color="#FF0000">Use iterators</H3></font>
+
+Iterators are an alternative way of providing fast access to the
+elements of an array or matrix when they are to be accessed
+sequentially. They need to be customised for each type of matrix. I have
+not implemented iterators in this package, although some iterator like
+functions are used internally for some row and column functions.
+<P>
+<A HREF="stor.htm">  next</A> -
+<A HREF="stor.htm">  skip</A> -
+<A HREF="design.htm">  up</A> -
+<A HREF="index.htm">  start</A>
+<P>
+</BODY></HTML>
