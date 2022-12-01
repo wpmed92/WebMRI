@@ -9,4 +9,3 @@ src/fsl/build.log
 !*.*
 !build
 !Makefile
-*.nii
